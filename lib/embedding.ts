@@ -18,7 +18,7 @@ function embeddingFalso(texto: string): number[] {
 }
 
 export async function gerarEmbedding(texto: string, tipo: "document" | "query" = "document"): Promise<number[] | null> {
-  if (process.env.EMBEDDING_FAKE === "1") return embeddingFalso(texto);
+  if (process.env.EMBEDDING_FAKE === "1" && process.env.NODE_ENV !== "production") return embeddingFalso(texto);
   const chave = process.env.VOYAGE_API_KEY;
   if (!chave || !texto.trim()) return null;
   const r = await fetch("https://api.voyageai.com/v1/embeddings", {

@@ -21,7 +21,7 @@ export async function POST(_req: Request, { params }: { params: Promise<{ id: st
   try {
     for (const [i, b] of fila.entries()) {
       if (b.segmentos || b.erro) continue;
-      if (process.env.TRANSCRICAO_FAKE === "1") {
+      if (process.env.TRANSCRICAO_FAKE === "1" && process.env.NODE_ENV !== "production") {
         b.segmentos = segmentosDeExemplo(i);
       } else if (!b.prediction) {
         const { data } = await supabase.storage.from("midia").createSignedUrl(b.path, 7200);

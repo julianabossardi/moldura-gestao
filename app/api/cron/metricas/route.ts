@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { cronAutorizado } from "@/lib/cron";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 import { consultarExterno, type Metrica } from "@/lib/metricas";
 import { consultarGa4 } from "@/lib/ga4";
@@ -7,7 +8,7 @@ export const maxDuration = 60;
 
 // job diário (Vercel Cron): lê os números vivos de cada projeto ativo e guarda no próprio projetos.metricas
 export async function GET(req: Request) {
-  if (req.headers.get("authorization") !== `Bearer ${process.env.CRON_SECRET}`) {
+  if (!cronAutorizado(req)) {
     return NextResponse.json({ erro: "não autorizado" }, { status: 401 });
   }
   const admin = supabaseAdmin();

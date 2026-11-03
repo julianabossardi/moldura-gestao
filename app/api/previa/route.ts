@@ -8,6 +8,8 @@ export async function GET(req: Request) {
   const supabase = await supabaseServidor();
   const { data: auth } = await supabase.auth.getUser();
   if (!auth.user) return NextResponse.json({}, { status: 401 });
+  const { data: eu } = await supabase.from("pessoas").select("papel").eq("id", auth.user.id).single();
+  if (eu?.papel !== "socia") return NextResponse.json({}, { status: 403 });
 
   const alvo = new URL(req.url).searchParams.get("url") ?? "";
   let url: URL;
