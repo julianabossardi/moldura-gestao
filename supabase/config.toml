@@ -411,3 +411,12 @@ enabled = true
 # declarative_schema_path = "./schemas"
 # JSON string passed through to pg-delta SQL formatting.
 # format_options = "{\"keywordCase\":\"upper\",\"indent\":2,\"maxWidth\":80,\"commaStyle\":\"trailing\"}"
+
+# links de entrada com token_hash: funcionam para convites feitos pelo servidor e para o login normal
+[auth.email.template.magic_link]
+subject = "seu link para entrar na moldura"
+content_path = "./supabase/templates/magic_link.html"
+
+[auth.email.template.confirmation]
+subject = "seu link para entrar na moldura"
+content_path = "./supabase/templates/magic_link.html"

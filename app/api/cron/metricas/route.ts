@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 import { consultarExterno, type Metrica } from "@/lib/metricas";
+import { consultarGa4 } from "@/lib/ga4";
 
 export const maxDuration = 60;
 
@@ -29,7 +30,11 @@ export async function GET(req: Request) {
             m.valor = Number(data);
           }
         }
-        // ga4 entra na fase 6; manual mantém o valor digitado
+        if (m.fonte === "ga4") {
+          if (!m.propriedade) throw new Error("informe a propriedade do GA4 em editar projeto");
+          m.valor = await consultarGa4({ propriedade: m.propriedade, metrica: m.metrica, dias: m.dias });
+        }
+        // manual mantém o valor digitado
         m.erro = null;
         if (m.valor != null) {
           m.historico = [...(m.historico ?? []).filter((h) => h.data !== hoje), { data: hoje, valor: m.valor }].slice(-60);

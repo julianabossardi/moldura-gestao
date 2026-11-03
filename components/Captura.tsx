@@ -3,7 +3,7 @@ import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Icone } from "./Icone";
 
-export function Captura({ projetoId }: { projetoId?: string }) {
+export function Captura({ projetoId, placeholder = "cola ou escreve", rotuloOk = "" }: { projetoId?: string; placeholder?: string; rotuloOk?: string }) {
   const router = useRouter();
   const [texto, setTexto] = useState("");
   const [gravando, setGravando] = useState(false);
@@ -15,7 +15,7 @@ export function Captura({ projetoId }: { projetoId?: string }) {
     setMsg("organizando…");
     if (projetoId) corpo.set("projeto_id", projetoId);
     const r = await fetch("/api/capturas", { method: "POST", body: corpo });
-    setMsg(r.ok ? "" : "não consegui organizar essa. ela ficou guardada.");
+    setMsg(r.ok ? rotuloOk : "não consegui organizar essa. ela ficou guardada.");
     router.refresh();
   }
 
@@ -55,7 +55,7 @@ export function Captura({ projetoId }: { projetoId?: string }) {
 
   return (
     <form className="vidro captura" onSubmit={colar}>
-      <input placeholder={msg || "cola ou escreve"} value={texto} onChange={(e) => setTexto(e.target.value)} aria-label="cola ou escreve" />
+      <input placeholder={msg || placeholder} value={texto} onChange={(e) => setTexto(e.target.value)} aria-label={placeholder} />
       <button
         type="button"
         className={`gravar ${gravando ? "gravando" : ""}`}

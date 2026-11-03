@@ -13,6 +13,7 @@ export function Mostrar({ autorId, projetos, projetoInicial }: Props) {
   const [corpo, setCorpo] = useState("");
   const [projeto, setProjeto] = useState(projetoInicial ?? "");
   const [arquivo, setArquivo] = useState<File | null>(null);
+  const [cliente, setCliente] = useState(false);
   const [salvando, setSalvando] = useState(false);
   const [erro, setErro] = useState("");
 
@@ -36,11 +37,11 @@ export function Mostrar({ autorId, projetos, projetoInicial }: Props) {
       .single();
     const { error } = await supabase.from("itens").insert({
       tipo: "entrega", titulo: titulo.trim(), corpo: corpo || null, projeto_id: projeto || null,
-      autor_id: autorId, midia: caminho ? [caminho] : [], origem: "captura", captura_id: captura?.id ?? null, status: "concluida",
+      autor_id: autorId, midia: caminho ? [caminho] : [], origem: "captura", captura_id: captura?.id ?? null, status: "concluida", visivel_cliente: cliente && !!projeto,
     });
     setSalvando(false);
     if (error) return setErro("não deu para mostrar. tenta de novo.");
-    setAberto(false); setTitulo(""); setCorpo(""); setArquivo(null); setErro("");
+    setAberto(false); setTitulo(""); setCorpo(""); setArquivo(null); setCliente(false); setErro("");
     router.refresh();
   }
 
@@ -69,6 +70,10 @@ export function Mostrar({ autorId, projetos, projetoInicial }: Props) {
             </label>
             <label className="rotulo-campo">print ou imagem
               <input type="file" accept="image/*" onChange={(e) => setArquivo(e.target.files?.[0] ?? null)} />
+            </label>
+            <label className="linha" style={{ gap: 8 }}>
+              <input type="checkbox" checked={cliente} disabled={!projeto} onChange={(e) => setCliente(e.target.checked)} />
+              <span className="m-small">mostrar também ao cliente do projeto</span>
             </label>
             {erro && <p className="erro">{erro}</p>}
             <button className="btn acento" disabled={salvando} onClick={enviar}>{salvando ? "enviando…" : "mostrar"}</button>

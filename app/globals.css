@@ -189,3 +189,12 @@ body { transition: padding-left var(--m-dur-base) var(--m-ease-glass); }
 .ajuda-item a { color: inherit; }
 .ajuda-fechar { margin-left: auto; border: 0; background: none; color: var(--m-ink-quiet); font-size: 18px; line-height: 1; padding: 0 4px; }
 .btn { text-decoration: none; }
+
+.menu-rodape { margin-top: auto; padding-top: var(--m-space-6); }
+.menu-sair { background: none; border: 0; width: 100%; text-align: left; color: var(--m-ink-quiet); font: inherit; font-weight: 400; cursor: pointer; }
+.menu-sair:hover { background: var(--m-surface-100); color: var(--m-ink); }
+.menu-lateral { display: flex; flex-direction: column; }
+
+/* portal do cliente */
+.portal { padding-left: var(--m-space-6); }
+.assinatura { display: flex; gap: var(--m-space-2); align-items: center; opacity: .7; padding-top: var(--m-space-8); }

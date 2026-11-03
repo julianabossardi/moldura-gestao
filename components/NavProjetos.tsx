@@ -52,6 +52,12 @@ export function NavProjetos({ ativos, arquivados, atual }: { ativos: P[]; arquiv
     router.refresh();
   }
 
+  async function sair() {
+    await supabaseNavegador().auth.signOut();
+    router.push("/login");
+    router.refresh();
+  }
+
   async function reativar(id: string) {
     await supabaseNavegador().rpc("reativar_projeto", { p_id: id });
     router.refresh();
@@ -114,6 +120,9 @@ export function NavProjetos({ ativos, arquivados, atual }: { ativos: P[]; arquiv
             ))}
           </details>
         )}
+        <div className="menu-bloco menu-rodape">
+          <button className="menu-item menu-sair" onClick={sair} tabIndex={aberto ? 0 : -1}>sair</button>
+        </div>
       </nav>
     </>
   );

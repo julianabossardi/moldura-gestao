@@ -6,6 +6,10 @@ export type Metrica = {
   valor?: number | null;
   consulta?: string;
   conexao_env?: string; // nome da variável com a URL do banco do próprio produto
+  propriedade?: string | null; // ga4: id numérico da propriedade
+  metrica?: string; // ga4: sessions, activeUsers...
+  dias?: number; // ga4: janela em dias (7 = visitas da semana)
+  visivel_cliente?: boolean; // some do portal do cliente quando false
   historico?: { data: string; valor: number }[];
   erro?: string | null;
   atualizado_em?: string;

@@ -9,6 +9,7 @@ type Props = {
   tarefas: Tarefa[];
   pessoas: { id: string; nome: string }[];
   projetos: { id: string; nome: string }[];
+  clientes: { id: string; nome: string }[];
   autorId: string;
   projetoId: string;
 };
@@ -16,13 +17,20 @@ type Props = {
 const PESO: Record<string, number> = { alta: 0, media: 1, baixa: 2 };
 
 // tarefas abertas em colunas por responsável. arrastar troca o responsável; clicar abre o painel
-export function ColunasTarefas({ tarefas, pessoas, projetos, autorId, projetoId }: Props) {
+export function ColunasTarefas({ tarefas, pessoas, projetos, clientes, autorId, projetoId }: Props) {
   const router = useRouter();
   const [aberto, setAberto] = useState<ItemEditavel | null>(null);
   const [alvo, setAlvo] = useState<string | null>(null);
   const arrastando = useRef<string | null>(null);
 
-  const colunas = [...pessoas.map((p) => ({ id: p.id, nome: p.nome })), { id: "", nome: "sem responsável" }];
+  const ehCliente = (id: string | null) => !!id && clientes.some((c) => c.id === id);
+  // tarefa de cliente fica numa coluna só, com o selo "com o cliente"
+  const colunas = [
+    ...pessoas.map((p) => ({ id: p.id, nome: p.nome })),
+    { id: "", nome: "sem responsável" },
+    ...(clientes.length ? [{ id: "__cliente", nome: "com o cliente" }] : []),
+  ];
+  const daColuna = (colId: string) => tarefas.filter((t) => (colId === "__cliente" ? ehCliente(t.responsavel_id) : (t.responsavel_id ?? "") === colId));
   const ordenar = (a: Tarefa, b: Tarefa) => (PESO[a.prioridade ?? "media"] ?? 1) - (PESO[b.prioridade ?? "media"] ?? 1);
 
   async function soltar(responsavel: string) {
@@ -30,7 +38,8 @@ export function ColunasTarefas({ tarefas, pessoas, projetos, autorId, projetoId 
     arrastando.current = null;
     setAlvo(null);
     if (!id) return;
-    await supabaseNavegador().from("itens").update({ responsavel_id: responsavel || null }).eq("id", id);
+    const destino = responsavel === "__cliente" ? clientes[0]?.id : responsavel || null;
+    await supabaseNavegador().from("itens").update({ responsavel_id: destino ?? null }).eq("id", id);
     router.refresh();
   }
 
@@ -55,18 +64,18 @@ export function ColunasTarefas({ tarefas, pessoas, projetos, autorId, projetoId 
             onDrop={() => soltar(col.id)}
           >
             <span className="m-small">{col.nome.toLowerCase()}</span>
-            {tarefas.filter((t) => (t.responsavel_id ?? "") === col.id).sort(ordenar).map((t) => (
+            {daColuna(col.id).sort(ordenar).map((t) => (
               <button key={t.id} className="cartao-tarefa" draggable onDragStart={() => (arrastando.current = t.id)} onClick={() => setAberto(t)}>
                 <span>{t.titulo}</span>
                 <span className="m-meta">
-                  {t.prioridade}{t.prazo ? ` · ${new Date(t.prazo + "T12:00").toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" })}` : ""}{t.status === "fazendo" ? " · fazendo" : ""}
+                  {ehCliente(t.responsavel_id) && <span className="selo">com o cliente</span>} {t.prioridade}{t.prazo ? ` · ${new Date(t.prazo + "T12:00").toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" })}` : ""}{t.status === "fazendo" ? " · fazendo" : ""}
                 </span>
               </button>
             ))}
           </div>
         ))}
       </div>
-      {aberto && <PainelItem key={aberto.id ?? "novo"} item={aberto} autorId={autorId} projetos={projetos} pessoas={pessoas} onFechar={() => setAberto(null)} />}
+      {aberto && <PainelItem key={aberto.id ?? "novo"} item={aberto} autorId={autorId} projetos={projetos} pessoas={[...pessoas, ...clientes.map((c) => ({ id: c.id, nome: `${c.nome} (cliente)` }))]} onFechar={() => setAberto(null)} />}
     </section>
   );
 }

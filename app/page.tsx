@@ -1,3 +1,4 @@
+import { redirect } from "next/navigation";
 import { pessoaAtual } from "@/lib/pessoa";
 import { Seletor } from "@/components/Seletor";
 import { Captura } from "@/components/Captura";
@@ -25,15 +26,20 @@ export default async function Inicio() {
       </div></main>
     );
   }
-  if (pessoa.papel === "cliente") return <main className="login"><div className="vidro"><p className="m-body">o portal do cliente chega na fase 6.</p></div></main>;
+  if (pessoa.papel === "cliente") {
+    const { data: projeto } = await supabase.from("portal_projetos").select("slug").limit(1).maybeSingle();
+    if (projeto) redirect(`/p/${projeto.slug}`);
+    return <main className="login"><div className="vidro"><p className="m-body">seu acesso está sem projeto agora. fala com a moldura.</p></div></main>;
+  }
 
   const hoje = new Date().toISOString().slice(0, 10);
-  const [{ data: projetos }, { data: abertas }, { data: fazendo }, { data: pendentes }, { data: pessoasAtivas }, { data: resumo }, { data: avisosBrutos }, { count: paradas }] = await Promise.all([
+  const [{ data: projetos }, { data: abertas }, { data: fazendo }, { data: pendentesBrutas }, { data: pessoasAtivas }, { data: resumo }, { data: avisosBrutos }, { count: paradas }] = await Promise.all([
     supabase.from("projetos").select("id, nome, slug, ordem_prioridade").eq("status", "ativo").order("ordem_prioridade"),
     supabase.from("itens").select("id, tipo, titulo, corpo, projeto_id, responsavel_id, prioridade, prazo, visivel_cliente, status").eq("tipo", "tarefa").eq("status", "aberta")
       .or(`responsavel_id.eq.${pessoa.id},responsavel_id.is.null`).is("pai_id", null).order("ultima_movimentacao", { ascending: false }),
     supabase.from("itens").select("id, titulo, origem").eq("status", "fazendo").eq("responsavel_id", pessoa.id).limit(1),
-    supabase.from("capturas").select("id, proposta").eq("autor_id", pessoa.id).eq("status", "proposta").order("criado_em"),
+    // minhas capturas e as que as clientes mandaram: qualquer sócia confirma
+    supabase.from("capturas").select("id, proposta, autor_id, autor:pessoas!autor_id(nome, papel)").eq("status", "proposta").order("criado_em"),
     supabase.from("pessoas").select("id, nome").eq("ativa", true).eq("papel", "socia"),
     supabase.rpc("equipe_resumo"),
     // quem reagiu às minhas entregas nas últimas 48h
@@ -45,6 +51,8 @@ export default async function Inicio() {
       .or(`responsavel_id.eq.${pessoa.id},and(responsavel_id.is.null,autor_id.eq.${pessoa.id})`),
   ]);
 
+  type Autor = { nome: string; papel: string } | null;
+  const pendentes = (pendentesBrutas ?? []).filter((c) => c.autor_id === pessoa.id || (c.autor as unknown as Autor)?.papel === "cliente");
   const equipe = (resumo ?? []) as ResumoPessoa[];
   const euResumo = equipe.find((p) => p.id === pessoa.id);
   const outras = equipe.filter((p) => p.id !== pessoa.id);
@@ -95,7 +103,7 @@ export default async function Inicio() {
         <section className="bloco">
           <h2>{pendentes!.length} {pendentes!.length === 1 ? "captura" : "capturas"} para confirmar</h2>
           {pendentes!.map((c) => (
-            <CartaoConfirmacao key={c.id} id={c.id} destinos={(c.proposta as { destinos: Destino[] }).destinos} titulosExistentes={titulosExistentes} />
+            <CartaoConfirmacao key={c.id} id={c.id} destinos={(c.proposta as { destinos: Destino[] }).destinos} titulosExistentes={titulosExistentes} de={c.autor_id === pessoa.id ? undefined : (c.autor as unknown as Autor)?.nome} />
           ))}
         </section>
       )}

@@ -4,7 +4,8 @@ import { pessoaAtual } from "@/lib/pessoa";
 import { temaParaCss, type Tema } from "@/lib/tema";
 import { variacaoSemana, type Metrica } from "@/lib/metricas";
 import { carregarEntregas } from "@/lib/entregas";
-import { diasAtras, diasAte } from "@/lib/datas";
+import { diasAtras, diasAte, haQuanto } from "@/lib/datas";
+import { sinaisDoCodigo, type Integracoes } from "@/lib/sinais";
 import { NavegacaoProjetos } from "@/components/NavegacaoProjetos";
 import { Captura } from "@/components/Captura";
 import { EntregaCard } from "@/components/EntregaCard";
@@ -31,9 +32,10 @@ export default async function Projeto({ params, searchParams }: Props) {
   const metricas = ((projeto.metricas ?? []) as Metrica[]).slice(0, 3);
   const gestao = aba === "gestao";
 
-  const [{ data: socias }, { data: outros }, { data: fazendo }, { data: movidos }, entregas, { data: tarefas }, { data: decisoes }, { data: memoria }] =
+  const [{ data: socias }, { data: clientes }, { data: outros }, { data: fazendo }, { data: movidos }, entregas, { data: tarefas }, { data: decisoes }, { data: memoria }] =
     await Promise.all([
       supabase.from("pessoas").select("id, nome").eq("papel", "socia").eq("ativa", true).order("nome"),
+      supabase.from("pessoas").select("id, nome").eq("papel", "cliente").eq("ativa", true).contains("projetos_cliente", [projeto.id]),
       supabase.from("projetos").select("id, nome").eq("status", "ativo").neq("id", projeto.id).order("ordem_prioridade"),
       supabase.from("itens").select("id, titulo, responsavel:pessoas!responsavel_id(nome)").eq("projeto_id", projeto.id).eq("status", "fazendo"),
       supabase.from("itens").select("responsavel_id, autor_id").eq("projeto_id", projeto.id).gte("ultima_movimentacao", diasAtras(7)),
@@ -44,6 +46,9 @@ export default async function Projeto({ params, searchParams }: Props) {
       supabase.from("itens").select("id, titulo, corpo, criado_em").eq("projeto_id", projeto.id).eq("tipo", "decisao").order("criado_em", { ascending: false }),
       supabase.from("itens").select("id, tipo, titulo, url, validade").eq("projeto_id", projeto.id).in("tipo", ["ideia", "reflexao", "referencia"]).eq("status", "aberta").order("criado_em", { ascending: false }),
     ]);
+
+  const integracoes = (projeto.integracoes ?? {}) as Integracoes;
+  const sinais = !gestao && (integracoes.github || integracoes.vercel?.projeto_id) ? await sinaisDoCodigo(integracoes) : null;
 
   const nomes = Object.fromEntries((socias ?? []).map((p) => [p.id, p.nome]));
   const movimento = Object.entries(
@@ -73,7 +78,7 @@ export default async function Projeto({ params, searchParams }: Props) {
           </div>
           {!arquivado && (
             <div className="linha">
-              <EditarProjeto projetoId={projeto.id} marco={projeto.proximo_marco} marcoEm={projeto.proximo_marco_em} metricas={(projeto.metricas ?? []) as Metrica[]} />
+              <EditarProjeto projetoId={projeto.id} marco={projeto.proximo_marco} marcoEm={projeto.proximo_marco_em} metricas={(projeto.metricas ?? []) as Metrica[]} integracoes={integracoes} />
               <ArquivarProjeto projetoId={projeto.id} nome={projeto.nome} tarefas={(tarefas ?? []).map((t) => ({ id: t.id, titulo: t.titulo }))} outros={outros ?? []} />
             </div>
           )}
@@ -135,6 +140,24 @@ export default async function Projeto({ params, searchParams }: Props) {
               </section>
             )}
 
+            {sinais && (sinais.commits.length > 0 || sinais.deploys.length > 0) && (
+              <section className="bloco">
+                <h2>sinais do código</h2>
+                {sinais.deploys.map((d) => (
+                  <a className="item" key={d.id} href={d.url} target="_blank" rel="noreferrer">
+                    <span><span className={d.estado === "error" ? "selo" : "m-mono"}>{d.estado === "ready" ? "no ar" : d.estado === "error" ? "falhou" : d.estado}</span> {d.mensagem ?? "deploy"}</span>
+                    <span className="m-meta">{haQuanto(d.em)}</span>
+                  </a>
+                ))}
+                {sinais.commits.map((c) => (
+                  <a className="item" key={c.sha} href={c.url} target="_blank" rel="noreferrer">
+                    <span><span className="m-mono">{c.sha}</span> {c.mensagem} <span className="m-meta">{c.autor.toLowerCase()}</span></span>
+                    <span className="m-meta">{haQuanto(c.em)}</span>
+                  </a>
+                ))}
+              </section>
+            )}
+
             <section className="bloco">
               <h2>movimento da semana</h2>
               {movimento.length ? (
@@ -154,6 +177,7 @@ export default async function Projeto({ params, searchParams }: Props) {
               tarefas={(tarefas ?? []) as never}
               pessoas={socias ?? []}
               projetos={[{ id: projeto.id, nome: projeto.nome }, ...(outros ?? [])]}
+              clientes={clientes ?? []}
               autorId={pessoa.id}
               projetoId={projeto.id}
             />

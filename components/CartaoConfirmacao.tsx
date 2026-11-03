@@ -3,9 +3,9 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import type { Destino } from "@/lib/ia/schemas";
 
-type Props = { id: string; destinos: Destino[]; titulosExistentes: Record<string, string> };
+type Props = { id: string; destinos: Destino[]; titulosExistentes: Record<string, string>; de?: string };
 
-export function CartaoConfirmacao({ id, destinos: inicial, titulosExistentes }: Props) {
+export function CartaoConfirmacao({ id, destinos: inicial, titulosExistentes, de }: Props) {
   const router = useRouter();
   const [destinos, setDestinos] = useState(inicial);
   const [editando, setEditando] = useState<number | null>(null);
@@ -29,7 +29,7 @@ export function CartaoConfirmacao({ id, destinos: inicial, titulosExistentes }: 
   return (
     <div className="vidro quieto">
       <div className="linha" style={{ justifyContent: "space-between" }}>
-        <span className="m-small">a moldura entendeu assim</span>
+        <span className="m-small">{de ? `${de} (cliente) mandou algo. a moldura entendeu assim` : "a moldura entendeu assim"}</span>
         <button className="btn" disabled={ocupada || !destinos.length} onClick={() => enviar({ destinos })}>confirmar tudo</button>
       </div>
       {destinos.map((d, i) => (
