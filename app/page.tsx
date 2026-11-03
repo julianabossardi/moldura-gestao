@@ -28,7 +28,7 @@ export default async function Inicio() {
   if (pessoa.papel === "cliente") return <main className="login"><div className="vidro"><p className="m-body">o portal do cliente chega na fase 6.</p></div></main>;
 
   const hoje = new Date().toISOString().slice(0, 10);
-  const [{ data: projetos }, { data: abertas }, { data: fazendo }, { data: pendentes }, { data: pessoasAtivas }, { data: resumo }, { data: avisosBrutos }] = await Promise.all([
+  const [{ data: projetos }, { data: abertas }, { data: fazendo }, { data: pendentes }, { data: pessoasAtivas }, { data: resumo }, { data: avisosBrutos }, { count: paradas }] = await Promise.all([
     supabase.from("projetos").select("id, nome, slug, ordem_prioridade").eq("status", "ativo").order("ordem_prioridade"),
     supabase.from("itens").select("id, tipo, titulo, corpo, projeto_id, responsavel_id, prioridade, prazo, visivel_cliente, status").eq("tipo", "tarefa").eq("status", "aberta")
       .or(`responsavel_id.eq.${pessoa.id},responsavel_id.is.null`).is("pai_id", null).order("ultima_movimentacao", { ascending: false }),
@@ -40,6 +40,9 @@ export default async function Inicio() {
     supabase.from("reacoes")
       .select("id, tipo, pessoa:pessoas(nome), item:itens!inner(titulo, autor_id)")
       .eq("item.autor_id", pessoa.id).neq("pessoa_id", pessoa.id).gte("criado_em", diasAtras(2)).order("criado_em", { ascending: false }),
+    // tarefas minhas que a faxina marcou como paradas (sem responsável entram na faxina de quem criou)
+    supabase.from("itens").select("id", { count: "exact", head: true }).eq("tipo", "tarefa").eq("status", "aberta").is("pai_id", null).not("parada_em", "is", null)
+      .or(`responsavel_id.eq.${pessoa.id},and(responsavel_id.is.null,autor_id.eq.${pessoa.id})`),
   ]);
 
   const equipe = (resumo ?? []) as ResumoPessoa[];
@@ -98,6 +101,13 @@ export default async function Inicio() {
       )}
 
       {fazendo?.[0] && <FazendoAgora item={fazendo[0]} />}
+
+      {(paradas ?? 0) > 0 && (
+        <Link href="/faxina" className="vidro quieto linha" style={{ justifyContent: "space-between", textDecoration: "none", color: "inherit" }}>
+          <span className="m-body">faxina: {paradas} {paradas === 1 ? "tarefa parada" : "tarefas paradas"}</span>
+          <span className="m-meta">resolver</span>
+        </Link>
+      )}
 
       <Seletor pessoaId={pessoa.id} projetos={projetos ?? []} projetoInicial={projetoDoDia} estadosIniciais={pessoa.estados ?? []} />
 

@@ -4,3 +4,5 @@ export const hojeISO = () => new Date().toISOString().slice(0, 10);
 
 // dias inteiros de hoje até a data (negativo se já passou)
 export const diasAte = (data: string) => Math.ceil((new Date(data + "T23:59:59").getTime() - Date.now()) / 86_400_000);
+
+export const diasDesde = (iso: string) => Math.floor((Date.now() - new Date(iso).getTime()) / 86_400_000);

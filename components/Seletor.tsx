@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabaseNavegador } from "@/lib/supabase/client";
 import type { Recorte } from "@/lib/ia/schemas";
+import { IssoPodeAjudar } from "./IssoPodeAjudar";
 
 type Projeto = { id: string; nome: string };
 type Props = { pessoaId: string; projetos: Projeto[]; projetoInicial: string | null; estadosIniciais: string[] };
@@ -21,6 +22,8 @@ export function Seletor({ pessoaId, projetos, projetoInicial, estadosIniciais }:
   const [titulos, setTitulos] = useState<Record<string, string>>({});
   const [carregando, setCarregando] = useState(false);
   const [vazio, setVazio] = useState(false);
+  const [editando, setEditando] = useState<number | null>(null);
+  const [titulosEditados, setTitulosEditados] = useState<Record<number, string>>({});
 
   const supabase = supabaseNavegador();
 
@@ -46,13 +49,18 @@ export function Seletor({ pessoaId, projetos, projetoInicial, estadosIniciais }:
     await supabase.from("pessoas").update({ estados: novo }).eq("id", pessoaId);
   }
 
-  async function agir(acao: "comecar" | "outro", r: Recorte) {
-    await fetch("/api/recortes/acao", { method: "POST", body: JSON.stringify({ acao, recorte: r, projeto_id: projeto }) });
+  async function agir(acao: "comecar" | "outro", original: Recorte, indice: number) {
+    const novoTitulo = titulosEditados[indice];
+    const editado = acao === "comecar" && !!novoTitulo && novoTitulo.trim() !== original.titulo;
+    const r = editado ? { ...original, titulo: novoTitulo.trim() } : original;
+    await fetch("/api/recortes/acao", { method: "POST", body: JSON.stringify({ acao, recorte: r, projeto_id: projeto, editado }) });
+    setEditando(null);
+    setTitulosEditados({});
     if (acao === "comecar") {
       setRecortes([]);
       router.refresh();
     } else {
-      setRecortes((x) => x.filter((y) => y !== r));
+      setRecortes((x) => x.filter((y) => y !== original));
       gerar();
     }
   }
@@ -88,13 +96,19 @@ export function Seletor({ pessoaId, projetos, projetoInicial, estadosIniciais }:
         {recortes.map((r, i) => (
           <article className="vidro recorte" key={i}>
             <span className="m-meta">{titulos[r.pai_id]}</span>
-            <h3 className="m-h4">{r.titulo}</h3>
+            {editando === i ? (
+              <input className="campo" autoFocus value={titulosEditados[i] ?? r.titulo} onChange={(e) => setTitulosEditados({ ...titulosEditados, [i]: e.target.value })} />
+            ) : (
+              <h3 className="m-h4">{titulosEditados[i] ?? r.titulo}</h3>
+            )}
             <span className="m-mono">{r.minutos_estimados} min</span>
             {r.mini_passos.length > 0 && <ul>{r.mini_passos.map((p, j) => <li key={j}>{p}</li>)}</ul>}
             {r.por_que_agora && <p className="m-meta" style={{ margin: 0 }}>{r.por_que_agora}</p>}
+            <IssoPodeAjudar itemId={r.pai_id} />
             <div className="acoes">
-              <button className="btn" onClick={() => agir("comecar", r)}>começar</button>
-              <button className="btn sutil" onClick={() => agir("outro", r)}>outro</button>
+              <button className="btn" onClick={() => agir("comecar", r, i)}>começar</button>
+              <button className="btn sutil" onClick={() => agir("outro", r, i)}>outro</button>
+              <button className="btn sutil" onClick={() => setEditando(editando === i ? null : i)}>{editando === i ? "pronto" : "editar"}</button>
             </div>
           </article>
         ))}

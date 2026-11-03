@@ -7,13 +7,14 @@ const corpo = z.object({
   acao: z.enum(["comecar", "outro"]),
   recorte: recorteSchema,
   projeto_id: z.string().uuid(),
+  editado: z.boolean().optional(),
 });
 
 export async function POST(req: Request) {
   const supabase = await supabaseServidor();
   const { data: auth } = await supabase.auth.getUser();
   if (!auth.user) return NextResponse.json({ erro: "sem sessão" }, { status: 401 });
-  const { acao, recorte, projeto_id } = corpo.parse(await req.json());
+  const { acao, recorte, projeto_id, editado } = corpo.parse(await req.json());
 
   // recortes só viram item quando a pessoa age: começar (fazendo) ou trocar (guardado como trocado)
   const comecar = acao === "comecar";
@@ -31,7 +32,7 @@ export async function POST(req: Request) {
       estados: recorte.estados,
       minutos_estimados: recorte.minutos_estimados,
       status: comecar ? "fazendo" : "arquivada",
-      recorte_retorno: comecar ? "aceito" : "trocado",
+      recorte_retorno: comecar ? (editado ? "editado" : "aceito") : "trocado",
     })
     .select("id")
     .single();

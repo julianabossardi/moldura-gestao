@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabaseNavegador } from "@/lib/supabase/client";
+import { IssoPodeAjudar } from "./IssoPodeAjudar";
 
 export type ItemEditavel = {
   id?: string;
@@ -50,11 +51,13 @@ export function PainelItem({ item, autorId, projetos, pessoas, onFechar }: Props
       visivel_cliente: f.visivel_cliente,
       ...extra,
     };
-    const { error } = novo
-      ? await supabase.from("itens").insert({ ...dados, autor_id: autorId, origem: "manual" })
-      : await supabase.from("itens").update(dados).eq("id", item.id!);
+    const { data: salvo, error } = novo
+      ? await supabase.from("itens").insert({ ...dados, autor_id: autorId, origem: "manual" }).select("id").single()
+      : await supabase.from("itens").update(dados).eq("id", item.id!).select("id").single();
     setSalvando(false);
     if (error) return setErro("não deu para salvar. tenta de novo.");
+    // o embedding é gerado ao criar ou editar; sem provedor, a plataforma segue sem busca por sentido
+    if (salvo) fetch(`/api/itens/${salvo.id}/embedding`, { method: "POST" }).catch(() => {});
     router.refresh();
     onFechar();
   }
@@ -71,6 +74,7 @@ export function PainelItem({ item, autorId, projetos, pessoas, onFechar }: Props
         <label className="rotulo-campo">título
           <input className="campo" value={f.titulo} onChange={(e) => campo("titulo", e.target.value)} autoFocus />
         </label>
+        {f.tipo === "tarefa" && <IssoPodeAjudar itemId={item.id} texto={f.titulo} />}
         <label className="rotulo-campo">texto
           <textarea className="campo" rows={5} value={f.corpo ?? ""} onChange={(e) => campo("corpo", e.target.value)} />
         </label>
