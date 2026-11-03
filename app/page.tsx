@@ -8,6 +8,7 @@ import { TempoReal } from "@/components/TempoReal";
 import { Mostrar } from "@/components/Mostrar";
 import { CartaoItem } from "@/components/CartaoItem";
 import { PainelDoDia } from "@/components/PainelDoDia";
+import { CapturasAutomaticas } from "@/components/CapturasAutomaticas";
 import { ProvedorDetalhe } from "@/components/ProvedorDetalhe";
 import { SELECT_CARTAO, paraCartoes } from "@/lib/cartao";
 import { carregarEntregas } from "@/lib/entregas";
@@ -54,6 +55,13 @@ export default async function Inicio() {
       .or(`responsavel_id.eq.${pessoa.id},and(responsavel_id.is.null,autor_id.eq.${pessoa.id})`),
   ]);
 
+  // capturas minhas confirmadas sozinhas, ainda sem resposta
+  const { data: autoBrutas } = await supabase.from("capturas").select("id, proposta").eq("autor_id", pessoa.id).eq("status", "confirmada")
+    .eq("proposta->>auto", "true").is("proposta->>auto_visto", null).gte("criado_em", diasAtras(14));
+  const automaticas = (autoBrutas ?? []).map((c) => {
+    const p = c.proposta as { destinos?: Destino[]; auto_pulados?: number };
+    return { id: c.id, titulos: (p.destinos ?? []).filter((d) => d.acao !== "atualizar").map((d) => d.titulo), pulados: p.auto_pulados ?? 0 };
+  });
   type Autor = { nome: string; papel: string } | null;
   const pendentes = (pendentesBrutas ?? []).filter((c) => c.autor_id === pessoa.id || (c.autor as unknown as Autor)?.papel === "cliente");
   const equipe = (resumo ?? []) as ResumoPessoa[];
@@ -123,6 +131,8 @@ export default async function Inicio() {
           ))}
         </section>
       )}
+
+      <CapturasAutomaticas capturas={automaticas} />
 
       <PainelDoDia
         pessoaId={pessoa.id}

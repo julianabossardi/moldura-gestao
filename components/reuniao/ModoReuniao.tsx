@@ -5,12 +5,14 @@ import { supabaseNavegador } from "@/lib/supabase/client";
 import { BLOCO_SEGUNDOS, mmss, type Marcacao, type Painel } from "@/lib/reuniao/tipos";
 import { PainelProjetoView } from "./PainelProjetoView";
 import { Icone } from "../Icone";
+import { TIPOS_LINK, type LinkProjeto } from "@/lib/links";
+import { abrirMicrofone, extensaoDe, formatoDeGravacao } from "@/lib/audio";
 
-type Props = { reuniaoId: string; painel: Painel; audioPaths: string[]; marcacoes: Marcacao[] };
+type Props = { reuniaoId: string; painel: Painel; audioPaths: string[]; marcacoes: Marcacao[]; links: Record<string, LinkProjeto[]> };
 
 // grava no navegador em blocos de 10 minutos, sobe cada bloco ao terminar e registra
 // a hora de cada troca de projeto e de cada marcação ("isso é decisão", "isso é tarefa")
-export function ModoReuniao({ reuniaoId, painel, audioPaths, marcacoes: inicial }: Props) {
+export function ModoReuniao({ reuniaoId, painel, audioPaths, marcacoes: inicial, links }: Props) {
   const router = useRouter();
   const supabase = useRef(supabaseNavegador()).current;
   const [i, setI] = useState(0);
@@ -40,13 +42,15 @@ export function ModoReuniao({ reuniaoId, painel, audioPaths, marcacoes: inicial 
   const salvarMarcacoes = () => supabase.from("reunioes").update({ marcacoes: marcacoes.current }).eq("id", reuniaoId);
 
   function iniciarBloco() {
-    const g = new MediaRecorder(stream.current!);
+    const formato = formatoDeGravacao();
+    const g = new MediaRecorder(stream.current!, formato ? { mimeType: formato } : undefined);
     const pedacos: Blob[] = [];
     g.ondataavailable = (e) => e.data.size && pedacos.push(e.data);
     g.onstop = () => {
       const n = paths.current.length + 1;
-      const caminho = `reunioes/${reuniaoId}/bloco-${String(n).padStart(3, "0")}.webm`;
-      const blob = new Blob(pedacos, { type: g.mimeType || "audio/webm" });
+      const tipo = g.mimeType || formato || "audio/webm";
+      const caminho = `reunioes/${reuniaoId}/bloco-${String(n).padStart(3, "0")}.${extensaoDe(tipo)}`;
+      const blob = new Blob(pedacos, { type: tipo });
       paths.current = [...paths.current, caminho]; // reserva o número do bloco já
       pendentes.current.push(
         supabase.storage.from("midia").upload(caminho, blob, { contentType: blob.type })
@@ -63,11 +67,9 @@ export function ModoReuniao({ reuniaoId, painel, audioPaths, marcacoes: inicial 
   }
 
   async function comecar() {
-    try {
-      stream.current = await navigator.mediaDevices.getUserMedia({ audio: true });
-    } catch {
-      return setAviso("preciso de acesso ao microfone para gravar.");
-    }
+    const { stream: s, erro } = await abrirMicrofone();
+    if (!s) return setAviso(erro ?? "preciso de acesso ao microfone para gravar.");
+    stream.current = s;
     setAviso("");
     parando.current = false;
     inicio.current = Date.now() - paths.current.length * BLOCO_SEGUNDOS * 1000;
@@ -125,6 +127,10 @@ export function ModoReuniao({ reuniaoId, painel, audioPaths, marcacoes: inicial 
           )}
         </div>
       </div>
+      <p className="m-meta" style={{ margin: 0 }}>
+        a gravação é uma só, da reunião inteira, para todas. vocês conversam projeto por projeto; ao encerrar, a moldura transcreve,
+        separa o que foi dito em cada projeto e propõe os encaminhamentos (tarefas, decisões e ideias) para vocês revisarem antes de guardar.
+      </p>
       {aviso && <p className="aviso" role="status">{aviso}</p>}
 
       <div className="linha" style={{ justifyContent: "space-between" }}>
@@ -140,6 +146,16 @@ export function ModoReuniao({ reuniaoId, painel, audioPaths, marcacoes: inicial 
         <button className="chip" disabled={!gravando} onClick={() => marcar("decisao")}>isso é decisão</button>
         <button className="chip" disabled={!gravando} onClick={() => marcar("tarefa")}>isso é tarefa</button>
       </div>
+
+      {atual?.projeto && (links[atual.projeto.id] ?? []).length > 0 && (
+        <div className="linha">
+          {(links[atual.projeto.id] ?? []).map((l, k) => (
+            <a key={k} className="link-rapido" href={l.url} target="_blank" rel="noreferrer">
+              <span className="m-meta">{TIPOS_LINK[l.tipo ?? ""] ?? "link"}</span><span className="m-small">{l.titulo}</span>
+            </a>
+          ))}
+        </div>
+      )}
 
       {atual && <PainelProjetoView bloco={atual} />}
     </section>

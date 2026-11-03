@@ -266,3 +266,8 @@ details.backlog > summary { color: var(--m-ink-quiet); }
 .ponto.atual .bolinha { transform: scale(1.35); }
 .pessoa-movimento { display: inline-flex; align-items: center; gap: var(--m-space-2); padding: 6px 14px 6px 6px; border: 1px solid var(--m-surface-200); border-radius: var(--m-radius-pill); background: var(--m-white); }
 .coluna .cartao { min-height: 96px; }
+.previa { text-align: left; cursor: pointer; font: inherit; }
+.memoria-abrir { flex: 1; min-width: 0; text-align: left; background: none; border: 0; padding: 0; color: inherit; cursor: pointer; display: grid; gap: 2px; }
+.memoria-abrir:hover .m-body { text-decoration: underline; }
+.captura { position: fixed; }
+.captura-aviso { position: absolute; bottom: calc(100% + 8px); left: 16px; right: 16px; margin: 0; padding: 8px 12px; border-radius: var(--m-radius-1); background: var(--m-white); border: 1px solid var(--m-surface-300); font-size: var(--m-size-small); color: var(--m-crimson-deep); }

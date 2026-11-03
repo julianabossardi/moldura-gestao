@@ -2,10 +2,13 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { pessoaAtual } from "@/lib/pessoa";
 import { montarPainel } from "@/lib/reuniao/painel";
-import { ROTULO_STATUS, type Painel, type Marcacao } from "@/lib/reuniao/tipos";
+import type { Painel, Marcacao } from "@/lib/reuniao/tipos";
 import { diasAtras, hojeISO } from "@/lib/datas";
 import { NavegacaoProjetos } from "@/components/NavegacaoProjetos";
 import { ModoReuniao } from "@/components/reuniao/ModoReuniao";
+import { ReunioesAnteriores } from "@/components/reuniao/GavetaReuniao";
+import { ProvedorDetalhe } from "@/components/ProvedorDetalhe";
+import { ehRapido, type LinkProjeto } from "@/lib/links";
 
 export default async function Reuniao() {
   const { supabase, pessoa } = await pessoaAtual();
@@ -22,9 +25,15 @@ export default async function Reuniao() {
     reuniao = data!;
   }
 
-  const { data: historico } = await supabase.from("reunioes").select("id, data, status, resumo").neq("id", reuniao.id).order("criado_em", { ascending: false }).limit(30);
+  const [{ data: historico }, { data: projetos }, { data: socias }] = await Promise.all([
+    supabase.from("reunioes").select("id, data, status, resumo").neq("id", reuniao.id).order("criado_em", { ascending: false }).limit(30),
+    supabase.from("projetos").select("id, nome, links").eq("status", "ativo").order("ordem_prioridade"),
+    supabase.from("pessoas").select("id, nome").eq("papel", "socia").eq("ativa", true),
+  ]);
+  const links = Object.fromEntries((projetos ?? []).map((p) => [p.id, ((p.links ?? []) as LinkProjeto[]).filter(ehRapido)]));
 
   return (
+    <ProvedorDetalhe euId={pessoa.id} projetos={(projetos ?? []).map((p) => ({ id: p.id, nome: p.nome }))} pessoas={socias ?? []}>
     <main className="pagina">
       <header className="topo">
         {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -43,19 +52,11 @@ export default async function Reuniao() {
         painel={reuniao.painel as Painel}
         audioPaths={reuniao.audio_paths ?? []}
         marcacoes={(reuniao.marcacoes ?? []) as Marcacao[]}
+        links={links}
       />
 
-      {(historico ?? []).length > 0 && (
-        <section className="bloco">
-          <h2>reuniões anteriores</h2>
-          {historico!.map((h) => (
-            <Link key={h.id} href={`/reuniao/${h.id}`} className="item">
-              <span>{new Date(h.data + "T12:00").toLocaleDateString("pt-BR", { day: "2-digit", month: "long", year: "numeric" })}</span>
-              <span className="m-meta">{ROTULO_STATUS[h.status as keyof typeof ROTULO_STATUS]}</span>
-            </Link>
-          ))}
-        </section>
-      )}
+      {(historico ?? []).length > 0 && <ReunioesAnteriores reunioes={historico ?? []} />}
     </main>
+    </ProvedorDetalhe>
   );
 }

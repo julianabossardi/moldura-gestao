@@ -2,6 +2,7 @@
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Icone } from "./Icone";
+import { abrirMicrofone, extensaoDe, formatoDeGravacao } from "@/lib/audio";
 
 export function Captura({ projetoId, placeholder = "cola ou escreve", rotuloOk = "" }: { projetoId?: string; placeholder?: string; rotuloOk?: string }) {
   const router = useRouter();
@@ -10,6 +11,7 @@ export function Captura({ projetoId, placeholder = "cola ou escreve", rotuloOk =
   const [msg, setMsg] = useState("");
   const gravador = useRef<MediaRecorder | null>(null);
   const pedacos = useRef<Blob[]>([]);
+  const segurando = useRef(false); // soltou antes do microfone abrir? então não grava
 
   async function enviar(corpo: FormData) {
     setMsg("organizando…");
@@ -20,26 +22,30 @@ export function Captura({ projetoId, placeholder = "cola ou escreve", rotuloOk =
   }
 
   async function comecar() {
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      pedacos.current = [];
-      const g = new MediaRecorder(stream);
-      g.ondataavailable = (e) => pedacos.current.push(e.data);
-      g.onstop = () => {
-        stream.getTracks().forEach((t) => t.stop());
-        const blob = new Blob(pedacos.current, { type: g.mimeType || "audio/webm" });
-        const f = new FormData();
-        f.set("arquivo", new File([blob], "audio.webm", { type: blob.type }));
-        enviar(f);
-      };
-      g.start();
-      gravador.current = g;
-      setGravando(true);
-    } catch {
-      setMsg("preciso de acesso ao microfone.");
-    }
+    segurando.current = true;
+    setMsg("");
+    const { stream, erro } = await abrirMicrofone();
+    if (!stream) return setMsg(erro ?? "não consegui abrir o microfone.");
+    if (!segurando.current) return stream.getTracks().forEach((t) => t.stop());
+    pedacos.current = [];
+    const formato = formatoDeGravacao();
+    const g = new MediaRecorder(stream, formato ? { mimeType: formato } : undefined);
+    g.ondataavailable = (e) => e.data.size && pedacos.current.push(e.data);
+    g.onstop = () => {
+      stream.getTracks().forEach((t) => t.stop());
+      const tipo = g.mimeType || formato || "audio/webm";
+      const blob = new Blob(pedacos.current, { type: tipo });
+      if (!blob.size) return;
+      const f = new FormData();
+      f.set("arquivo", new File([blob], `audio.${extensaoDe(tipo)}`, { type: tipo }));
+      enviar(f);
+    };
+    g.start();
+    gravador.current = g;
+    setGravando(true);
   }
   function parar() {
+    segurando.current = false;
     if (gravador.current?.state === "recording") gravador.current.stop();
     setGravando(false);
   }
@@ -55,6 +61,7 @@ export function Captura({ projetoId, placeholder = "cola ou escreve", rotuloOk =
 
   return (
     <form className="vidro captura" onSubmit={colar}>
+      {msg && msg !== "organizando…" && <p className="captura-aviso" role="status">{msg}</p>}
       <input placeholder={msg || placeholder} value={texto} onChange={(e) => setTexto(e.target.value)} aria-label={placeholder} />
       <button
         type="button"

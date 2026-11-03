@@ -8,6 +8,9 @@ import { ProcessandoReuniao } from "@/components/reuniao/ProcessandoReuniao";
 import { AssociarFalantes } from "@/components/reuniao/AssociarFalantes";
 import { RevisaoReuniao } from "@/components/reuniao/RevisaoReuniao";
 import { PainelProjetoView } from "@/components/reuniao/PainelProjetoView";
+import { ProvedorDetalhe } from "@/components/ProvedorDetalhe";
+import { CartaoItem } from "@/components/CartaoItem";
+import { SELECT_CARTAO, paraCartoes } from "@/lib/cartao";
 
 export default async function ReuniaoPorId({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -60,17 +63,22 @@ export default async function ReuniaoPorId({ params }: { params: Promise<{ id: s
   } else {
     // aprovada: histórico com resumo, transcrição e o que foi aprovado
     const painel = r.painel as Painel | null;
-    const { data: criados } = await supabase.from("itens").select("id, tipo, titulo, projeto_id").eq("reuniao_id", id).order("criado_em");
+    const criados = await paraCartoes(supabase, (await supabase.from("itens").select(SELECT_CARTAO).eq("reuniao_id", id).order("criado_em")).data);
+    const porProjeto = Object.entries(criados.reduce<Record<string, typeof criados>>((acc, c) => {
+      (acc[c.projeto ?? "soltos"] ??= []).push(c);
+      return acc;
+    }, {}));
     const nome = (f: string) => pessoas?.find((p) => p.id === falantes[f])?.nome ?? f;
     corpo = (
       <>
         {r.resumo && <section className="bloco"><h2>resumo</h2><p className="m-body" style={{ margin: 0, whiteSpace: "pre-line" }}>{r.resumo}</p></section>}
         <section className="bloco">
-          <h2>o que foi aprovado</h2>
-          {(criados ?? []).length ? (criados ?? []).map((c) => (
-            <div className="item" key={c.id}>
-              <span>{c.titulo}</span>
-              <span className="m-meta">{c.tipo === "decisao" ? "decisão" : c.tipo} · {projetos?.find((p) => p.id === c.projeto_id)?.nome ?? "solto"}</span>
+          <h2>encaminhamentos</h2>
+          <p className="m-meta" style={{ margin: 0 }}>o que saiu da reunião e já está nos projetos: tarefas, decisões e ideias.</p>
+          {porProjeto.length ? porProjeto.map(([nome, lista]) => (
+            <div className="bloco" key={nome}>
+              <span className="m-small">{nome}</span>
+              <div className="grade-cartoes">{lista.map((c) => <CartaoItem key={c.id} item={c} euId={pessoa.id} />)}</div>
             </div>
           )) : <p className="aviso">nenhum item novo. as atualizações foram aplicadas nos itens existentes.</p>}
         </section>
@@ -96,6 +104,7 @@ export default async function ReuniaoPorId({ params }: { params: Promise<{ id: s
 
   const titulo = { processando: "processando", em_revisao: "revisão", aprovada: "reunião" }[r.status as string] ?? "reunião";
   return (
+    <ProvedorDetalhe euId={pessoa.id} projetos={(projetos ?? []).map((p) => ({ id: p.id, nome: p.nome }))} pessoas={socias ?? []}>
     <main className="pagina">
       <header className="topo">
         {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -109,5 +118,6 @@ export default async function ReuniaoPorId({ params }: { params: Promise<{ id: s
       </div>
       {corpo}
     </main>
+    </ProvedorDetalhe>
   );
 }

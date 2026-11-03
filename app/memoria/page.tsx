@@ -5,6 +5,10 @@ import { gerarEmbedding } from "@/lib/embedding";
 import { NavegacaoProjetos } from "@/components/NavegacaoProjetos";
 import { PreviaLink } from "@/components/PreviaLink";
 import { ReabrirItem } from "@/components/ReabrirItem";
+import { ProvedorDetalhe } from "@/components/ProvedorDetalhe";
+import { LinhaClicavel } from "@/components/LinhaClicavel";
+import { CartaoItem } from "@/components/CartaoItem";
+import { carregarEntregas } from "@/lib/entregas";
 
 type Props = { searchParams: Promise<{ q?: string; projeto?: string; tipo?: string; autora?: string; site?: string }> };
 type Linha = {
@@ -61,9 +65,11 @@ export default async function Memoria({ searchParams }: Props) {
   }
 
   const referencias = !filtrando ? itens.filter((i) => i.tipo === "referencia" && i.url).slice(0, 8) : [];
-  const resto = !filtrando ? itens.filter((i) => !referencias.includes(i)) : itens;
+  const entregas = !filtrando ? (await carregarEntregas(supabase)).slice(0, 8) : [];
+  const resto = !filtrando ? itens.filter((i) => !referencias.includes(i) && i.tipo !== "entrega") : itens;
 
   return (
+    <ProvedorDetalhe euId={pessoa.id} projetos={projetos ?? []} pessoas={socias ?? []}>
     <main className="pagina">
       <header className="topo">
         {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -102,7 +108,14 @@ export default async function Memoria({ searchParams }: Props) {
       {referencias.length > 0 && (
         <section className="bloco">
           <h2>referências recentes</h2>
-          <div className="previas">{referencias.map((r) => <PreviaLink key={r.id} url={r.url!} />)}</div>
+          <div className="previas">{referencias.map((r) => <PreviaLink key={r.id} id={r.id} url={r.url!} titulo={r.titulo} />)}</div>
+        </section>
+      )}
+
+      {entregas.length > 0 && (
+        <section className="bloco">
+          <h2>entregas recentes</h2>
+          <div className="grade-cartoes">{entregas.map((e) => <CartaoItem key={e.id} item={e} euId={pessoa.id} mostrarProjeto />)}</div>
         </section>
       )}
 
@@ -110,19 +123,20 @@ export default async function Memoria({ searchParams }: Props) {
         <h2>{filtrando ? `${resto.length} ${resto.length === 1 ? "resultado" : "resultados"}` : "na memória"}</h2>
         {resto.length ? resto.map((i) => (
           <div className="item memoria-item" key={i.id}>
-            <div style={{ minWidth: 0 }}>
-              <div className="m-body">{i.url ? <a href={i.url} target="_blank" rel="noreferrer">{i.titulo}</a> : i.titulo}</div>
+            <LinhaClicavel id={i.id} className="memoria-abrir">
+              <div className="m-body">{i.titulo}</div>
               {i.corpo && <div className="m-meta memoria-corpo">{i.corpo}</div>}
               <div className="m-meta">
                 {[TIPOS[i.tipo], i.projeto?.nome, i.autor?.nome.toLowerCase(), new Date(i.criado_em).toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" })].filter(Boolean).join(" · ")}
                 {i.tags.includes("site") && <span className="selo" style={{ marginLeft: 8 }}>para o site</span>}
                 {["expirada", "arquivada"].includes(i.status) && <span className="m-mono" style={{ marginLeft: 8 }}>{i.status}</span>}
               </div>
-            </div>
+            </LinhaClicavel>
             {["expirada", "arquivada"].includes(i.status) && <ReabrirItem id={i.id} />}
           </div>
         )) : <p className="aviso">{filtrando ? "nada por aqui com esses filtros." : "a memória começa a se formar quando você captura ideias, referências e decisões."}</p>}
       </section>
     </main>
+    </ProvedorDetalhe>
   );
 }

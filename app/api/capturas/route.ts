@@ -6,6 +6,7 @@ import { gerarEmbedding } from "@/lib/embedding";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 
 export const maxDuration = 60;
+const LIMITE_CLIENTE_POR_HORA = 20;
 
 export async function POST(req: Request) {
   const supabase = await supabaseServidor();
@@ -29,6 +30,13 @@ export async function POST(req: Request) {
     return NextResponse.json({ erro: "projeto não permitido" }, { status: 403 });
   }
   const db = eCliente ? supabaseAdmin() : supabase;
+  if (eCliente) {
+    const umaHora = new Date(Date.now() - 3_600_000).toISOString();
+    const { count } = await db.from("capturas").select("id", { count: "exact", head: true }).eq("autor_id", auth.user.id).gte("criado_em", umaHora);
+    if ((count ?? 0) >= LIMITE_CLIENTE_POR_HORA) {
+      return NextResponse.json({ erro: "muitos envios em pouco tempo. tente de novo daqui a pouco." }, { status: 429 });
+    }
+  }
 
   const { data: captura, error } = await supabase
     .from("capturas")
