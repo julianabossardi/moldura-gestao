@@ -110,12 +110,6 @@ details[open] > summary::before { content: "⌄ "; }
 
 /* projetos */
 .tema-projeto { background: var(--tema-fundo); color: var(--tema-texto); font-family: var(--tema-fonte), var(--m-font-sans); min-height: 100dvh; }
-.nav-projetos { display: grid; gap: var(--m-space-3); }
-.chip.arrastavel { cursor: grab; text-decoration: none; color: inherit; }
-.chip.arrastavel.sobre { border-color: var(--m-crimson); }
-a.chip { text-decoration: none; color: inherit; }
-a.chip[aria-pressed="true"] { color: var(--m-white); }
-.arquivados summary { font-size: var(--m-size-small); color: var(--m-ink-quiet); }
 .abas { display: flex; gap: var(--m-space-2); border-bottom: 1px solid var(--m-surface-200); }
 .aba { padding: 10px 4px; margin-right: var(--m-space-4); text-decoration: none; color: var(--m-ink-quiet); font-weight: 500; border-bottom: 2px solid transparent; }
 .aba[aria-current="page"] { color: var(--m-ink); border-bottom-color: var(--m-crimson); }
@@ -130,3 +124,47 @@ a.chip[aria-pressed="true"] { color: var(--m-white); }
 .cabeca-projeto { display: flex; justify-content: space-between; align-items: end; gap: var(--m-space-4); flex-wrap: wrap; }
 .barra-metrica { display: grid; gap: var(--m-space-2); }
 .selo { font-size: 12px; padding: 2px 8px; border-radius: var(--m-radius-pill); background: var(--m-crimson-12); color: var(--m-crimson-deep); font-weight: 500; }
+
+/* menu lateral esquerdo */
+:root { --menu-largura: 264px; }
+.menu-lateral {
+  position: fixed; top: 0; left: 0; bottom: 0; width: min(var(--menu-largura), 86vw); z-index: 15;
+  border-radius: 0; border-width: 0 1px 0 0; padding: var(--m-space-16) var(--m-space-5) var(--m-space-6);
+  background: rgba(255,255,255,0.97); color: #1a1a1f; overflow-y: auto; display: grid; gap: var(--m-space-6); align-content: start;
+  transform: translateX(-100%); visibility: hidden;
+  transition: transform var(--m-dur-base) var(--m-ease-glass), visibility 0s linear var(--m-dur-base);
+}
+.menu-lateral.aberto { transform: none; visibility: visible; transition: transform var(--m-dur-base) var(--m-ease-glass); }
+.aba-menu {
+  position: fixed; top: 120px; left: 0; z-index: 16; width: 28px; height: 48px; padding: 0; display: grid; place-items: center;
+  border-radius: 0 var(--m-radius-2) var(--m-radius-2) 0; border-left: 0; background: rgba(255,255,255,0.9);
+  transition: left var(--m-dur-base) var(--m-ease-glass);
+}
+.aba-menu.aberta { left: min(var(--menu-largura), 86vw); }
+.menu-bloco { display: grid; gap: 2px; }
+.menu-titulo { padding-left: 12px; font-size: var(--m-size-small); color: var(--m-ink-quiet); font-weight: 500; margin-bottom: var(--m-space-1); cursor: default; }
+.menu-item {
+  display: flex; align-items: center; gap: var(--m-space-2); padding: 9px 12px; border-radius: var(--m-radius-1);
+  text-decoration: none; color: #1a1a1f; font-weight: 500; transition: background var(--m-dur-quick) var(--m-ease-glass);
+}
+a.menu-item:hover { background: var(--m-surface-100); }
+.menu-item[aria-current="page"] { background: var(--m-ink); color: var(--m-white); }
+.menu-item.arrastavel { cursor: grab; }
+.menu-item.arrastavel.sobre { outline: 1px solid var(--m-crimson); }
+.menu-item.desligado { color: var(--m-ink-quiet); font-weight: 400; justify-content: space-between; }
+.menu-arquivado { display: flex; align-items: center; justify-content: space-between; gap: var(--m-space-2); padding: 4px 0 4px 12px; }
+.menu-arquivado a { color: inherit; }
+.menu-arquivado .btn { padding: 6px 12px; }
+details.arquivados summary { list-style: none; }
+details.arquivados summary::before { content: "› "; }
+details.arquivados[open] summary::before { content: "⌄ "; }
+
+/* tela larga: o menu aberto empurra a página em vez de cobri-la */
+@media (min-width: 1100px) {
+  html[data-menu="aberto"] body { padding-left: var(--menu-largura); }
+  html[data-menu="aberto"] .captura { left: calc(50% + var(--menu-largura) / 2); }
+}
+body { transition: padding-left var(--m-dur-base) var(--m-ease-glass); }
+
+.pagina { padding-left: 40px; }
+@media (max-width: 640px) { .pagina { padding-left: 36px; padding-right: var(--m-space-4); } }
