@@ -4,15 +4,17 @@ import { useRouter } from "next/navigation";
 import { supabaseNavegador } from "@/lib/supabase/client";
 import type { Metrica } from "@/lib/metricas";
 import type { Integracoes } from "@/lib/sinais";
+import { camposDoProximo, ordenarMarcos, type Marco } from "@/lib/marcos";
+import { Gaveta } from "../Gaveta";
 
-type Props = { projetoId: string; marco: string | null; marcoEm: string | null; metricas: Metrica[]; integracoes: Integracoes };
+type Props = { projetoId: string; marcos: Marco[]; metricas: Metrica[]; integracoes: Integracoes };
 
-// próximo marco e números digitados à mão (os números "sql" vêm do job diário)
-export function EditarProjeto({ projetoId, marco, marcoEm, metricas, integracoes }: Props) {
+// marcos da linha do tempo, números digitados à mão (os "sql" vêm do job diário) e integrações
+export function EditarProjeto({ projetoId, marcos: marcosIniciais, metricas, integracoes }: Props) {
   const router = useRouter();
   const [aberto, setAberto] = useState(false);
-  const [m, setM] = useState(marco ?? "");
-  const [data, setData] = useState(marcoEm ?? "");
+  const [marcos, setMarcos] = useState<Marco[]>(ordenarMarcos(marcosIniciais));
+  const mudarMarco = (k: number, campo: Partial<Marco>) => setMarcos((ms) => ms.map((x, j) => (j === k ? { ...x, ...campo } : x)));
   const [valores, setValores] = useState<Record<number, string>>({});
   const [propriedades, setPropriedades] = useState<Record<number, string>>({});
   const [github, setGithub] = useState(integracoes.github ?? "");
@@ -33,7 +35,8 @@ export function EditarProjeto({ projetoId, marco, marcoEm, metricas, integracoes
       ...(github.trim() && { github: github.trim().replace(/^https?:\/\/github\.com\//, "").replace(/\/$/, "") }),
       ...(vercelId.trim() && { vercel: { projeto_id: vercelId.trim(), ...(vercelTime.trim() && { time_id: vercelTime.trim() }) } }),
     };
-    await supabaseNavegador().from("projetos").update({ proximo_marco: m || null, proximo_marco_em: data || null, metricas: novas, integracoes: novasIntegracoes }).eq("id", projetoId);
+    const limpos = ordenarMarcos(marcos.filter((x) => x.titulo.trim()).map((x) => ({ ...x, titulo: x.titulo.trim(), data: x.data || null })));
+    await supabaseNavegador().from("projetos").update({ marcos: limpos, ...camposDoProximo(limpos), metricas: novas, integracoes: novasIntegracoes }).eq("id", projetoId);
     setSalvando(false);
     setAberto(false);
     router.refresh();
@@ -43,19 +46,17 @@ export function EditarProjeto({ projetoId, marco, marcoEm, metricas, integracoes
     <>
       <button className="btn sutil" onClick={() => setAberto(true)}>editar</button>
       {aberto && (
-        <>
-          <div className="veu" onClick={() => setAberto(false)} />
-          <aside className="painel vidro" role="dialog" aria-label="editar projeto">
-            <div className="linha" style={{ justifyContent: "space-between" }}>
-              <h2 className="m-h4" style={{ margin: 0 }}>editar projeto</h2>
-              <button className="btn sutil" onClick={() => setAberto(false)}>fechar</button>
-            </div>
-            <label className="rotulo-campo">próximo marco
-              <input className="campo" value={m} onChange={(e) => setM(e.target.value)} placeholder="deixe vazio para esconder" />
-            </label>
-            <label className="rotulo-campo">data do marco
-              <input className="campo" type="date" value={data} onChange={(e) => setData(e.target.value)} />
-            </label>
+        <Gaveta titulo="editar projeto" onFechar={() => setAberto(false)}>
+            <span className="m-small">marcos</span>
+            {marcos.map((x, k) => (
+              <div className="linha" key={k}>
+                <input className="campo" style={{ flex: 2, minWidth: 140 }} placeholder="nome do marco" value={x.titulo} onChange={(e) => mudarMarco(k, { titulo: e.target.value })} />
+                <input className="campo" style={{ flex: 1, minWidth: 130 }} type="date" value={x.data ?? ""} onChange={(e) => mudarMarco(k, { data: e.target.value || null })} />
+                <label className="linha" style={{ gap: 6 }}><input type="checkbox" checked={x.feito} onChange={(e) => mudarMarco(k, { feito: e.target.checked })} /><span className="m-small">feito</span></label>
+              </div>
+            ))}
+            <button className="btn sutil" style={{ justifySelf: "start" }} onClick={() => setMarcos([...marcos, { titulo: "", data: null, feito: false }])}>adicionar marco</button>
+            <p className="m-meta" style={{ margin: 0 }}>para tirar um marco da linha, apague o nome dele.</p>
             {metricas.map((x, i) => (
               <label className="rotulo-campo" key={i}>
                 {x.rotulo} <span className="m-mono">({x.fonte})</span>
@@ -81,8 +82,7 @@ export function EditarProjeto({ projetoId, marco, marcoEm, metricas, integracoes
               </label>
             </div>
             <button className="btn" disabled={salvando} onClick={salvar}>salvar</button>
-          </aside>
-        </>
+        </Gaveta>
       )}
     </>
   );

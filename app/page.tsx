@@ -1,19 +1,20 @@
 import { redirect } from "next/navigation";
 import { pessoaAtual } from "@/lib/pessoa";
-import { Seletor } from "@/components/Seletor";
 import { Captura } from "@/components/Captura";
 import { CartaoConfirmacao } from "@/components/CartaoConfirmacao";
 import { TarefasAbertas } from "@/components/TarefasAbertas";
-import { FazendoAgora } from "@/components/FazendoAgora";
 import { Bonequinho, rotuloEstado } from "@/components/Bonequinho";
 import { TempoReal } from "@/components/TempoReal";
 import { Mostrar } from "@/components/Mostrar";
-import { EntregaCard } from "@/components/EntregaCard";
+import { CartaoItem } from "@/components/CartaoItem";
+import { PainelDoDia } from "@/components/PainelDoDia";
+import { ProvedorDetalhe } from "@/components/ProvedorDetalhe";
+import { SELECT_CARTAO, paraCartoes } from "@/lib/cartao";
 import { carregarEntregas } from "@/lib/entregas";
 import { NavegacaoProjetos } from "@/components/NavegacaoProjetos";
 import Link from "next/link";
 import type { ResumoPessoa } from "@/lib/estados-bonequinho";
-import { diasAtras } from "@/lib/datas";
+import { diasAtras, hojeISO } from "@/lib/datas";
 import type { Destino } from "@/lib/ia/schemas";
 
 export default async function Inicio() {
@@ -33,11 +34,13 @@ export default async function Inicio() {
   }
 
   const hoje = new Date().toISOString().slice(0, 10);
-  const [{ data: projetos }, { data: abertas }, { data: fazendo }, { data: pendentesBrutas }, { data: pessoasAtivas }, { data: resumo }, { data: avisosBrutos }, { count: paradas }] = await Promise.all([
+  const [{ data: projetos }, { data: abertasBrutas }, { data: emCursoBrutas }, { data: pendentesBrutas }, { data: pessoasAtivas }, { data: resumo }, { data: avisosBrutos }, { count: paradas }] = await Promise.all([
     supabase.from("projetos").select("id, nome, slug, ordem_prioridade").eq("status", "ativo").order("ordem_prioridade"),
-    supabase.from("itens").select("id, tipo, titulo, corpo, projeto_id, responsavel_id, prioridade, prazo, visivel_cliente, status").eq("tipo", "tarefa").eq("status", "aberta")
+    supabase.from("itens").select(SELECT_CARTAO).eq("tipo", "tarefa").eq("status", "aberta")
       .or(`responsavel_id.eq.${pessoa.id},responsavel_id.is.null`).is("pai_id", null).order("ultima_movimentacao", { ascending: false }),
-    supabase.from("itens").select("id, titulo, origem").eq("status", "fazendo").eq("responsavel_id", pessoa.id).limit(1),
+    // tarefas de agora: em andamento, ou feitas hoje
+    supabase.from("itens").select(SELECT_CARTAO).eq("tipo", "tarefa").eq("responsavel_id", pessoa.id)
+      .or(`status.eq.fazendo,and(status.eq.concluida,concluido_em.gte.${hojeISO()})`).order("ultima_movimentacao", { ascending: false }),
     // minhas capturas e as que as clientes mandaram: qualquer sócia confirma
     supabase.from("capturas").select("id, proposta, autor_id, autor:pessoas!autor_id(nome, papel)").eq("status", "proposta").order("criado_em"),
     supabase.from("pessoas").select("id, nome").eq("ativa", true).eq("papel", "socia"),
@@ -57,11 +60,17 @@ export default async function Inicio() {
   const euResumo = equipe.find((p) => p.id === pessoa.id);
   const outras = equipe.filter((p) => p.id !== pessoa.id);
 
-  const entregas = await carregarEntregas(supabase);
+  const [entregas, abertas, emCurso] = await Promise.all([
+    carregarEntregas(supabase),
+    paraCartoes(supabase, abertasBrutas),
+    paraCartoes(supabase, emCursoBrutas),
+  ]);
+  // em andamento primeiro, depois as feitas hoje
+  emCurso.sort((a, b) => (a.status === "fazendo" ? -1 : 0) - (b.status === "fazendo" ? -1 : 0));
   const avisos = (avisosBrutos ?? []) as unknown as { id: string; tipo: string; pessoa: { nome: string } | null; item: { titulo: string } }[];
 
   // projeto do dia: o de hoje, se já escolhido; senão o mais prioritário com tarefa minha aberta
-  const comTarefa = new Set((abertas ?? []).map((t) => t.projeto_id));
+  const comTarefa = new Set(abertas.map((t) => t.projeto_id));
   const sugerido = projetos?.find((p) => comTarefa.has(p.id))?.id ?? projetos?.[0]?.id ?? null;
   const projetoDoDia = pessoa.projeto_do_dia_em === hoje ? pessoa.projeto_do_dia : sugerido;
 
@@ -69,16 +78,8 @@ export default async function Inicio() {
   const { data: existentes } = idsAtualizar.length ? await supabase.from("itens").select("id, titulo").in("id", idsAtualizar) : { data: [] };
   const titulosExistentes = Object.fromEntries((existentes ?? []).map((i) => [i.id, i.titulo]));
 
-  return (
-    <main className="pagina">
-      <header className="topo">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <Link href="/"><img src="/marca/logo_preto.svg" alt="moldura" /></Link>
-        <Mostrar autorId={pessoa.id} projetos={projetos ?? []} projetoInicial={projetoDoDia} />
-      </header>
-
-      <NavegacaoProjetos />
-
+  const saudacao = (
+    <>
       <div className="cabeca-eu">
         {euResumo && <Bonequinho pessoa={euResumo} tamanho={96} />}
         <div className="saudacao">
@@ -88,16 +89,31 @@ export default async function Inicio() {
           </p>
         </div>
       </div>
-
       {avisos.length > 0 && (
         <div className="avisos">
-          {avisos.map((a) => (
+          {avisos.slice(0, 3).map((a) => (
             <p key={a.id} className="m-meta" style={{ margin: 0 }}>
-              {a.pessoa?.nome} {a.tipo === "audio" ? "respondeu em áudio" : "deu foguinho"} em {a.item.titulo}
+              {a.pessoa?.nome} {a.tipo === "audio" ? "respondeu em áudio" : a.tipo === "estrela" ? "deu estrela" : "deu foguinho"} em {a.item.titulo}
             </p>
           ))}
         </div>
       )}
+      <Mostrar autorId={pessoa.id} projetos={projetos ?? []} projetoInicial={projetoDoDia} />
+      {(paradas ?? 0) > 0 && (
+        <Link href="/faxina" className="m-small aviso-faxina">faxina: {paradas} {paradas === 1 ? "tarefa parada" : "tarefas paradas"}. resolver</Link>
+      )}
+    </>
+  );
+
+  return (
+    <ProvedorDetalhe euId={pessoa.id} projetos={projetos ?? []} pessoas={pessoasAtivas ?? []}>
+    <main className="pagina">
+      <header className="topo">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <Link href="/"><img src="/marca/logo_preto.svg" alt="moldura" /></Link>
+      </header>
+
+      <NavegacaoProjetos />
 
       {(pendentes ?? []).length > 0 && (
         <section className="bloco">
@@ -108,19 +124,18 @@ export default async function Inicio() {
         </section>
       )}
 
-      {fazendo?.[0] && <FazendoAgora item={fazendo[0]} />}
-
-      {(paradas ?? 0) > 0 && (
-        <Link href="/faxina" className="vidro quieto linha" style={{ justifyContent: "space-between", textDecoration: "none", color: "inherit" }}>
-          <span className="m-body">faxina: {paradas} {paradas === 1 ? "tarefa parada" : "tarefas paradas"}</span>
-          <span className="m-meta">resolver</span>
-        </Link>
-      )}
-
-      <Seletor pessoaId={pessoa.id} projetos={projetos ?? []} projetoInicial={projetoDoDia} estadosIniciais={pessoa.estados ?? []} />
+      <PainelDoDia
+        pessoaId={pessoa.id}
+        pessoaNome={pessoa.nome}
+        projetos={projetos ?? []}
+        projetoInicial={projetoDoDia}
+        estadosIniciais={pessoa.estados ?? []}
+        saudacao={saudacao}
+        emCurso={emCurso}
+      />
 
       <TarefasAbertas
-        tarefas={(abertas ?? []) as never}
+        tarefas={abertas}
         projetos={projetos ?? []}
         pessoas={pessoasAtivas ?? []}
         autorId={pessoa.id}
@@ -147,14 +162,15 @@ export default async function Inicio() {
       <section className="bloco">
         <h2>entregas recentes</h2>
         {entregas.length ? (
-          <div className="entregas">{entregas.map((e) => <EntregaCard key={e.id} entrega={e} euId={pessoa.id} />)}</div>
+          <div className="grade-cartoes">{entregas.map((e) => <CartaoItem key={e.id} item={e} euId={pessoa.id} mostrarProjeto />)}</div>
         ) : (
-          <p className="aviso">nada nos últimos 14 dias. o botão mostrar é o jeito de começar.</p>
+          <p className="aviso">nada nos últimos 14 dias. o botão mostrar para a equipe é o jeito de começar.</p>
         )}
       </section>
 
       <TempoReal />
       <Captura />
     </main>
+    </ProvedorDetalhe>
   );
 }

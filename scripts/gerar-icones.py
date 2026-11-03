@@ -31,6 +31,14 @@ ICONES = {
         "............", "...kk.......", "....kk......", ".....kk.....", "......kk....", ".......kk...",
         ".......kk...", "......kk....", ".....kk.....", "....kk......", "...kk.......", "............",
     ],
+    "estrela": [
+        ".....yy.....", ".....yy.....", "....yyyy....", "yyyyyyyyyyyy", ".yyyyyyyyyy.", "..yyyyyyyy..",
+        "...yyyyyy...", "...yyyyyy...", "..yyy..yyy..", "..yy....yy..", ".yy......yy.", "............",
+    ],
+    "atrasada": [
+        "....dddd....", "..dd....dd..", ".d........d.", ".d...d....d.", "d....d.....d", "d....d.....d",
+        "d....ddd...d", "d..........d", ".d........d.", ".d........d.", "..dd....dd..", "....dddd....",
+    ],
     "mais": [
         "............", ".....kk.....", ".....kk.....", ".....kk.....", ".....kk.....", ".kkkkkkkkkk.",
         ".kkkkkkkkkk.", ".....kk.....", ".....kk.....", ".....kk.....", ".....kk.....", "............",
@@ -42,7 +50,7 @@ raiz = os.path.join(os.path.dirname(__file__), "..", "public", "icones")
 bon.ESCALA = 3
 for nome, linhas_ in ICONES.items():
     for sufixo, tinta in (("", "#1a1a1f"), ("-branco", "#ffffff")):
-        if nome == "foguinho" and sufixo:
+        if nome in ("foguinho", "estrela", "atrasada") and sufixo:
             continue
         cores = {**CORES, "k": tinta}
         grade = [[bon.rgba(cores[c]) if c != "." else (0, 0, 0, 0) for c in l] for l in linhas_]

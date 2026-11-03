@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabaseNavegador } from "@/lib/supabase/client";
+import { Icone } from "./Icone";
 
 type Props = { autorId: string; projetos: { id: string; nome: string }[]; projetoInicial: string | null };
 
@@ -47,7 +48,10 @@ export function Mostrar({ autorId, projetos, projetoInicial }: Props) {
 
   return (
     <>
-      <button className="btn sutil" onClick={() => setAberto(true)}>mostrar</button>
+      <button className="mostrar-cta" onClick={() => setAberto(true)}>
+        <Icone nome="mais" tam={18} />
+        <span><strong>mostrar para a equipe</strong><span className="m-meta">uma tela, um print, algo que ficou pronto</span></span>
+      </button>
       {aberto && (
         <>
           <div className="veu" onClick={() => setAberto(false)} />

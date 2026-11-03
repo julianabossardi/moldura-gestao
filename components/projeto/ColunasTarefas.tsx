@@ -2,11 +2,14 @@
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabaseNavegador } from "@/lib/supabase/client";
+import type { ItemCartao } from "@/lib/cartao";
 import { PainelItem, type ItemEditavel } from "../PainelItem";
+import { CartaoItem } from "../CartaoItem";
+import { Avatar } from "../Avatar";
+import { Icone } from "../Icone";
 
-type Tarefa = ItemEditavel & { id: string; prazo: string | null };
 type Props = {
-  tarefas: Tarefa[];
+  tarefas: ItemCartao[];
   pessoas: { id: string; nome: string }[];
   projetos: { id: string; nome: string }[];
   clientes: { id: string; nome: string }[];
@@ -16,10 +19,10 @@ type Props = {
 
 const PESO: Record<string, number> = { alta: 0, media: 1, baixa: 2 };
 
-// tarefas abertas em colunas por responsável. arrastar troca o responsável; clicar abre o painel
+// tarefas abertas em colunas por responsável, em cartões. arrastar troca o responsável; clicar abre os detalhes
 export function ColunasTarefas({ tarefas, pessoas, projetos, clientes, autorId, projetoId }: Props) {
   const router = useRouter();
-  const [aberto, setAberto] = useState<ItemEditavel | null>(null);
+  const [novo, setNovo] = useState<ItemEditavel | null>(null);
   const [alvo, setAlvo] = useState<string | null>(null);
   const arrastando = useRef<string | null>(null);
 
@@ -31,7 +34,7 @@ export function ColunasTarefas({ tarefas, pessoas, projetos, clientes, autorId, 
     ...(clientes.length ? [{ id: "__cliente", nome: "com o cliente" }] : []),
   ];
   const daColuna = (colId: string) => tarefas.filter((t) => (colId === "__cliente" ? ehCliente(t.responsavel_id) : (t.responsavel_id ?? "") === colId));
-  const ordenar = (a: Tarefa, b: Tarefa) => (PESO[a.prioridade ?? "media"] ?? 1) - (PESO[b.prioridade ?? "media"] ?? 1);
+  const ordenar = (a: ItemCartao, b: ItemCartao) => (PESO[a.prioridade ?? "media"] ?? 1) - (PESO[b.prioridade ?? "media"] ?? 1);
 
   async function soltar(responsavel: string) {
     const id = arrastando.current;
@@ -43,16 +46,14 @@ export function ColunasTarefas({ tarefas, pessoas, projetos, clientes, autorId, 
     router.refresh();
   }
 
-  const novo = (): ItemEditavel => ({
-    tipo: "tarefa", titulo: "", corpo: null, projeto_id: projetoId, responsavel_id: autorId,
-    prioridade: "media", prazo: null, visivel_cliente: false,
-  });
-
   return (
     <section className="bloco">
       <div className="linha" style={{ justifyContent: "space-between" }}>
         <h2>tarefas abertas</h2>
-        <button className="btn sutil" onClick={() => setAberto(novo())}>nova tarefa</button>
+        <button className="btn sutil" onClick={() => setNovo({
+          tipo: "tarefa", titulo: "", corpo: null, objetivo: null, definicao_pronto: null, projeto_id: projetoId,
+          responsavel_id: autorId, prioridade: "media", prazo: null, visivel_cliente: false,
+        })}><Icone nome="mais" /> nova tarefa</button>
       </div>
       <div className="colunas">
         {colunas.map((col) => (
@@ -63,19 +64,23 @@ export function ColunasTarefas({ tarefas, pessoas, projetos, clientes, autorId, 
             onDragLeave={() => setAlvo(null)}
             onDrop={() => soltar(col.id)}
           >
-            <span className="m-small">{col.nome.toLowerCase()}</span>
+            <span className="linha" style={{ gap: 8 }}>
+              {col.id && col.id !== "__cliente" ? <Avatar nome={col.nome} tam={24} /> : null}
+              <span className="m-small">{col.nome.toLowerCase()}</span>
+            </span>
             {daColuna(col.id).sort(ordenar).map((t) => (
-              <button key={t.id} className="cartao-tarefa" draggable onDragStart={() => (arrastando.current = t.id)} onClick={() => setAberto(t)}>
-                <span>{t.titulo}</span>
-                <span className="m-meta">
-                  {ehCliente(t.responsavel_id) && <span className="selo">com o cliente</span>} {t.prioridade}{t.prazo ? ` · ${new Date(t.prazo + "T12:00").toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" })}` : ""}{t.status === "fazendo" ? " · fazendo" : ""}
-                </span>
-              </button>
+              <CartaoItem
+                key={t.id}
+                item={t}
+                euId={autorId}
+                onDragStart={() => (arrastando.current = t.id)}
+                topo={ehCliente(t.responsavel_id) ? <span className="selo">com o cliente</span> : undefined}
+              />
             ))}
           </div>
         ))}
       </div>
-      {aberto && <PainelItem key={aberto.id ?? "novo"} item={aberto} autorId={autorId} projetos={projetos} pessoas={[...pessoas, ...clientes.map((c) => ({ id: c.id, nome: `${c.nome} (cliente)` }))]} onFechar={() => setAberto(null)} />}
+      {novo && <PainelItem item={novo} autorId={autorId} projetos={projetos} pessoas={[...pessoas, ...clientes.map((c) => ({ id: c.id, nome: `${c.nome} (cliente)` }))]} onFechar={() => setNovo(null)} />}
     </section>
   );
 }
