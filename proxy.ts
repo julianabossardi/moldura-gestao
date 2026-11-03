@@ -18,7 +18,7 @@ export async function proxy(req: NextRequest) {
     },
   );
   const { data } = await supabase.auth.getUser();
-  const publica = req.nextUrl.pathname.startsWith("/login") || req.nextUrl.pathname.startsWith("/auth");
+  const publica = req.nextUrl.pathname.startsWith("/login") || req.nextUrl.pathname.startsWith("/auth") || req.nextUrl.pathname.startsWith("/api/cron");
   if (!data.user && !publica) {
     return NextResponse.redirect(new URL("/login", req.url));
   }

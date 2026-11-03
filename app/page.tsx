@@ -7,7 +7,10 @@ import { FazendoAgora } from "@/components/FazendoAgora";
 import { Bonequinho, rotuloEstado } from "@/components/Bonequinho";
 import { TempoReal } from "@/components/TempoReal";
 import { Mostrar } from "@/components/Mostrar";
-import { EntregaCard, type Entrega, type Reacao } from "@/components/EntregaCard";
+import { EntregaCard } from "@/components/EntregaCard";
+import { carregarEntregas } from "@/lib/entregas";
+import { NavegacaoProjetos } from "@/components/NavegacaoProjetos";
+import Link from "next/link";
 import type { ResumoPessoa } from "@/lib/estados-bonequinho";
 import { diasAtras } from "@/lib/datas";
 import type { Destino } from "@/lib/ia/schemas";
@@ -25,7 +28,7 @@ export default async function Inicio() {
   if (pessoa.papel === "cliente") return <main className="login"><div className="vidro"><p className="m-body">o portal do cliente chega na fase 6.</p></div></main>;
 
   const hoje = new Date().toISOString().slice(0, 10);
-  const [{ data: projetos }, { data: abertas }, { data: fazendo }, { data: pendentes }, { data: pessoasAtivas }, { data: resumo }, { data: entregasBrutas }, { data: avisosBrutos }] = await Promise.all([
+  const [{ data: projetos }, { data: abertas }, { data: fazendo }, { data: pendentes }, { data: pessoasAtivas }, { data: resumo }, { data: avisosBrutos }] = await Promise.all([
     supabase.from("projetos").select("id, nome, slug, ordem_prioridade").eq("status", "ativo").order("ordem_prioridade"),
     supabase.from("itens").select("id, tipo, titulo, corpo, projeto_id, responsavel_id, prioridade, prazo, visivel_cliente, status").eq("tipo", "tarefa").eq("status", "aberta")
       .or(`responsavel_id.eq.${pessoa.id},responsavel_id.is.null`).is("pai_id", null).order("ultima_movimentacao", { ascending: false }),
@@ -33,10 +36,6 @@ export default async function Inicio() {
     supabase.from("capturas").select("id, proposta").eq("autor_id", pessoa.id).eq("status", "proposta").order("criado_em"),
     supabase.from("pessoas").select("id, nome").eq("ativa", true).eq("papel", "socia"),
     supabase.rpc("equipe_resumo"),
-    // entregas dos últimos 14 dias, mais novas primeiro
-    supabase.from("itens")
-      .select("id, titulo, corpo, criado_em, midia, autor:pessoas!autor_id(nome), projeto:projetos(nome), reacoes(id, pessoa_id, tipo, audio_path, pessoa:pessoas(nome))")
-      .eq("tipo", "entrega").gte("criado_em", diasAtras(14)).order("criado_em", { ascending: false }),
     // quem reagiu às minhas entregas nas últimas 48h
     supabase.from("reacoes")
       .select("id, tipo, pessoa:pessoas(nome), item:itens!inner(titulo, autor_id)")
@@ -47,18 +46,7 @@ export default async function Inicio() {
   const euResumo = equipe.find((p) => p.id === pessoa.id);
   const outras = equipe.filter((p) => p.id !== pessoa.id);
 
-  // mídia e áudios ficam num bucket privado: links assinados de 1 hora
-  type Bruta = { id: string; titulo: string; corpo: string | null; criado_em: string; midia: string[] | null; autor: { nome: string } | null; projeto: { nome: string } | null; reacoes: (Omit<Reacao, "audio_url"> & { audio_path: string | null })[] };
-  const brutas = (entregasBrutas ?? []) as unknown as Bruta[];
-  const caminhos = brutas.flatMap((e) => [...(e.midia ?? []), ...e.reacoes.map((r) => r.audio_path).filter(Boolean)]) as string[];
-  const { data: assinadas } = caminhos.length ? await supabase.storage.from("midia").createSignedUrls(caminhos, 3600) : { data: [] };
-  const url = (c: string) => assinadas?.find((a) => a.path === c)?.signedUrl ?? null;
-  const entregas: Entrega[] = brutas.map((e) => ({
-    id: e.id, titulo: e.titulo, corpo: e.corpo, criado_em: e.criado_em,
-    midia_urls: (e.midia ?? []).map(url).filter(Boolean) as string[],
-    autor: e.autor?.nome ?? "", projeto: e.projeto?.nome ?? null,
-    reacoes: e.reacoes.map((r) => ({ id: r.id, pessoa_id: r.pessoa_id, tipo: r.tipo, pessoa: r.pessoa, audio_url: r.audio_path ? url(r.audio_path) : null })),
-  }));
+  const entregas = await carregarEntregas(supabase);
   const avisos = (avisosBrutos ?? []) as unknown as { id: string; tipo: string; pessoa: { nome: string } | null; item: { titulo: string } }[];
 
   // projeto do dia: o de hoje, se já escolhido; senão o mais prioritário com tarefa minha aberta
@@ -74,9 +62,11 @@ export default async function Inicio() {
     <main className="pagina">
       <header className="topo">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/marca/logo_preto.svg" alt="moldura" />
+        <Link href="/"><img src="/marca/logo_preto.svg" alt="moldura" /></Link>
         <Mostrar autorId={pessoa.id} projetos={projetos ?? []} projetoInicial={projetoDoDia} />
       </header>
+
+      <NavegacaoProjetos />
 
       <div className="cabeca-eu">
         {euResumo && <Bonequinho pessoa={euResumo} tamanho={96} />}
