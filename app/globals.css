@@ -90,3 +90,16 @@ details[open] > summary::before { content: "⌄ "; }
 .grade2 { display: grid; grid-template-columns: 1fr 1fr; gap: var(--m-space-3); }
 .item-botao { width: 100%; background: none; border: 0; border-bottom: 1px solid var(--m-surface-200); text-align: left; }
 .item-botao:hover { background: var(--m-surface-50); }
+
+/* equipe e bonequinhos */
+.boneco img { image-rendering: pixelated; display: block; }
+.boneco .simbolos { display: flex; gap: 4px; justify-content: center; margin-top: 2px; }
+.boneco .simbolos img { image-rendering: pixelated; }
+.equipe { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: var(--m-space-4); }
+.pessoa-card { display: flex; gap: var(--m-space-4); align-items: center; }
+.entregas { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: var(--m-space-4); }
+.entrega { display: grid; gap: var(--m-space-3); align-content: start; }
+.entrega-img { width: 100%; max-height: 240px; object-fit: cover; border-radius: var(--m-radius-frame-16a); border: 2px solid var(--m-white); }
+.gravando-chip { background: var(--m-crimson); color: white; border-color: var(--m-crimson); }
+.cabeca-eu { display: flex; gap: var(--m-space-5); align-items: center; }
+.avisos { display: grid; gap: var(--m-space-2); }
