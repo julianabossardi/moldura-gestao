@@ -1,6 +1,6 @@
 import { chaveSprite, estadoDoBonequinho, type ResumoPessoa } from "@/lib/estados-bonequinho";
 
-export function Bonequinho({ pessoa, tamanho = 72 }: { pessoa: ResumoPessoa; tamanho?: number }) {
+export function Bonequinho({ pessoa, tamanho = 96 }: { pessoa: ResumoPessoa; tamanho?: number }) {
   const estado = estadoDoBonequinho(pessoa);
   return (
     <div className="boneco" style={{ width: tamanho }}>
