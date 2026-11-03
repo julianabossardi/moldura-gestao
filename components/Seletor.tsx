@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -72,7 +73,7 @@ export function Seletor({ pessoaId, projetos, projetoInicial, estadosIniciais }:
           </div>
           <div className="linha">
             <span className="rotulo">estado</span>
-            {ESTADOS.map((s) => <button key={s} className="chip" aria-pressed={estados.includes(s)} onClick={() => alternarEstado(s)}>{s}</button>)}
+            {ESTADOS.map((s) => <button key={s} className="chip" aria-pressed={estados.includes(s)} onClick={() => alternarEstado(s)}><img className="icone-pixel" src={`/bonequinhos/_simbolos/${s}.png`} alt="" height={14} aria-hidden /> {s}</button>)}
           </div>
           <div className="linha">
             <span className="rotulo">recortes</span>

@@ -1,6 +1,7 @@
 "use client";
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import { Icone } from "./Icone";
 
 export function Captura({ projetoId }: { projetoId?: string }) {
   const router = useRouter();
@@ -63,9 +64,7 @@ export function Captura({ projetoId }: { projetoId?: string }) {
         onPointerUp={parar}
         onPointerLeave={() => gravando && parar()}
       >
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
-          <rect x="9" y="3" width="6" height="12" rx="3" /><path d="M5 11a7 7 0 0 0 14 0M12 18v3" />
-        </svg>
+        <Icone nome="microfone-branco" tam={24} />
       </button>
     </form>
   );

@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import { Icone } from "./Icone";
 import { PainelItem, type ItemEditavel } from "./PainelItem";
 
 type Tarefa = ItemEditavel & { id: string };
@@ -37,7 +38,7 @@ export function TarefasAbertas({ tarefas, projetos, pessoas, autorId, projetoDoD
             ) : null;
           })}
         </details>
-        <button className="btn sutil" onClick={() => setAberto(novo())}>nova</button>
+        <button className="btn sutil" onClick={() => setAberto(novo())}><Icone nome="mais" /> nova</button>
       </div>
       {aberto && <PainelItem key={aberto.id ?? "novo"} item={aberto} autorId={autorId} projetos={projetos} pessoas={pessoas} onFechar={() => setAberto(null)} />}
     </section>

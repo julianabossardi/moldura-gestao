@@ -103,3 +103,7 @@ details[open] > summary::before { content: "⌄ "; }
 .gravando-chip { background: var(--m-crimson); color: white; border-color: var(--m-crimson); }
 .cabeca-eu { display: flex; gap: var(--m-space-5); align-items: center; }
 .avisos { display: grid; gap: var(--m-space-2); }
+
+/* ícones 8-bit */
+.icone-pixel { image-rendering: pixelated; vertical-align: -3px; }
+.chip, .btn { display: inline-flex; align-items: center; gap: 6px; }

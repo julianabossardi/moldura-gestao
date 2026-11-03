@@ -10,7 +10,7 @@ export function Bonequinho({ pessoa, tamanho = 72 }: { pessoa: ResumoPessoa; tam
         <div className="simbolos">
           {estado.simbolos.map((s) => (
             // eslint-disable-next-line @next/next/no-img-element
-            <img key={s} src={`/bonequinhos/_simbolos/${s}.png`} alt={s} width={20} height={7} />
+            <img key={s} src={`/bonequinhos/_simbolos/${s}.png`} alt={s} height={14} />
           ))}
         </div>
       )}

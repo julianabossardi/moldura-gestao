@@ -21,11 +21,43 @@ BASE = [
     "....PPP..PPP....",
     "....PPP..PPP....",
 ]
+def linhas(*ps):
+    return [(r, c) for r, cs in ps for c in cs]
+
+
+# cada pessoa: paleta + pixels extras (linha, coluna) -> letra, aplicados antes do estado
 PESSOAS = {
-    "juliana": {"H": "#3b2a20", "T": "#1a1a1f"},
-    "larissa": {"H": "#c9a15b", "T": "#b4d2ff"},
-    "viviane": {"H": "#1a1a1f", "T": "#dcbcff"},
-    "padrao": {"H": "#908e93", "T": "#c9c7cc"},
+    # lari: cabelo preto cacheado com dois coques no alto, franja, colar brilhante, roupa preta
+    "larissa": {
+        "paleta": {"H": "#1c1620", "T": "#1a1a1f", "S": "#eebf9f", "G": "#d9d9e3"},
+        "extras": {
+            **{p: "H" for p in linhas((2, (3, 4, 11, 12)), (3, (3, 4, 11, 12)), (5, (3, 12)), (6, (3, 12)), (7, (3, 12)))},
+            **{(5, c): "H" for c in range(5, 11)},
+            **{(9, c): "G" for c in (6, 7, 8, 9)},
+            (8, 7): "M", (8, 8): "M",
+        },
+    },
+    # vivi: cabelo cacheado volumoso, castanho com reflexos, sorrisão, regata verde-oliva, tatuagem no braço
+    "viviane": {
+        "paleta": {"H": "#5a3320", "A": "#a8602f", "T": "#8d8a68", "S": "#c98d62", "K": "#3a3a3a"},
+        "extras": {
+            **{p: "H" for p in linhas((3, (4, 11)), (4, (3, 12)), (5, (2, 3, 12, 13)), (6, (2, 3, 12, 13)), (7, (2, 3, 12, 13)),
+                                       (8, (3, 12)), (9, (3, 12)), (10, (3, 12)))},
+            **{(r, c): "A" for r, c in ((4, 6), (5, 3), (7, 13), (6, 2), (9, 3), (4, 10))},
+            **{(8, c): "M" for c in (6, 7, 8, 9)},
+            (12, 3): "K",
+        },
+    },
+    # juliana: cabelo longo escuro e ondulado, piercing na sobrancelha, roupa preta
+    "juliana": {
+        "paleta": {"H": "#2a1d1a", "T": "#1a1a1f", "S": "#e9b992", "G": "#d9d9e3"},
+        "extras": {
+            **{p: "H" for p in linhas((4, (3, 12)), (5, (3, 12)), (6, (3, 12)), (7, (3, 12)), (8, (3, 12)), (9, (3, 12)),
+                                       (10, (3, 12)), (11, (3, 12)))},
+            (5, 9): "G",
+        },
+    },
+    "padrao": {"paleta": {"H": "#908e93", "T": "#c9c7cc"}, "extras": {}},
 }
 COMUM = {"S": "#f2c9a5", "E": "#1a1a1f", "M": "#b5483a", "P": "#444444"}
 
@@ -49,12 +81,12 @@ SIMBOLOS = {
         "y": [(0, 7), (1, 6), (1, 7), (1, 8), (2, 7), (1, 5), (1, 9)],
     },
     "focada": {  # alvo
-        "k": [(0, 6), (0, 7), (0, 8), (1, 5), (1, 9), (2, 5), (2, 9), (3, 6), (3, 7), (3, 8)],
+        "b": [(0, 6), (0, 7), (0, 8), (1, 5), (1, 9), (2, 5), (2, 9), (3, 6), (3, 7), (3, 8)],
         "r": [(1, 7), (2, 7)],
     },
 }
 CORES = {"w": "#ffffff", "g": "#c9c7cc", "y": "#ffd23f", "k": "#1a1a1f", "r": "#e32450",
-         "o": "#ff8a1f", "f": "#ffd23f", "d": "#e32450", "p": "#ff7aa2", "z": "#908e93"}
+         "b": "#4a6fa5", "o": "#ff8a1f", "f": "#ffd23f", "d": "#e32450", "p": "#ff7aa2", "z": "#908e93"}
 
 
 def aplica_simbolo(g, estado, deslocar_col=0):
@@ -62,8 +94,10 @@ def aplica_simbolo(g, estado, deslocar_col=0):
         pinta(g, [(r, c + deslocar_col) for r, c in pts], cor)
 
 
-def estado_sprite(estado):
+def estado_sprite(estado, extras=None):
     g = grade()
+    for (r, c), letra in (extras or {}).items():
+        g[r][c] = letra
     if estado in SIMBOLOS:
         aplica_simbolo(g, estado)
         if estado == "focada":
@@ -121,12 +155,13 @@ def renderiza(g, paleta):
 if __name__ == "__main__":
     raiz = os.path.join(os.path.dirname(__file__), "..", "public", "bonequinhos")
     estados = ["leve", "criativa", "focada", "pegando-fogo", "feliz", "dormindo"]
-    for pessoa, paleta in PESSOAS.items():
+    for pessoa, cfg in PESSOAS.items():
+        paleta = cfg["paleta"]
         for e in estados:
-            png(renderiza(estado_sprite(e), paleta), os.path.join(raiz, pessoa, f"{e}.png"))
+            png(renderiza(estado_sprite(e, cfg["extras"]), cfg["paleta"]), os.path.join(raiz, pessoa, f"{e}.png"))
     # símbolos soltos, para estados combinados lado a lado
     for e in SIMBOLOS:
         g = [list("." * 16) for _ in range(16)]
         aplica_simbolo(g, e)
-        png(renderiza(g[:5], {}), os.path.join(raiz, "_simbolos", f"{e}.png"))
+        png(renderiza([l[4:11] for l in g[:4]], {}), os.path.join(raiz, "_simbolos", f"{e}.png"))
     print("ok")

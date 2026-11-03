@@ -1,6 +1,7 @@
 "use client";
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import { Icone } from "./Icone";
 import { supabaseNavegador } from "@/lib/supabase/client";
 
 export type Reacao = { id: string; pessoa_id: string; tipo: string; audio_url: string | null; pessoa: { nome: string } | null };
@@ -74,8 +75,8 @@ export function EntregaCard({ entrega, euId }: { entrega: Entrega; euId: string 
       <h3 className="m-h4" style={{ margin: 0 }}>{entrega.titulo}</h3>
       {entrega.corpo && <p className="m-body" style={{ margin: 0 }}>{entrega.corpo}</p>}
       <div className="linha">
-        <button className="chip" aria-pressed={!!meuFoguinho} onClick={foguinho}>foguinho {foguinhos.length || ""}</button>
-        <button className={`chip ${gravando ? "gravando-chip" : ""}`} onClick={gravarAudio}>{gravando ? "parar" : "responder em áudio"}</button>
+        <button className="chip" aria-pressed={!!meuFoguinho} onClick={foguinho} aria-label="foguinho"><Icone nome="foguinho" /> {foguinhos.length || ""}</button>
+        <button className={`chip ${gravando ? "gravando-chip" : ""}`} onClick={gravarAudio}><Icone nome={gravando ? "parar-branco" : "microfone"} /> {gravando ? "parar" : "responder em áudio"}</button>
       </div>
       {audios.map((a) => (
         <div key={a.id} className="m-meta">
