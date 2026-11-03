@@ -45,6 +45,6 @@ export function estadoDoBonequinho(p: ResumoPessoa, agora = Date.now()): EstadoB
   if (dias >= REGRAS.dormindo.diasSemAtividade) return { sprite: "dormindo", rotulo: "dormindo", simbolos: [] };
   if (p.feliz) return { sprite: "feliz", rotulo: "feliz", simbolos: base };
   if (p.concluidos_7d >= REGRAS.fogo.minimoConcluidos) return { sprite: "pegando-fogo", rotulo: "pegando fogo", simbolos: base };
-  const sprite = base[0] ?? "focada";
+  const sprite = base[0] ?? "neutro";
   return { sprite, rotulo: base.length ? base.join(" + ") : "sem estado", simbolos: base.length > 1 ? base : [] };
 }
