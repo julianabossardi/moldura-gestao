@@ -1,6 +1,7 @@
 // Whisper large-v3 atrás de uma função só, para trocar de provedor sem mexer no app.
 // Provedor atual: Groq (mesmo modelo, hospedado).
-export async function transcrever(audio: Blob, _opcoes: { falantes: boolean } = { falantes: false } // eslint-disable-line @typescript-eslint/no-unused-vars): Promise<string> {
+export async function transcrever(audio: Blob, opcoes: { falantes: boolean } = { falantes: false }): Promise<string> {
+  void opcoes; // falantes entra na fase 4, com WhisperX
   const chave = process.env.GROQ_API_KEY;
   if (!chave) throw new Error("GROQ_API_KEY não configurada");
   const form = new FormData();

@@ -2,6 +2,7 @@ import { pessoaAtual } from "@/lib/pessoa";
 import { Seletor } from "@/components/Seletor";
 import { Captura } from "@/components/Captura";
 import { CartaoConfirmacao } from "@/components/CartaoConfirmacao";
+import { TarefasAbertas } from "@/components/TarefasAbertas";
 import { FazendoAgora } from "@/components/FazendoAgora";
 import type { Destino } from "@/lib/ia/schemas";
 
@@ -18,12 +19,13 @@ export default async function Inicio() {
   if (pessoa.papel === "cliente") return <main className="login"><div className="vidro"><p className="m-body">o portal do cliente chega na fase 6.</p></div></main>;
 
   const hoje = new Date().toISOString().slice(0, 10);
-  const [{ data: projetos }, { data: abertas }, { data: fazendo }, { data: pendentes }] = await Promise.all([
+  const [{ data: projetos }, { data: abertas }, { data: fazendo }, { data: pendentes }, { data: pessoasAtivas }] = await Promise.all([
     supabase.from("projetos").select("id, nome, slug, ordem_prioridade").eq("status", "ativo").order("ordem_prioridade"),
-    supabase.from("itens").select("id, titulo, projeto_id, prioridade").eq("tipo", "tarefa").eq("status", "aberta")
+    supabase.from("itens").select("id, tipo, titulo, corpo, projeto_id, responsavel_id, prioridade, prazo, visivel_cliente, status").eq("tipo", "tarefa").eq("status", "aberta")
       .or(`responsavel_id.eq.${pessoa.id},responsavel_id.is.null`).is("pai_id", null).order("ultima_movimentacao", { ascending: false }),
     supabase.from("itens").select("id, titulo, origem").eq("status", "fazendo").eq("responsavel_id", pessoa.id).limit(1),
     supabase.from("capturas").select("id, proposta").eq("autor_id", pessoa.id).eq("status", "proposta").order("criado_em"),
+    supabase.from("pessoas").select("id, nome").eq("ativa", true).eq("papel", "socia"),
   ]);
 
   // projeto do dia: o de hoje, se já escolhido; senão o mais prioritário com tarefa minha aberta
@@ -61,21 +63,13 @@ export default async function Inicio() {
 
       <Seletor pessoaId={pessoa.id} projetos={projetos ?? []} projetoInicial={projetoDoDia} estadosIniciais={pessoa.estados ?? []} />
 
-      <section className="bloco">
-        <details>
-          <summary>minhas tarefas abertas ({abertas?.length ?? 0})</summary>
-          {(projetos ?? []).map((p) => {
-            const lista = (abertas ?? []).filter((t) => t.projeto_id === p.id);
-            return lista.length ? (
-              <div key={p.id} style={{ marginTop: 16 }}>
-                <span className="m-meta">{p.nome}</span>
-                {lista.map((t) => <div className="item" key={t.id}><span>{t.titulo}</span><span className="m-meta">{t.prioridade}</span></div>)}
-              </div>
-            ) : null;
-          })}
-          {(abertas ?? []).filter((t) => !t.projeto_id).map((t) => <div className="item" key={t.id}><span>{t.titulo}</span><span className="m-meta">solta</span></div>)}
-        </details>
-      </section>
+      <TarefasAbertas
+        tarefas={(abertas ?? []) as never}
+        projetos={projetos ?? []}
+        pessoas={pessoasAtivas ?? []}
+        autorId={pessoa.id}
+        projetoDoDia={projetoDoDia}
+      />
 
       <Captura />
     </main>

@@ -78,3 +78,15 @@ details[open] > summary::before { content: "⌄ "; }
   .pagina { padding: var(--m-space-5) var(--m-space-4) 160px; gap: var(--m-space-10); }
   .rotulo { min-width: 100%; }
 }
+
+/* painel lateral de edição */
+.veu { position: fixed; inset: 0; background: rgba(0,0,0,.18); z-index: 20; }
+.painel {
+  position: fixed; top: 0; right: 0; bottom: 0; width: min(440px, 100vw); z-index: 21; overflow-y: auto;
+  border-radius: 0; display: grid; gap: var(--m-space-4); align-content: start; background: var(--m-glass-bg-strong);
+}
+.rotulo-campo { display: grid; gap: 6px; font-size: var(--m-size-small); font-weight: 500; color: var(--m-ink-quiet); }
+.rotulo-campo .campo { color: var(--m-ink); }
+.grade2 { display: grid; grid-template-columns: 1fr 1fr; gap: var(--m-space-3); }
+.item-botao { width: 100%; background: none; border: 0; border-bottom: 1px solid var(--m-surface-200); text-align: left; }
+.item-botao:hover { background: var(--m-surface-50); }
