@@ -98,7 +98,8 @@ export function NavProjetos({ ativos, arquivados, atual }: { ativos: P[]; arquiv
 
         <div className="menu-bloco">
           <span className="menu-titulo">outros</span>
-          {["reunião", "memória", "faxina"].map((n) => (
+          <Link href="/reuniao" className="menu-item" aria-current={atual === "reuniao" ? "page" : undefined} onClick={fecharNoCelular} tabIndex={aberto ? 0 : -1}>reunião</Link>
+          {["memória", "faxina"].map((n) => (
             <span key={n} className="menu-item desligado">{n} <span className="m-mono">em breve</span></span>
           ))}
         </div>
