@@ -202,7 +202,7 @@ declare
 begin
   if lower(new.email) = any (socias) then
     insert into pessoas (id, nome, papel)
-    values (new.id, initcap(split_part(new.email, '@', 1)), 'socia')
+    values (new.id, initcap(split_part(split_part(new.email, '@', 1), '.', 1)), 'socia')
     on conflict do nothing;
   end if;
   return new;
