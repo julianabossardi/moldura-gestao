@@ -83,7 +83,7 @@ export default async function Memoria({ searchParams }: Props) {
         <p className="m-lead" style={{ margin: 0, color: "var(--m-ink-quiet)" }}>tudo o que já passou por aqui e pode voltar a ser útil.</p>
       </div>
 
-      <form method="get" className="vidro quieto busca" role="search">
+      <form method="get" className="vidro foco busca" role="search">
         <input className="campo" name="q" defaultValue={q} placeholder="busque por sentido: “inspiração de mapa”, “texto sobre curadoria”" aria-label="buscar" />
         <div className="linha">
           <select className="campo filtro" name="projeto" defaultValue={projeto} aria-label="projeto">

@@ -111,7 +111,7 @@ export function ModoReuniao({ reuniaoId, painel, audioPaths, marcacoes: inicial,
 
   return (
     <section className="bloco" style={{ gap: "var(--m-space-5)" }}>
-      <div className="vidro linha" style={{ justifyContent: "space-between" }}>
+      <div className="vidro foco linha" style={{ justifyContent: "space-between" }}>
         <div className="linha">
           <span className="m-mono" aria-live="off" style={{ fontSize: 28 }}>{mmss(segundos)}</span>
           {gravando && <span className="selo">gravando</span>}

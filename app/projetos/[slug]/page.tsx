@@ -112,7 +112,7 @@ export default async function Projeto({ params, searchParams }: Props) {
                 {metricas.map((m, i) => {
                   const v = variacaoSemana(m);
                   return (
-                    <div className="vidro numero" key={i}>
+                    <div className={`vidro numero ${i === 0 ? "foco" : ""}`} key={i}>
                       <span className="m-meta">{m.rotulo}</span>
                       <span className="grande">{m.valor ?? "·"}</span>
                       <span className="m-mono" style={{ color: "var(--m-ink-quiet)" }}>

@@ -18,73 +18,81 @@
   font-style: normal;
   font-display: swap;
 }
+/* tokens do design system v2 (23/10/2026), de ds/tokens.css do plugin moldura-idvisual.
+   os nomes --m-* continuam os mesmos para não mexer nos componentes; os valores seguem a v2:
+   fundo papel ou branco (sem off-white), texto em tinta, canto reto, sem vidro,
+   sombra só no foco e tingida pelo fundo, furtacor só como luz. */
 :root {
-  /* ── base · clara, racional, predominante ─────────────────────── */
-  --m-white:        #ffffff;
-  --m-off-white:    #f8f7f8;
-  --m-paper:        #f3f1f3;        /* footer / quiet bands */
+  /* ── v2 · nomes do design system ─────────────────────────────── */
+  --papel: #f3f1f3;
+  --branco: #ffffff;
+  --tinta: #000000;
+  --tinta-2: #444444;
+  --tinta-3: #908e93;   /* só texto de 24 px ou mais */
+  --tinta-4: #c9c7cc;   /* só linhas e divisores */
+  --crimson: #e32450;
+  --crimson-pressionado: #db1442;
+  --furtacor-rosa: #ffc2d6;
+  --furtacor-ambar: #fff1c2;
+  --furtacor-agua: #c9f3f0;
+  --furtacor-lilas: #cfc4ff;
+  --raio-diagonal-12: 12px 0 12px 0;
+  --raio-diagonal-40: 40px 0 40px 0;
+  --sombra-tinta: 64, 56, 80; /* cinza frio levemente lilás: a sombra no papel */
 
-  /* ── superfície · cinza vidro ─────────────────────────────────── */
-  --m-surface-50:   #f5f4f6;
-  --m-surface-100:  #ecebee;
-  --m-surface-200:  #e0e0e1;        /* divisor padrão */
-  --m-surface-300:  #c9c7cc;        /* cinza superfície (figma) */
-  --m-surface-400:  #b4b2b8;
-  --m-surface-500:  #908e93;        /* cinza muted (figma) */
+  /* ── base ─────────────────────────────────────────────────────── */
+  --m-white:        var(--branco);
+  --m-off-white:    var(--papel);   /* v2: sem off-white; o fundo da página é o papel */
+  --m-paper:        var(--papel);
 
-  /* ── tinta · raramente puro preto ─────────────────────────────── */
-  --m-ink:          #000000;        /* uso pleno, primário */
-  --m-ink-soft:     #1a1a1f;
-  --m-ink-muted:    #444444;
-  --m-ink-quiet:    #908e93;
-  --m-ink-faint:    #c9c7cc;
+  /* ── superfícies e linhas ─────────────────────────────────────── */
+  --m-surface-50:   var(--papel);
+  --m-surface-100:  #ebe9ec;        /* hover em fundo branco */
+  --m-surface-200:  var(--tinta-4); /* filete padrão */
+  --m-surface-300:  var(--tinta-4);
+  --m-surface-400:  var(--tinta-3); /* filete no hover */
+  --m-surface-500:  var(--tinta-3);
 
-  /* ── accent · crimson moldura, uso CIRÚRGICO ──────────────────── */
-  --m-crimson:      #e32450;        /* accent principal (figma fill) */
-  --m-crimson-deep: #db1442;        /* accent pressed/stroke */
+  /* ── tinta ────────────────────────────────────────────────────── */
+  --m-ink:          var(--tinta);
+  --m-ink-soft:     var(--tinta);
+  --m-ink-muted:    var(--tinta-2);
+  --m-ink-quiet:    var(--tinta-2); /* era tinta-3; texto pequeno precisa de 4,5:1 */
+  --m-ink-faint:    var(--tinta-4);
+
+  /* ── crimson: pontual ─────────────────────────────────────────── */
+  --m-crimson:      var(--crimson);
+  --m-crimson-deep: var(--crimson-pressionado);
   --m-crimson-50:   rgba(227, 36, 80, 0.50);
   --m-crimson-12:   rgba(227, 36, 80, 0.12);
 
-  /* ── camada atmosférica · furtacor / iridescente / pérola ─────── */
-  --m-irid-blue:    rgba(180, 210, 255, 0.32);
-  --m-irid-lilac:   rgba(220, 188, 255, 0.28);
-  --m-irid-mint:    rgba(180, 240, 220, 0.22);
-  --m-irid-peach:   rgba(255, 210, 220, 0.20);
-  --m-pearl:        rgba(240, 238, 244, 0.65);
+  /* ── vidro (v1) desligado: superfície chapada com filete ──────── */
+  --m-glass-bg:        var(--branco);
+  --m-glass-bg-strong: var(--branco);
+  --m-glass-border:    var(--tinta-4);
+  --m-glass-stroke:    var(--tinta-4);
 
-  /* ── glass · vidro fosco translúcido ──────────────────────────── */
-  --m-glass-bg:     rgba(255, 255, 255, 0.55);
-  --m-glass-bg-strong: rgba(255, 255, 255, 0.72);
-  --m-glass-border: rgba(180, 178, 184, 0.40);
-  --m-glass-stroke: rgba(255, 255, 255, 0.80);
+  /* ── sombra: só no elemento de foco, uma luz (de cima, à esquerda) ── */
+  --m-shadow-xs: none;
+  --m-shadow-sm: none;
+  --m-shadow-md: 6px 8px 24px rgba(var(--sombra-tinta), 0.12);
+  --m-shadow-lg: 10px 14px 40px rgba(var(--sombra-tinta), 0.16);
+  --m-shadow-inset: 0 0 0 0 transparent;
+  --m-veu: rgba(var(--sombra-tinta), 0.20);
 
-  /* ── shadow · sutil, nunca pesada ─────────────────────────────── */
-  --m-shadow-xs: 0 1px 1px rgba(0, 0, 0, 0.03);
-  --m-shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.04);
-  --m-shadow-md: 0 8px 24px rgba(0, 0, 0, 0.06), 0 2px 6px rgba(0, 0, 0, 0.04);
-  --m-shadow-lg: 0 24px 48px rgba(0, 0, 0, 0.08), 0 4px 10px rgba(0, 0, 0, 0.04);
-  --m-shadow-inset: inset 0 0 0 1px rgba(255, 255, 255, 0.6);
-
-  /* ── gradients · sempre como camada, nunca como base ──────────── */
-  --m-grad-pearl:    linear-gradient(160deg, #ffffff 0%, #f5f4f6 50%, #ecebee 100%);
-  --m-grad-glass:    linear-gradient(180deg, rgba(255,255,255,0.60) 0%, rgba(255,255,255,0.00) 100%);
-  --m-grad-irid:     linear-gradient(125deg, rgba(201,199,204,0.55) 0%, rgba(180,210,255,0.40) 30%, rgba(220,188,255,0.36) 60%, rgba(201,199,204,0.55) 100%);
-  --m-grad-crimson:  radial-gradient(circle at 22% 38%, #e32450 0%, #e32450 22%, rgba(227,36,80,0.55) 55%, rgba(227,36,80,0.10) 80%, rgba(255,255,255,0) 100%);
-  --m-grad-protect-top: linear-gradient(180deg, rgba(255,255,255,0.92) 0%, rgba(255,255,255,0.00) 100%);
-
-  /* ── radii · cantos contidos, nada exagerado ──────────────────── */
-  --m-radius-0:  0px;        /* reto · default · frames abertos */
-  --m-radius-1:  6px;        /* chips */
-  --m-radius-2:  12px;       /* cards quietos */
-  --m-radius-3:  16px;       /* cards · opção diagonal menor */
-  --m-radius-4:  22px;       /* cards de destaque · opção diagonal maior */
-  --m-radius-5:  40px;       /* halos · cápsulas largas */
-  --m-radius-pill: 999px;    /* botões pílula */
-  /* assimétrico · diagonal-opposite, sempre contra 0 */
-  --m-radius-frame-16a: 16px 0 16px 0;
-  --m-radius-frame-16b: 0 16px 0 16px;
-  --m-radius-frame-22a: 22px 0 22px 0;
-  --m-radius-frame-22b: 0 22px 0 22px;
+  /* ── cantos: reto por padrão; a diagonal é gesto de foco ──────── */
+  --m-radius-0:  0px;
+  --m-radius-1:  0px;
+  --m-radius-2:  0px;
+  --m-radius-3:  0px;
+  --m-radius-4:  0px;
+  --m-radius-5:  0px;
+  --m-radius-pill: 0px;
+  --m-radius-frame-16a: 0;          /* cartões comuns: retos */
+  --m-radius-frame-16b: 0;
+  --m-radius-frame-22a: 0;
+  --m-radius-frame-22b: 0;
+  /* a diagonal fica só na classe .foco (globals.css), uma vez por tela */
 
   /* ── spacing · escala 4 ───────────────────────────────────────── */
   --m-space-0:  0;
@@ -103,8 +111,8 @@
   --m-space-32: 128px;
 
   /* ── motion · easings e durações ──────────────────────────────── */
-  --m-ease-glass: cubic-bezier(0.22, 0.6, 0.18, 1);
-  --m-ease-fade:  cubic-bezier(0.40, 0.00, 0.20, 1);
+  --m-ease-glass: cubic-bezier(0, 0, .2, 1); /* v2: ease-out, sem mola */
+  --m-ease-fade:  cubic-bezier(0, 0, .2, 1);
   --m-dur-quick:  180ms;
   --m-dur-base:   320ms;
   --m-dur-slow:   620ms;
@@ -125,15 +133,15 @@
 
   /* ── type scale · semantic ────────────────────────────────────── */
   --m-size-display: 128px;   /* hero word-mark · "moldura" */
-  --m-size-h1: 52px;         /* page-title */
+  --m-size-h1: 48px;         /* v2: título de tela */         /* page-title */
   --m-size-h2: 40px;         /* section title */
   --m-size-h3: 32px;         /* nav / subhead */
   --m-size-h4: 24px;         /* tagline */
-  --m-size-lead: 20px;       /* body lead */
-  --m-size-body: 16px;
-  --m-size-meta: 14px;       /* muted secondary */
-  --m-size-small: 14px;      /* small label */
-  --m-size-micro: 12px;      /* mono · meta dados */
+  --m-size-lead: 22px;       /* v2: apoio */       /* body lead */
+  --m-size-body: 17px;       /* v2: corpo */
+  --m-size-meta: 13px;       /* v2: legenda */
+  --m-size-small: 13px;      /* v2: rótulo, peso 500 */
+  --m-size-micro: 13px;      /* v2: dado em mono */
 
   --m-track-tight: -0.032em; /* títulos grandes · -0.032 ≈ figma */
   --m-track-snug:  -0.020em;
@@ -142,7 +150,7 @@
 
   --m-lh-tight: 1.0;
   --m-lh-snug:  1.12;
-  --m-lh-body:  1.40;
+  --m-lh-body:  1.50;
   --m-lh-loose: 1.65;
 }
 

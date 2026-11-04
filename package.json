@@ -7,6 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
+    "test": "tsx --test tests/*.test.ts",
     "projeto:criar": "tsx --env-file=.env.local scripts/criar-projeto.ts",
     "embeddings:preencher": "tsx --env-file=.env.local scripts/preencher-embeddings.ts",
     "cliente:convidar": "tsx --env-file=.env.local scripts/convidar-cliente.ts"
