@@ -1,0 +1,186 @@
+/* ──────────────────────────────────────────────────────────────────
+   moldura · design system
+   colors + type tokens
+   ────────────────────────────────────────────────────────────────── */
+
+@font-face {
+  font-family: "Instrument Sans";
+  src: url("/fonts/InstrumentSans.ttf") format("truetype-variations");
+  font-weight: 100 900;
+  font-stretch: 75% 100%;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "JetBrains Mono";
+  src: url("/fonts/JetBrainsMono.ttf") format("truetype-variations");
+  font-weight: 100 800;
+  font-style: normal;
+  font-display: swap;
+}
+:root {
+  /* ── base · clara, racional, predominante ─────────────────────── */
+  --m-white:        #ffffff;
+  --m-off-white:    #f8f7f8;
+  --m-paper:        #f3f1f3;        /* footer / quiet bands */
+
+  /* ── superfície · cinza vidro ─────────────────────────────────── */
+  --m-surface-50:   #f5f4f6;
+  --m-surface-100:  #ecebee;
+  --m-surface-200:  #e0e0e1;        /* divisor padrão */
+  --m-surface-300:  #c9c7cc;        /* cinza superfície (figma) */
+  --m-surface-400:  #b4b2b8;
+  --m-surface-500:  #908e93;        /* cinza muted (figma) */
+
+  /* ── tinta · raramente puro preto ─────────────────────────────── */
+  --m-ink:          #000000;        /* uso pleno, primário */
+  --m-ink-soft:     #1a1a1f;
+  --m-ink-muted:    #444444;
+  --m-ink-quiet:    #908e93;
+  --m-ink-faint:    #c9c7cc;
+
+  /* ── accent · crimson moldura, uso CIRÚRGICO ──────────────────── */
+  --m-crimson:      #e32450;        /* accent principal (figma fill) */
+  --m-crimson-deep: #db1442;        /* accent pressed/stroke */
+  --m-crimson-50:   rgba(227, 36, 80, 0.50);
+  --m-crimson-12:   rgba(227, 36, 80, 0.12);
+
+  /* ── camada atmosférica · furtacor / iridescente / pérola ─────── */
+  --m-irid-blue:    rgba(180, 210, 255, 0.32);
+  --m-irid-lilac:   rgba(220, 188, 255, 0.28);
+  --m-irid-mint:    rgba(180, 240, 220, 0.22);
+  --m-irid-peach:   rgba(255, 210, 220, 0.20);
+  --m-pearl:        rgba(240, 238, 244, 0.65);
+
+  /* ── glass · vidro fosco translúcido ──────────────────────────── */
+  --m-glass-bg:     rgba(255, 255, 255, 0.55);
+  --m-glass-bg-strong: rgba(255, 255, 255, 0.72);
+  --m-glass-border: rgba(180, 178, 184, 0.40);
+  --m-glass-stroke: rgba(255, 255, 255, 0.80);
+
+  /* ── shadow · sutil, nunca pesada ─────────────────────────────── */
+  --m-shadow-xs: 0 1px 1px rgba(0, 0, 0, 0.03);
+  --m-shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.04);
+  --m-shadow-md: 0 8px 24px rgba(0, 0, 0, 0.06), 0 2px 6px rgba(0, 0, 0, 0.04);
+  --m-shadow-lg: 0 24px 48px rgba(0, 0, 0, 0.08), 0 4px 10px rgba(0, 0, 0, 0.04);
+  --m-shadow-inset: inset 0 0 0 1px rgba(255, 255, 255, 0.6);
+
+  /* ── gradients · sempre como camada, nunca como base ──────────── */
+  --m-grad-pearl:    linear-gradient(160deg, #ffffff 0%, #f5f4f6 50%, #ecebee 100%);
+  --m-grad-glass:    linear-gradient(180deg, rgba(255,255,255,0.60) 0%, rgba(255,255,255,0.00) 100%);
+  --m-grad-irid:     linear-gradient(125deg, rgba(201,199,204,0.55) 0%, rgba(180,210,255,0.40) 30%, rgba(220,188,255,0.36) 60%, rgba(201,199,204,0.55) 100%);
+  --m-grad-crimson:  radial-gradient(circle at 22% 38%, #e32450 0%, #e32450 22%, rgba(227,36,80,0.55) 55%, rgba(227,36,80,0.10) 80%, rgba(255,255,255,0) 100%);
+  --m-grad-protect-top: linear-gradient(180deg, rgba(255,255,255,0.92) 0%, rgba(255,255,255,0.00) 100%);
+
+  /* ── radii · cantos contidos, nada exagerado ──────────────────── */
+  --m-radius-0:  0px;        /* reto · default · frames abertos */
+  --m-radius-1:  6px;        /* chips */
+  --m-radius-2:  12px;       /* cards quietos */
+  --m-radius-3:  16px;       /* cards · opção diagonal menor */
+  --m-radius-4:  22px;       /* cards de destaque · opção diagonal maior */
+  --m-radius-5:  40px;       /* halos · cápsulas largas */
+  --m-radius-pill: 999px;    /* botões pílula */
+  /* assimétrico · diagonal-opposite, sempre contra 0 */
+  --m-radius-frame-16a: 16px 0 16px 0;
+  --m-radius-frame-16b: 0 16px 0 16px;
+  --m-radius-frame-22a: 22px 0 22px 0;
+  --m-radius-frame-22b: 0 22px 0 22px;
+
+  /* ── spacing · escala 4 ───────────────────────────────────────── */
+  --m-space-0:  0;
+  --m-space-1:  4px;
+  --m-space-2:  8px;
+  --m-space-3:  12px;
+  --m-space-4:  16px;
+  --m-space-5:  20px;
+  --m-space-6:  24px;
+  --m-space-8:  32px;
+  --m-space-10: 40px;
+  --m-space-12: 48px;
+  --m-space-16: 64px;
+  --m-space-20: 80px;
+  --m-space-24: 96px;
+  --m-space-32: 128px;
+
+  /* ── motion · easings e durações ──────────────────────────────── */
+  --m-ease-glass: cubic-bezier(0.22, 0.6, 0.18, 1);
+  --m-ease-fade:  cubic-bezier(0.40, 0.00, 0.20, 1);
+  --m-dur-quick:  180ms;
+  --m-dur-base:   320ms;
+  --m-dur-slow:   620ms;
+  --m-dur-drift:  1200ms;
+
+  /* ── typography · families ────────────────────────────────────── */
+  --m-font-sans: "Instrument Sans", "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --m-font-mono: "JetBrains Mono", "Chivo Mono", "SFMono-Regular", ui-monospace, monospace;
+
+  /* tipografia variável · expostos para fine-tuning contextual */
+  --m-wght-thin:     200;
+  --m-wght-light:    300;
+  --m-wght-regular:  400;
+  --m-wght-medium:   500;
+  --m-wght-semibold: 600;
+  --m-wght-bold:     700;
+  --m-wght-extrabold: 800;
+
+  /* ── type scale · semantic ────────────────────────────────────── */
+  --m-size-display: 128px;   /* hero word-mark · "moldura" */
+  --m-size-h1: 52px;         /* page-title */
+  --m-size-h2: 40px;         /* section title */
+  --m-size-h3: 32px;         /* nav / subhead */
+  --m-size-h4: 24px;         /* tagline */
+  --m-size-lead: 20px;       /* body lead */
+  --m-size-body: 16px;
+  --m-size-meta: 14px;       /* muted secondary */
+  --m-size-small: 14px;      /* small label */
+  --m-size-micro: 12px;      /* mono · meta dados */
+
+  --m-track-tight: -0.032em; /* títulos grandes · -0.032 ≈ figma */
+  --m-track-snug:  -0.020em;
+  --m-track-base:  -0.010em;
+  --m-track-mono: -0.020em;
+
+  --m-lh-tight: 1.0;
+  --m-lh-snug:  1.12;
+  --m-lh-body:  1.40;
+  --m-lh-loose: 1.65;
+}
+
+/* ── semantic role aliases ─────────────────────────────────────── */
+:root {
+  --color-bg:        var(--m-white);
+  --color-bg-quiet:  var(--m-off-white);
+  --color-fg:        var(--m-ink);
+  --color-fg-soft:   var(--m-ink-soft);
+  --color-fg-muted:  var(--m-ink-quiet);
+  --color-fg-faint:  var(--m-ink-faint);
+  --color-line:      var(--m-surface-200);
+  --color-line-soft: var(--m-surface-100);
+  --color-accent:    var(--m-crimson);
+  --color-accent-deep: var(--m-crimson-deep);
+}
+
+/* ── base type rules ──────────────────────────────────────────── */
+html, body {
+  font-family: var(--m-font-sans);
+  font-weight: var(--m-wght-regular);
+  font-size: var(--m-size-body);
+  line-height: var(--m-lh-body);
+  letter-spacing: var(--m-track-base);
+  color: var(--color-fg);
+  background: var(--color-bg);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+.m-display { font-size: var(--m-size-display); font-weight: var(--m-wght-medium); letter-spacing: -0.040em; line-height: 0.92; }
+.m-h1      { font-size: var(--m-size-h1);  font-weight: var(--m-wght-medium); letter-spacing: -0.020em; line-height: 1.00; }
+.m-h2      { font-size: var(--m-size-h2);  font-weight: var(--m-wght-medium); letter-spacing: -0.020em; line-height: 1.00; }
+.m-h3      { font-size: var(--m-size-h3);  font-weight: var(--m-wght-medium); letter-spacing: -0.015em; line-height: 1.10; }
+.m-h4      { font-size: var(--m-size-h4);  font-weight: var(--m-wght-medium); letter-spacing: -0.010em; line-height: 1.20; }
+.m-lead    { font-size: var(--m-size-lead); font-weight: var(--m-wght-medium); letter-spacing: -0.012em; line-height: 1.40; }
+.m-body    { font-size: var(--m-size-body); font-weight: var(--m-wght-medium); letter-spacing: -0.010em; line-height: 1.55; }
+.m-meta    { font-size: var(--m-size-meta); font-weight: var(--m-wght-medium); letter-spacing: -0.005em; line-height: 1.50; color: var(--m-ink-quiet); }
+.m-small   { font-size: var(--m-size-small); font-weight: var(--m-wght-medium); letter-spacing: -0.005em; line-height: 1.35; }
+.m-mono    { font-family: var(--m-font-mono); font-size: var(--m-size-micro); letter-spacing: var(--m-track-mono); font-weight: 500; }
+.m-accent  { color: var(--color-accent); }
