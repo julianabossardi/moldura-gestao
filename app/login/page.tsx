@@ -4,9 +4,20 @@ import { supabaseNavegador } from "@/lib/supabase/client";
 
 // login só tipográfico: o foco é a hierarquia ("entrar" grande contra o texto pequeno),
 // e o símbolo entra em sangria no canto, com o conteúdo dentro do ângulo.
+// o Supabase diz por que não mandou o link; a tela repete o motivo em vez de culpar o e-mail
+function explicarErro(e: { code?: string; status?: number; message?: string }): string {
+  if (e.code === "over_email_send_rate_limit" || e.status === 429) return "foram links demais em pouco tempo. espere cerca de uma hora e tente de novo.";
+  if (e.code === "email_address_not_authorized") return "esse e-mail ainda não pode receber o link. fala com a Juliana.";
+  if (e.code === "signup_disabled" || e.code === "otp_disabled") return "novos acessos estão fechados. fala com a Juliana.";
+  if (e.code === "validation_failed" || e.code === "email_address_invalid") return "esse e-mail parece estar escrito errado. confere e tenta de novo.";
+  if (/fetch|network/i.test(e.message ?? "")) return "não consegui falar com o servidor. confere a internet e tenta de novo.";
+  return "não consegui mandar o link agora. tenta de novo daqui a pouco.";
+}
+
 export default function Login() {
   const [email, setEmail] = useState("");
   const [estado, setEstado] = useState<"parado" | "enviando" | "enviado" | "erro">("parado");
+  const [motivo, setMotivo] = useState("");
 
   async function entrar(e: React.FormEvent) {
     e.preventDefault();
@@ -15,6 +26,7 @@ export default function Login() {
       email,
       options: { emailRedirectTo: `${location.origin}/auth/callback`, shouldCreateUser: true },
     });
+    if (error) setMotivo(explicarErro(error));
     setEstado(error ? "erro" : "enviado");
   }
 
@@ -35,7 +47,7 @@ export default function Login() {
               <input id="email" className="campo" type="email" required autoComplete="email" placeholder="nome@agenciamoldura.com" value={email} onChange={(e) => setEmail(e.target.value)} />
               <button className="btn acento" disabled={estado === "enviando"}>{estado === "enviando" ? "enviando" : "mandar link"}</button>
             </div>
-            {estado === "erro" && <p className="erro" role="alert">não deu certo. confere o e-mail e tenta de novo.</p>}
+            {estado === "erro" && <p className="erro" role="alert">{motivo}</p>}
           </form>
         )}
       </div>
