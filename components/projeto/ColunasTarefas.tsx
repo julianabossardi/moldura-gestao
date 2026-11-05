@@ -65,7 +65,7 @@ export function ColunasTarefas({ tarefas, pessoas, projetos, clientes, autorId, 
             onDrop={() => soltar(col.id)}
           >
             <span className="linha" style={{ gap: 8 }}>
-              {col.id && col.id !== "__cliente" ? <Avatar nome={col.nome} tam={24} /> : null}
+              {col.id && col.id !== "__cliente" ? <Avatar nome={col.nome} tam={48} /> : null}
               <span className="m-small">{col.nome.toLowerCase()}</span>
             </span>
             {daColuna(col.id).sort(ordenar).map((t) => (

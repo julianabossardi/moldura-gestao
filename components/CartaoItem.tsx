@@ -36,13 +36,13 @@ export function CartaoItem({ item, euId, destaque, mostrarProjeto, topo, rodape,
     >
       {item.imagem && <img className="cartao-img" src={item.imagem} alt="" loading="lazy" />}
       <div className="cartao-corpo">
-        <Avatar nome={pessoa} tam={destaque ? 32 : 26} />
+        <Avatar nome={pessoa} tam={destaque ? 72 : 48} />
         <div className="cartao-texto">
           {topo}
           <h3 className="cartao-titulo">{item.titulo}</h3>
           <div className="cartao-meta">
-            {importante(item) && <span title="importante" aria-label="importante"><Icone nome="importante" tam={14} /></span>}
-            {atrasada(item) && <span title="atrasada" className="marca atrasada"><Icone nome="atrasada" tam={14} /> atrasada</span>}
+            {importante(item) && <span title="importante" aria-label="importante"><Icone nome="importante" tam={16} /></span>}
+            {atrasada(item) && <span title="atrasada" className="marca atrasada"><Icone nome="atrasada" tam={16} /> atrasada</span>}
             {item.status === "fazendo" && <span className="selo">em andamento</span>}
             {item.status === "concluida" && tarefa && <span className="m-mono">feita</span>}
             {item.status === "arquivada" && tarefa && <span className="m-mono">cancelada</span>}

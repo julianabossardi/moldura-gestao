@@ -56,7 +56,7 @@ export function Notificacoes({ lista }: { lista: Notificacao[] }) {
                 <li key={n.id}>
                   <button type="button" className={`notificacao ${vistasEm !== null && n.em > vistasEm ? "nova" : ""}`}
                     onClick={() => { setAberta(false); detalhe?.abrir(n.item_id); }} disabled={!detalhe}>
-                    <Avatar nome={n.quem} tam={24} />
+                    <Avatar nome={n.quem} tam={48} />
                     <span><strong>{(n.quem ?? "alguém").split(" ")[0].toLowerCase()}</strong> {n.verbo} {n.titulo}</span>
                     <span className="m-mono">{haQuanto(n.em)}</span>
                   </button>

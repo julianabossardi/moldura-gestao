@@ -49,7 +49,7 @@ export function Mostrar({ autorId, projetos, projetoInicial }: Props) {
   return (
     <>
       <button className="mostrar-cta" onClick={() => setAberto(true)}>
-        <Icone nome="mais" tam={18} />
+        <Icone nome="mais" tam={16} />
         <span><strong>mostrar para a equipe</strong><span className="m-meta">uma tela, um print, algo que ficou pronto</span></span>
       </button>
       {aberto && (

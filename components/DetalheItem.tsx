@@ -111,7 +111,7 @@ export function DetalheItem({ id, euId, projetos, pessoas, onFechar }: Props) {
       </div>
 
       <div className="linha" style={{ gap: 10 }}>
-        <Avatar nome={pessoa} tam={36} />
+        <Avatar nome={pessoa} tam={72} />
         <span className="m-small">{pessoa ? `${tarefa ? "com" : "de"} ${pessoa.toLowerCase()}` : "sem responsável"}</span>
         {item.prazo && <span className="m-meta">· até {new Date(item.prazo + "T12:00").toLocaleDateString("pt-BR", { day: "2-digit", month: "long" })}</span>}
       </div>

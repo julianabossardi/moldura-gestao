@@ -71,7 +71,7 @@ export function Captura({ projetoId, placeholder = "cola ou escreve", rotuloOk =
         onPointerUp={parar}
         onPointerLeave={() => gravando && parar()}
       >
-        <Icone nome="microfone-branco" tam={24} />
+        <Icone nome="microfone-branco" tam={32} />
       </button>
     </form>
   );

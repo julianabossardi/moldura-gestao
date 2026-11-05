@@ -89,7 +89,7 @@ export default async function Inicio() {
   const saudacao = (
     <>
       <div className="cabeca-eu">
-        {euResumo && <Bonequinho pessoa={euResumo} tamanho={96} />}
+        {euResumo && <Bonequinho pessoa={euResumo} tamanho={160} />}
         <div className="saudacao">
           <h1 className="m-h1">oi, {pessoa.nome.split(" ")[0].toLowerCase()}</h1>
           <p className="m-lead" style={{ margin: 0 }}>como você se sente hoje?</p>
@@ -99,7 +99,7 @@ export default async function Inicio() {
       <div className="equipe-topo" aria-label="equipe">
         {outras.map((p) => (
           <div className="pessoa-topo" key={p.id}>
-            <Bonequinho pessoa={p} tamanho={56} />
+            <Bonequinho pessoa={p} tamanho={96} />
             <div className="pessoa-topo-texto">
               <strong>{p.nome.split(" ")[0].toLowerCase()}</strong>
               <span className="m-mono">{rotuloEstado(p)}</span>
@@ -109,7 +109,6 @@ export default async function Inicio() {
         ))}
         {!outras.length && <p className="aviso">quando a Lari e a Vivi entrarem, elas aparecem aqui.</p>}
       </div>
-      <Mostrar autorId={pessoa.id} projetos={projetos ?? []} projetoInicial={projetoDoDia} />
       {(paradas ?? 0) > 0 && (
         <Link href="/faxina" className="m-small aviso-faxina">faxina: {paradas} {paradas === 1 ? "tarefa parada" : "tarefas paradas"}. resolver</Link>
       )}
@@ -141,6 +140,7 @@ export default async function Inicio() {
         projetoInicial={projetoDoDia}
         estadosIniciais={pessoa.estados ?? []}
         saudacao={saudacao}
+        abaixoDoSeletor={<Mostrar autorId={pessoa.id} projetos={projetos ?? []} projetoInicial={projetoDoDia} />}
         emCurso={emCurso}
       />
 

@@ -17,7 +17,7 @@ export function Novidades({ itens, mostrarProjeto = true, vazio }: { itens: Novi
       {itens.map((n) => (
         <li key={n.id}>
           <button type="button" className="novidade" onClick={() => abrir(n.item_id)}>
-            <Avatar nome={n.quem} tam={28} />
+            <Avatar nome={n.quem} tam={48} />
             <span className="novidade-frase">
               <strong>{(n.quem ?? "alguém").split(" ")[0].toLowerCase()}</strong> {n.verbo} <span className="novidade-titulo">{n.titulo}</span>
               {mostrarProjeto && n.projeto && <span className="novidade-projeto"> · {n.projeto.toLowerCase()}</span>}

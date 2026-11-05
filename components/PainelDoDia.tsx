@@ -19,6 +19,7 @@ type Props = {
   projetoInicial: string | null;
   estadosIniciais: string[];
   saudacao: React.ReactNode; // lado esquerdo do topo, montado no servidor
+  abaixoDoSeletor?: React.ReactNode; // fica logo abaixo da caixa de seleção ("mostrar para a equipe")
   emCurso: ItemCartao[]; // tarefas de agora que já estão no banco (em andamento ou feitas hoje)
 };
 
@@ -35,7 +36,7 @@ const TODOS = "todos";
 
 // o topo da página inicial (saudação ao lado do seletor) e o bloco das tarefas de agora.
 // a pessoa diz como está e quanto tempo tem; a plataforma devolve de 1 a 3 tarefas para focar nesse período
-export function PainelDoDia({ pessoaId, pessoaNome, projetos, projetoInicial, estadosIniciais, saudacao, emCurso }: Props) {
+export function PainelDoDia({ pessoaId, pessoaNome, projetos, projetoInicial, estadosIniciais, saudacao, abaixoDoSeletor, emCurso }: Props) {
   const router = useRouter();
   const { abrir } = useDetalhe();
   const chave = `sessao-${pessoaId}-${hojeISO()}`;
@@ -124,6 +125,7 @@ export function PainelDoDia({ pessoaId, pessoaNome, projetos, projetoInicial, es
     <>
       <div className="hero">
         <div className="hero-saudacao">{saudacao}</div>
+        <div className="hero-direita">
         <div className="vidro hero-seletor">
           <div className="linha"><span className="rotulo">projeto</span>
             <button className="chip" aria-pressed={projeto === TODOS} onClick={() => escolherProjeto(TODOS)}>todos</button>
@@ -135,7 +137,7 @@ export function PainelDoDia({ pessoaId, pessoaNome, projetos, projetoInicial, es
           <div className="linha"><span className="rotulo">como você está</span>
             {ESTADOS.map((e) => (
               <button key={e.valor} className="chip" aria-pressed={estados.includes(e.valor)} onClick={() => alternarEstado(e.valor)}>
-                <img className="icone-pixel" src={`/bonequinhos/_simbolos/${e.valor}.png`} alt="" height={14} aria-hidden /> {e.rotulo}
+                <img className="icone-pixel" src={`/bonequinhos/_simbolos/${e.valor}.png`} alt="" height={16} aria-hidden /> {e.rotulo}
               </button>
             ))}
           </div>
@@ -144,6 +146,8 @@ export function PainelDoDia({ pessoaId, pessoaNome, projetos, projetoInicial, es
             {([1, 2, 3, "auto"] as const).map((q) => <button key={q} className="chip" aria-pressed={quantidade === q} onClick={() => setQuantidade(q)}>{q === "auto" ? "quantas achar melhor" : q}</button>)}
           </div>
           <div><button className="btn acento" disabled={carregando || !projeto} onClick={() => pedir()}>{carregando ? "escolhendo…" : "me dá tarefas"}</button></div>
+        </div>
+        {abaixoDoSeletor}
         </div>
       </div>
 
@@ -169,7 +173,7 @@ export function PainelDoDia({ pessoaId, pessoaNome, projetos, projetoInicial, es
             {sessao.recortes.map((r, i) => (
               <article key={`${r.pai_id}-${i}`} className="cartao destaque sugestao" role="button" tabIndex={0} onClick={() => abrir(r.pai_id)} onKeyDown={(e) => e.key === "Enter" && abrir(r.pai_id)}>
                 <div className="cartao-corpo">
-                  <Avatar nome={pessoaNome} tam={32} />
+                  <Avatar nome={pessoaNome} tam={48} />
                   <div className="cartao-texto">
                     {editando === i ? (
                       <input className="campo" autoFocus value={titulosEditados[i] ?? r.titulo} onClick={(e) => e.stopPropagation()} onChange={(e) => setTitulosEditados({ ...titulosEditados, [i]: e.target.value })} />

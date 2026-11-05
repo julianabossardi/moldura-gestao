@@ -38,13 +38,13 @@ function MiniCartao({ item }: { item: ItemPainel }) {
   return (
     <button type="button" className={`cartao ${item.status === "concluida" && item.tipo === "tarefa" ? "feito" : ""}`} onClick={() => abrir(item.id)}>
       <span className="cartao-corpo">
-        <Avatar nome={item.responsavel} tam={26} />
+        <Avatar nome={item.responsavel} tam={48} />
         <span className="cartao-texto">
           <span className="cartao-titulo">{item.titulo}</span>
           {(item.prioridade === "alta" || atrasada || item.status === "fazendo" || (item.dias != null && item.dias <= 7)) && (
             <span className="cartao-meta">
-              {item.prioridade === "alta" && <span title="importante" aria-label="importante"><Icone nome="importante" tam={14} /></span>}
-              {atrasada && <span className="marca atrasada"><Icone nome="atrasada" tam={14} /> atrasada</span>}
+              {item.prioridade === "alta" && <span title="importante" aria-label="importante"><Icone nome="importante" tam={16} /></span>}
+              {atrasada && <span className="marca atrasada"><Icone nome="atrasada" tam={16} /> atrasada</span>}
               {item.status === "fazendo" && <span className="selo">em andamento</span>}
               {item.dias != null && item.dias <= 7 && <span className="selo">expira em {Math.max(item.dias, 0)} dias</span>}
             </span>

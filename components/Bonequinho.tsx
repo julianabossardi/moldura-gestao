@@ -1,6 +1,6 @@
 import { chaveSprite, estadoDoBonequinho, type ResumoPessoa } from "@/lib/estados-bonequinho";
 
-export function Bonequinho({ pessoa, tamanho = 96 }: { pessoa: ResumoPessoa; tamanho?: number }) {
+export function Bonequinho({ pessoa, tamanho = 160 }: { pessoa: ResumoPessoa; tamanho?: number }) {
   const estado = estadoDoBonequinho(pessoa);
   return (
     <div className="boneco" style={{ width: tamanho }}>
@@ -10,7 +10,7 @@ export function Bonequinho({ pessoa, tamanho = 96 }: { pessoa: ResumoPessoa; tam
         <div className="simbolos">
           {estado.simbolos.map((s) => (
             // eslint-disable-next-line @next/next/no-img-element
-            <img key={s} src={`/bonequinhos/_simbolos/${s}.png`} alt={s} height={14} />
+            <img key={s} src={`/bonequinhos/_simbolos/${s}.png`} alt={s} height={16} />
           ))}
         </div>
       )}

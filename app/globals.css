@@ -282,6 +282,7 @@ body { transition: padding-left var(--m-dur-base) var(--m-ease-glass); }
 /* página inicial: saudação ao lado do seletor */
 .hero { display: grid; grid-template-columns: minmax(260px, 1fr) minmax(320px, 1.25fr); gap: var(--m-space-8); align-items: start; }
 .hero-saudacao { display: grid; gap: var(--m-space-5); align-content: start; }
+.hero-direita { display: grid; gap: var(--m-space-5); align-content: start; }
 .hero-seletor { display: grid; gap: var(--m-space-3); padding: var(--m-space-5); }
 .hero-seletor .rotulo { min-width: 64px; }
 .hero-seletor .chip { padding: 6px 12px; }
@@ -404,7 +405,7 @@ details.backlog > summary { color: var(--m-ink-quiet); }
 .hero-seletor .rotulo { min-width: 120px; }
 
 /* a área das tarefas de agora: uma caixa com fundo, para separar do resto da página */
-.sessao-caixa { background: var(--m-surface-100); border: 1px solid var(--m-surface-200); padding: var(--m-space-5) var(--m-space-6) var(--m-space-6); }
+.sessao-caixa { background: #f4f2f4; border: 1px solid var(--m-surface-200); padding: var(--m-space-5) var(--m-space-6) var(--m-space-6); }
 
 .filtros-status .chip .m-mono { margin-left: 4px; color: inherit; opacity: .7; }
 
@@ -436,3 +437,106 @@ details.backlog > summary { color: var(--m-ink-quiet); }
 .sprint-objetivo { gap: var(--m-space-3); }
 .sprint-objetivo .rotulo { min-width: 0; }
 .sprint-objetivo .campo { flex: 1 1 320px; }
+
+/* =====================================================================
+   32 bits (v3): linhas tracejadas, caixas com canto em degrau, avatares e "+" em pixel.
+   o pixel de arte vale 2 px na tela. a borda é feita com sombras sem desfoque (uma por lado),
+   o que deixa o canto de cada caixa com o degrau clássico, e a cor vem de --pb.
+   fica no fim do arquivo de propósito: sobrepõe as bordas finas anteriores.
+   ===================================================================== */
+:root {
+  --px: 2px;
+  --pb: var(--tinta-4);
+  --sombra-dura: 0 0 0 0 transparent;
+  --px-traco: linear-gradient(90deg, var(--tinta-4) 0 4px, transparent 4px 8px);
+}
+
+.vidro, .cartao, .cartao-tarefa, .link-rapido, .previa, .reacao, .chip, .btn, .mostrar-cta, .campo,
+.destino input[type="text"], .destino textarea, .coluna, .sessao-caixa, .captura-aviso, .categoria,
+.regua-dia, .gravar, .avatar, .avatar-vazio, .bolinha, .entrega-img, .notificacoes-botao, .notificacoes-painel {
+  border: 0; border-radius: 0;
+  box-shadow:
+    0 calc(-1 * var(--px)) 0 0 var(--pb), 0 var(--px) 0 0 var(--pb),
+    calc(-1 * var(--px)) 0 0 0 var(--pb), var(--px) 0 0 0 var(--pb),
+    var(--sombra-dura);
+}
+
+/* cores de cada tipo de caixa */
+.vidro, .cartao, .cartao-tarefa, .reacao, .chip, .coluna, .sessao-caixa, .previa { --pb: var(--m-surface-200); }
+.link-rapido, .btn.sutil, .captura-aviso { --pb: var(--m-surface-300); }
+.campo, .destino input[type="text"], .destino textarea { --pb: var(--m-surface-300); }
+.btn, .mostrar-cta, .notificacoes-botao { --pb: var(--m-ink); }
+.btn.sutil { --pb: var(--m-surface-300); }
+.cartao:hover, .cartao-tarefa:hover, .link-rapido:hover, .btn.sutil:hover, .mostrar-cta:hover { --pb: var(--m-ink); }
+.chip:hover, .reacao:hover { --pb: var(--m-surface-400); }
+.chip[aria-pressed="true"] { --pb: var(--m-ink); }
+.cartao.fazendo { --pb: var(--m-ink); }
+.campo:focus-visible, .destino input[type="text"]:focus-visible, .destino textarea:focus-visible { outline: 0; --pb: var(--m-ink); }
+.login-linha .campo { --pb: var(--m-ink); }
+.btn.acento:active:not(:disabled) { --pb: var(--m-crimson-deep); }
+.coluna { --pb: var(--m-surface-300); }
+.coluna.alvo { --pb: var(--m-crimson); }
+.gravar { --pb: var(--m-ink); }
+.gravar.gravando { --pb: var(--m-crimson); transform: none; }
+.avatar { --pb: var(--m-surface-300); background: var(--m-surface-50); }
+.avatar-vazio { --pb: var(--m-surface-400); }
+.categoria, .categoria-entrega, .categoria-feita { --px: 1px; --pb: var(--m-surface-200); }
+.categoria-entrega, .categoria-feita { --pb: var(--m-ink); }
+.regua-dia { --pb: var(--m-ink); }
+.regua-dia.hoje { --pb: var(--m-crimson); }
+.regua-dia:nth-child(7) { margin-right: 6px; }
+.entrega-img { --pb: var(--m-ink); }
+
+/* o que importa na tela: caixa com borda de tinta e sombra dura em degrau */
+.foco, .foco.pequeno { border-radius: 0; --pb: var(--m-ink); --sombra-dura: 8px 8px 0 0 var(--tinta-4); }
+.grade-cartoes.sessao > .cartao:first-child { border-radius: 0; --pb: var(--m-ink); --sombra-dura: 6px 6px 0 0 var(--tinta-4); }
+.captura, .notificacoes-painel { --pb: var(--m-ink); --sombra-dura: 6px 6px 0 0 var(--tinta-4); }
+.painel { --pb: var(--m-ink); }
+.menu-lateral { --pb: var(--m-ink); }
+.aba-menu { --pb: var(--m-ink); }
+
+/* botões e chips quadrados, com um pouco mais de ar para o degrau */
+.btn { padding: 10px 22px; }
+.chip { padding: 8px 16px; }
+.selo, .menu-item, .previa img, .cartao-img { border-radius: 0; }
+.menu-lateral { border-width: 0; }
+.aba-menu { border-radius: 0; }
+
+/* linhas: tracejado de pixel (4 px cheios, 4 vazios, 2 de altura) em vez do filete de 1 px */
+.item, .destino, .linha-revisao, .item-botao, .novidades li button, .notificacao, .novidades {
+  border-top-width: 0; border-bottom-width: 0;
+}
+.item, .destino, .linha-revisao, .item-botao {
+  background-image: var(--px-traco); background-size: 8px 2px; background-repeat: repeat-x; background-position: left bottom;
+}
+.item:last-child { background-image: none; }
+.item-botao:hover { background-color: var(--m-surface-50); background-image: var(--px-traco); }
+.novidades { background-image: var(--px-traco); background-size: 8px 2px; background-repeat: repeat-x; background-position: left top; }
+.novidades li button, .notificacao {
+  background-image: var(--px-traco); background-size: 8px 2px; background-repeat: repeat-x; background-position: left top; background-color: transparent;
+}
+.abas { border-bottom: 0; background-image: var(--px-traco); background-size: 8px 2px; background-repeat: repeat-x; background-position: left bottom; }
+.aba { border-bottom-width: 2px; }
+.sistema { border-bottom: 2px solid var(--m-ink); }
+.cabeca-projeto { border-top-width: 2px; border-bottom: 0; }
+.trilha::before { height: 2px; background: var(--px-traco) repeat-x 0 0 / 8px 2px; }
+
+/* marcos da linha do tempo: quadradinhos */
+.bolinha { width: 14px; height: 14px; --pb: var(--m-surface-400); background: var(--m-white); margin: 2px; }
+.ponto.feito .bolinha { --pb: var(--m-ink); background: var(--m-ink); }
+.ponto.proximo .bolinha { --pb: var(--m-crimson); }
+
+/* setinha de "abrir e fechar" em pixel: cinco quadradinhos de 2 px em formato de › */
+details > summary::before, details.arquivados summary::before {
+  content: ""; display: inline-block; width: 2px; height: 2px; margin: 0 12px 0 4px; vertical-align: middle; color: var(--m-ink-quiet);
+  box-shadow: 0 -4px 0 0 currentColor, 2px -2px 0 0 currentColor, 4px 0 0 0 currentColor, 2px 2px 0 0 currentColor, 0 4px 0 0 currentColor;
+}
+details[open] > summary::before, details.arquivados[open] summary::before { transform: rotate(90deg); }
+
+/* ícones e bonecos: ampliação só em múltiplos inteiros, sem suavizar */
+.icone-pixel, .avatar, .boneco img, .boneco .simbolos img { image-rendering: pixelated; }
+.icone-pixel { vertical-align: -4px; }
+.cartao-corpo { gap: 14px; }
+.cabeca-eu { gap: var(--m-space-6); }
+.pessoa-topo { gap: var(--m-space-4); }
+.equipe-topo { gap: var(--m-space-6); }
