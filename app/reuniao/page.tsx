@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { pessoaAtual } from "@/lib/pessoa";
 import { montarPainel } from "@/lib/reuniao/painel";
@@ -9,6 +8,7 @@ import { ModoReuniao } from "@/components/reuniao/ModoReuniao";
 import { ReunioesAnteriores } from "@/components/reuniao/GavetaReuniao";
 import { ProvedorDetalhe } from "@/components/ProvedorDetalhe";
 import { ehRapido, type LinkProjeto } from "@/lib/links";
+import { Cabecalho } from "@/components/Cabecalho";
 
 export default async function Reuniao() {
   const { supabase, pessoa } = await pessoaAtual();
@@ -35,16 +35,12 @@ export default async function Reuniao() {
   return (
     <ProvedorDetalhe euId={pessoa.id} projetos={(projetos ?? []).map((p) => ({ id: p.id, nome: p.nome }))} pessoas={socias ?? []}>
     <main className="pagina">
-      <header className="topo">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <Link href="/"><img src="/marca/logo_preto.svg" alt="moldura" /></Link>
-        <span className="m-meta">reunião de {new Date(reuniao.data + "T12:00").toLocaleDateString("pt-BR", { day: "2-digit", month: "long" })}</span>
-      </header>
+      <Cabecalho atual="reuniao" contexto={`reunião de ${new Date(reuniao.data + "T12:00").toLocaleDateString("pt-BR", { day: "2-digit", month: "long" })}`} />
       <NavegacaoProjetos />
 
       <div className="saudacao">
         <h1 className="m-h1">reunião</h1>
-        <p className="m-lead" style={{ margin: 0, color: "var(--m-ink-quiet)" }}>o painel já está pronto. é só começar.</p>
+        <p className="m-lead" style={{ margin: 0, color: "var(--m-ink-quiet)" }}>grave a conversa olhando para o que está acontecendo em cada projeto.</p>
       </div>
 
       <ModoReuniao

@@ -9,6 +9,7 @@ import { ProvedorDetalhe } from "@/components/ProvedorDetalhe";
 import { LinhaClicavel } from "@/components/LinhaClicavel";
 import { CartaoItem } from "@/components/CartaoItem";
 import { carregarEntregas } from "@/lib/entregas";
+import { Cabecalho } from "@/components/Cabecalho";
 
 type Props = { searchParams: Promise<{ q?: string; projeto?: string; tipo?: string; autora?: string; site?: string }> };
 type Linha = {
@@ -71,11 +72,7 @@ export default async function Memoria({ searchParams }: Props) {
   return (
     <ProvedorDetalhe euId={pessoa.id} projetos={projetos ?? []} pessoas={socias ?? []}>
     <main className="pagina">
-      <header className="topo">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <Link href="/"><img src="/marca/logo_preto.svg" alt="moldura" /></Link>
-        <span className="m-meta">memória</span>
-      </header>
+      <Cabecalho atual="memoria" />
       <NavegacaoProjetos />
 
       <div className="saudacao">

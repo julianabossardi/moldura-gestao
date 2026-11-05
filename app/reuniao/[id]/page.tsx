@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { pessoaAtual } from "@/lib/pessoa";
 import type { Painel, PropostaReuniao, Segmento } from "@/lib/reuniao/tipos";
@@ -11,6 +10,7 @@ import { PainelProjetoView } from "@/components/reuniao/PainelProjetoView";
 import { ProvedorDetalhe } from "@/components/ProvedorDetalhe";
 import { CartaoItem } from "@/components/CartaoItem";
 import { SELECT_CARTAO, paraCartoes } from "@/lib/cartao";
+import { Cabecalho } from "@/components/Cabecalho";
 
 export default async function ReuniaoPorId({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -106,11 +106,7 @@ export default async function ReuniaoPorId({ params }: { params: Promise<{ id: s
   return (
     <ProvedorDetalhe euId={pessoa.id} projetos={(projetos ?? []).map((p) => ({ id: p.id, nome: p.nome }))} pessoas={socias ?? []}>
     <main className="pagina">
-      <header className="topo">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <Link href="/"><img src="/marca/logo_preto.svg" alt="moldura" /></Link>
-        <Link href="/reuniao" className="m-meta">todas as reuniões</Link>
-      </header>
+      <Cabecalho atual="reuniao" contexto="reunião anterior" />
       <NavegacaoProjetos />
       <div className="saudacao">
         <h1 className="m-h1">{titulo}</h1>

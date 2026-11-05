@@ -1,5 +1,5 @@
 {
-  "resumo": "- **gestão interna:** é difícil definir o que cada uma entrega. Ideia: backlog básico com a lógica do folga (\"tenho 1 h, estou focada, o que dá para fazer?\"). Proposta de voltar a trabalhar em sprints com visão de longo prazo, como no projeto do Caio, em vez de cada uma numa frente solta. O que está 99% pronto pode ser fechado em trabalho síncrono.\n- **projeto e processo:** o site é projeto, tem marco e fim. Comunicação e posts são processo, contínuo, toda semana, sem marco. A diferença precisa aparecer na forma de organizar.\n- **app de gestão:** apresentado como rascunho. Gera tarefas por tempo e estado, mostra a equipe, deixa curtir o que foi feito, e a reunião grava tudo e distribui em tarefas. Motivo: no Miro e no WhatsApp as coisas se perdem. Na demonstração o app travou carregando.\n- **site da moldura:** \"deu\", mas virou várias pecinhas. Falta definir um novo prazo e voltar com as entregas finais. A Lari pediu uma revisão do site.\n- **prospecção:** estudar tráfego pago nesta semana. Dois contatos possíveis (amiga fisioterapeuta com formulário ruim; lojas do Quitandinha que não investem em venda). Dificuldade de vender e falta de portfólio publicado: nem o vetor nem o folga estão 100% no ar. Precisam de projetos pequenos que paguem.\n- **folga:** primeira versão pronta. O pedido na Google Play exige um período de teste em dias úteis; a proposta é usar esse prazo como prazo de finalização para começar a divulgar. Pendências: termos de uso, revisão do produto, landing, mapa, datas na agenda, notificações, revisão visual e o fluxo automático de posts. Editais: BNDES e Nova Ativa (este mês), mas o folga precisa estar ativo.\n- **agenda:** feriado no dia 20. Uma das sócias volta de viagem na quarta à noite.",
+  "resumo": "- **como a moldura se organiza:** é difícil definir o que cada uma entrega. A Juliana propõe um backlog básico com a lógica do folga (\"tenho 1 h e estou focada, o que dá para fazer?\"), uma hora de organização no começo da semana e a volta dos sprints com visão de longo prazo, como no projeto do Caio. A ideia é sair de \"cada uma numa frente de um pseudo-projeto\". O que está 99% pronto pode ser fechado em trabalho síncrono.\n- **projeto e processo:** o site tinha planejamento de projeto, mas virou várias pecinhas ao mesmo tempo que prospecção e comunicação. A Juliana nomeia a diferença: projeto tem marco e entrega; processo é contínuo (post toda semana). O site precisa de um novo prazo e das entregas finais ligadas a ele.\n- **o app de gestão:** a Juliana apresenta o app como rascunho, \"ainda não está 100% funcional\", e diz que não quer gastar muito tempo com ele. O app gera tarefas por tempo e estado a partir do que está priorizado na semana, mostra a equipe, deixa curtir o que foi feito e mostra o marco da semana e do mês, como no vetor. Na aba de reunião, grava tudo e distribui (atualiza tarefas abertas, cria novas). O motivo: no Miro e no WhatsApp as coisas se perdem. O Notion continua. Na demonstração, o app travou carregando.\n- **comunicação:** há um post para publicar hoje. A Juliana quer saber se ele foi mandado para a Raquel antes ou se publica e pergunta se ela quer compartilhar. O post com a Raquel sai compartilhado quando ela publicar o vídeo, mesmo sendo diferente da identidade visual da moldura. Também vão marcar meia hora para entender o design system e as regras que foram mandadas, fora da reunião semanal.\n- **prospecção:** a energia da Juliana agora é prospectar para a moldura. Nesta semana ela vai estudar tráfego pago. Contexto:\n  - uma amiga dela, fisioterapeuta de recém-nascidos que vende curso na Hotmart, diz que o tráfego pago é o melhor retorno que tem;\n  - um sócio de tráfego pago pede opinião sobre o trabalho dele.\n  A visão muda de \"tráfego pago só para produto de escala\" para \"botar o nome no mundo\". Há dois contatos: a própria amiga (formulário ruim, histórico de atendimento no WhatsApp; a Juliana já apresentou a moldura) e as lojas do Quitandinha, que quase não investem em venda de produto. O chip do telefone da moldura tem custo mensal. A Lari pediu uma revisão do site.\n- **folga:** a primeira versão está pronta. O pedido na Google Play exige um período de teste contado em dias úteis de novembro; a conta foi \"meio aleatória\", sem saber se pega os feriados. A proposta é usar o prazo desse pedido como prazo de finalização para começar a divulgar. A Juliana já montou a política de privacidade e estava subindo os termos de uso. Faltam:\n  - a revisão do produto (\"da News\")\n  - a landing\n  - o fluxo automático de posts com a Vivi\n  - ajeitar o mapa\n  - decidir sobre a \"New\" antes de subir\n  - testar datas na agenda\n  - revisar as notificações\n  - a revisão visual\n\n  A Lari conta que corrigiu a tipografia, que o acesso estava liberado só para o usuário curador e foi atualizado, e que padronizou o que não tinha ficado bonito; agora falta a revisão visual. A Juliana propõe um dia de fim de semana para dar um gás no folga. Também comentam um material da Lari sobre como construir um site.\n- **dinheiro e venda:** a Juliana precisa de dinheiro. Dois sites pequenos que paguem seriam ótimos. O mercado está difícil: as pessoas estão acostumadas a fazer sozinhas e mal. Falta portfólio no ar: nem o vetor nem o folga estão 100% publicados, então \"o que se faz na moldura\" ainda não tem o que mostrar. A Juliana sente dificuldade de vender e quer treinar a cara de pau. Editais: BNDES agora, para o folga, e Nova Ativa ainda neste mês. Mas o folga precisa estar no ar para a inscrição fazer sentido.\n- **agenda:** a Juliana volta de viagem na quarta à noite e não vai a São Paulo. O dia 20 é feriado. **Ficou marcado um evento do folga para 11 de dezembro** (correção da Juliana em 04/11: \"vamos marcar folga 11\"). O dia 19 é aniversário da irmã de quem fala.",
   "projetos": [
     {
       "projeto_slug": "moldura",
@@ -7,27 +7,41 @@
         {
           "tipo": "tarefa",
           "titulo": "montar o backlog da semana no começo da semana",
-          "corpo": null,
+          "corpo": "provável: juliana. \"prefiro gastar uma hora organizando no começo da semana\"",
+          "responsavel": "juliana",
+          "prioridade": "media"
+        },
+        {
+          "tipo": "tarefa",
+          "titulo": "marcar meia hora para entender o design system",
+          "corpo": "fora da reunião semanal. confirmar se é com a lari ou a raquel",
           "responsavel": null,
           "prioridade": "media"
         },
         {
           "tipo": "tarefa",
-          "titulo": "marcar meia hora para a lari explicar o design system",
-          "corpo": "provável: larissa explica. confirmar se é com a lari ou a raquel",
+          "titulo": "publicar o post de hoje",
+          "corpo": "provável: juliana",
+          "responsavel": "juliana",
+          "prioridade": "alta"
+        },
+        {
+          "tipo": "tarefa",
+          "titulo": "ver se o post foi mandado para a raquel",
+          "corpo": "ou publicar e perguntar se ela quer compartilhar",
+          "responsavel": "juliana",
+          "prioridade": "alta"
+        },
+        {
+          "tipo": "tarefa",
+          "titulo": "publicar o post compartilhado com a raquel",
+          "corpo": "quando o vídeo dela sair",
           "responsavel": null,
           "prioridade": "media"
         },
         {
           "tipo": "tarefa",
-          "titulo": "compartilhar o post da raquel quando o vídeo sair",
-          "corpo": null,
-          "responsavel": null,
-          "prioridade": "baixa"
-        },
-        {
-          "tipo": "tarefa",
-          "titulo": "definir novo prazo do site e listar as entregas finais",
+          "titulo": "definir novo prazo do site e as entregas finais",
           "corpo": null,
           "responsavel": null,
           "prioridade": "alta"
@@ -35,37 +49,72 @@
         {
           "tipo": "tarefa",
           "titulo": "fazer a revisão do site que a lari pediu",
-          "corpo": null,
-          "responsavel": null,
+          "corpo": "provável: juliana",
+          "responsavel": "juliana",
           "prioridade": "media"
         },
         {
           "tipo": "tarefa",
+          "titulo": "ver o material da lari sobre como construir um site",
+          "corpo": null,
+          "responsavel": null,
+          "prioridade": "baixa"
+        },
+        {
+          "tipo": "tarefa",
           "titulo": "estudar tráfego pago para prospecção",
-          "corpo": "quem falou não foi identificado na transcrição",
+          "corpo": "\"vou estudar essa semana\"",
+          "responsavel": "juliana",
+          "prioridade": "alta"
+        },
+        {
+          "tipo": "tarefa",
+          "titulo": "conversar com o sócio da empresa de tráfego pago",
+          "corpo": null,
+          "responsavel": "juliana",
+          "prioridade": "baixa"
+        },
+        {
+          "tipo": "tarefa",
+          "titulo": "seguir com a amiga fisioterapeuta",
+          "corpo": "formulário ruim e atendimento no whatsapp; já apresentou a moldura",
+          "responsavel": "juliana",
+          "prioridade": "media"
+        },
+        {
+          "tipo": "tarefa",
+          "titulo": "mapear as lojas do quitandinha como prospecção",
+          "corpo": null,
+          "responsavel": "juliana",
+          "prioridade": "media"
+        },
+        {
+          "tipo": "tarefa",
+          "titulo": "decidir se mantém o chip do telefone da moldura",
+          "corpo": "custo mensal",
+          "responsavel": "juliana",
+          "prioridade": "baixa"
+        },
+        {
+          "tipo": "tarefa",
+          "titulo": "procurar dois sites pequenos que paguem",
+          "corpo": null,
           "responsavel": null,
           "prioridade": "alta"
         },
         {
           "tipo": "tarefa",
-          "titulo": "falar com o sócio que tem empresa de tráfego pago",
+          "titulo": "inscrever o folga no bndes",
           "corpo": null,
           "responsavel": null,
-          "prioridade": "baixa"
+          "prioridade": "alta"
         },
         {
           "tipo": "tarefa",
-          "titulo": "seguir a conversa com a amiga fisioterapeuta",
-          "corpo": "formulário ruim e histórico de atendimento no whatsapp; possível projeto de design e ux",
+          "titulo": "inscrever o folga no nova ativa",
+          "corpo": "é neste mês; o folga precisa estar no ar",
           "responsavel": null,
-          "prioridade": "media"
-        },
-        {
-          "tipo": "tarefa",
-          "titulo": "decidir se ativa o chip do telefone da moldura",
-          "corpo": "custo mensal",
-          "responsavel": null,
-          "prioridade": "baixa"
+          "prioridade": "alta"
         }
       ],
       "atualizacoes": [],
@@ -88,12 +137,16 @@
           "corpo": null
         },
         {
-          "titulo": "lojas do quitandinha como prospecção",
+          "titulo": "treinar a venda e se inscrever em editais",
           "corpo": null
         },
         {
-          "titulo": "procurar dois sites pequenos que paguem",
+          "titulo": "app: gerar tarefas a partir do priorizado da semana",
           "corpo": null
+        },
+        {
+          "titulo": "app: marco da semana e do mês à vista",
+          "corpo": "como no vetor"
         }
       ]
     },
@@ -102,23 +155,30 @@
       "novas": [
         {
           "tipo": "tarefa",
-          "titulo": "abrir o pedido na google play",
-          "corpo": "depende do período de teste em dias úteis",
+          "titulo": "preparar o evento do folga de 11 de dezembro",
+          "corpo": "marco do projeto: 11/12/2026",
           "responsavel": null,
+          "prioridade": "alta"
+        },
+        {
+          "tipo": "tarefa",
+          "titulo": "contar os dias úteis de teste e abrir o pedido na google play",
+          "corpo": "a conta foi \"meio aleatória\"; conferir feriados",
+          "responsavel": "juliana",
           "prioridade": "alta"
         },
         {
           "tipo": "tarefa",
           "titulo": "subir os termos de uso",
           "corpo": "a política de privacidade já está montada",
-          "responsavel": null,
+          "responsavel": "juliana",
           "prioridade": "alta"
         },
         {
           "tipo": "tarefa",
           "titulo": "fechar a revisão do produto",
           "corpo": "\"quero fechar essa semana\"",
-          "responsavel": null,
+          "responsavel": "juliana",
           "prioridade": "alta"
         },
         {
@@ -131,21 +191,28 @@
         {
           "tipo": "tarefa",
           "titulo": "montar o fluxo automático de posts de divulgação",
-          "corpo": "provável: viviane",
-          "responsavel": null,
+          "corpo": "provável: juliana e viviane. listas como rio + baixada + criança + gratuito",
+          "responsavel": "viviane",
           "prioridade": "media"
         },
         {
           "tipo": "tarefa",
           "titulo": "fazer a revisão visual depois da padronização",
-          "corpo": "provável: larissa",
-          "responsavel": null,
+          "corpo": "tipografia, acesso do curador e padronização já feitos",
+          "responsavel": "larissa",
           "prioridade": "media"
         },
         {
           "tipo": "tarefa",
           "titulo": "ajeitar o mapa",
           "corpo": null,
+          "responsavel": null,
+          "prioridade": "media"
+        },
+        {
+          "tipo": "tarefa",
+          "titulo": "decidir sobre a new antes de subir",
+          "corpo": "confirmar o que é a new",
           "responsavel": null,
           "prioridade": "media"
         },
@@ -162,24 +229,14 @@
           "corpo": null,
           "responsavel": null,
           "prioridade": "media"
-        },
-        {
-          "tipo": "tarefa",
-          "titulo": "decidir sobre a new antes de subir",
-          "corpo": "confirmar o que é a new",
-          "responsavel": null,
-          "prioridade": "media"
-        },
-        {
-          "tipo": "tarefa",
-          "titulo": "preparar a inscrição no bndes e no nova ativa",
-          "corpo": "nova ativa é neste mês; o folga precisa estar ativo",
-          "responsavel": null,
-          "prioridade": "media"
         }
       ],
       "atualizacoes": [],
       "decisoes": [
+        {
+          "titulo": "evento do folga em 11 de dezembro",
+          "corpo": "marco. confirmado pela juliana em 04/11"
+        },
         {
           "titulo": "prazo da google play vira prazo de finalização",
           "corpo": "proposta na reunião; confirmar"
@@ -192,7 +249,7 @@
         },
         {
           "titulo": "posts automáticos por recorte: bairro, público, gratuito",
-          "corpo": null
+          "corpo": "lógica de lista do caio"
         }
       ]
     }

@@ -39,6 +39,11 @@ ICONES = {
         "....dddd....", "..dd....dd..", ".d........d.", ".d...d....d.", "d....d.....d", "d....d.....d",
         "d....ddd...d", "d..........d", ".d........d.", ".d........d.", "..dd....dd..", "....dddd....",
     ],
+    # prioridade alta ("importante"): bandeirinha. a estrela fica só para a reação
+    "importante": [
+        "..kk........", "..kkdddddd..", "..kkddddddd.", "..kkdddddd..", "..kkddddddd.", "..kkdddddd..",
+        "..kk........", "..kk........", "..kk........", "..kk........", ".kkkk.......", "............",
+    ],
     "mais": [
         "............", ".....kk.....", ".....kk.....", ".....kk.....", ".....kk.....", ".kkkkkkkkkk.",
         ".kkkkkkkkkk.", ".....kk.....", ".....kk.....", ".....kk.....", ".....kk.....", "............",
@@ -50,7 +55,7 @@ raiz = os.path.join(os.path.dirname(__file__), "..", "public", "icones")
 bon.ESCALA = 3
 for nome, linhas_ in ICONES.items():
     for sufixo, tinta in (("", "#1a1a1f"), ("-branco", "#ffffff")):
-        if nome in ("foguinho", "estrela", "atrasada") and sufixo:
+        if nome in ("foguinho", "estrela", "atrasada", "importante") and sufixo:
             continue
         cores = {**CORES, "k": tinta}
         grade = [[bon.rgba(cores[c]) if c != "." else (0, 0, 0, 0) for c in l] for l in linhas_]

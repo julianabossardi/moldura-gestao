@@ -31,7 +31,7 @@ type Item = {
 };
 
 const TIPO: Record<string, string> = { tarefa: "tarefa", ideia: "ideia", reflexao: "reflexão", referencia: "referência", decisao: "decisão", entrega: "entrega" };
-const STATUS: Record<string, string> = { aberta: "aberta", fazendo: "em andamento", concluida: "feita", arquivada: "arquivada", expirada: "expirada" };
+const STATUS: Record<string, string> = { aberta: "a fazer", fazendo: "em andamento", concluida: "feita", arquivada: "cancelada", expirada: "expirada" };
 const LIMITE_AUDIO_MS = 30_000;
 
 // detalhes de um item, num resumo curto, com a opção de editar
@@ -62,7 +62,7 @@ export function DetalheItem({ id, euId, projetos, pessoas, onFechar }: Props) {
     carregar();
   }, [carregar]);
 
-  async function mudarStatus(status: "fazendo" | "concluida") {
+  async function mudarStatus(status: "aberta" | "fazendo" | "concluida" | "arquivada") {
     if (!item) return;
     setOcupada(true);
     const recorte = ["recorte", "faxina"].includes(item.origem);
@@ -104,7 +104,7 @@ export function DetalheItem({ id, euId, projetos, pessoas, onFechar }: Props) {
       <h2 className="m-h3" style={{ margin: 0 }}>{item.titulo}</h2>
 
       <div className="linha">
-        {importante(cartao) && <span className="marca"><Icone nome="estrela" tam={16} /> importante</span>}
+        {importante(cartao) && <span className="marca"><Icone nome="importante" tam={16} /> importante</span>}
         {atrasada(cartao) && <span className="marca atrasada"><Icone nome="atrasada" tam={16} /> atrasada</span>}
         {item.status !== "aberta" && <span className="m-mono">{STATUS[item.status] ?? item.status}</span>}
         {item.minutos_estimados && <span className="m-mono">{item.minutos_estimados} min</span>}
@@ -150,6 +150,9 @@ export function DetalheItem({ id, euId, projetos, pessoas, onFechar }: Props) {
       <div className="linha" style={{ marginTop: 8 }}>
         {tarefa && item.status === "aberta" && <button className="btn acento" disabled={ocupada} onClick={() => mudarStatus("fazendo")}>começar</button>}
         {tarefa && ["aberta", "fazendo"].includes(item.status) && <button className="btn" disabled={ocupada} onClick={() => mudarStatus("concluida")}><Icone nome="check-branco" /> feita</button>}
+        {tarefa && item.status === "concluida" && <button className="btn" disabled={ocupada} onClick={() => mudarStatus("fazendo")}>desfazer feita</button>}
+        {tarefa && item.status === "arquivada" && <button className="btn" disabled={ocupada} onClick={() => mudarStatus("aberta")}>reabrir</button>}
+        {tarefa && ["aberta", "fazendo"].includes(item.status) && <button className="btn sutil" disabled={ocupada} onClick={() => mudarStatus("arquivada")}>cancelar tarefa</button>}
         <button className="btn sutil" onClick={() => setEditando(true)}>editar</button>
       </div>
     </Gaveta>

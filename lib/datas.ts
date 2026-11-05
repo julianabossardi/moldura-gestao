@@ -15,3 +15,6 @@ export function haQuanto(iso: string) {
   const d = Math.round(min / 1440);
   return `há ${d} ${d === 1 ? "dia" : "dias"}`;
 }
+
+// semanas inteiras desde a data (mínimo 1), para "projeto há N semanas"
+export const semanasDesde = (iso: string) => Math.max(1, Math.round((Date.now() - new Date(iso).getTime()) / (7 * 86_400_000)));

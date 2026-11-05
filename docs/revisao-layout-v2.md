@@ -103,7 +103,66 @@ Não são ajustes de layout, mas mudam o que o layout precisa mostrar.
 
 1. ~~Tokens v2 em `app/moldura.css` (pontos 1, 3 e 4)~~ **feito em 04/11**. Fundo papel, texto em tinta, cinza pequeno em tinta-2, sem vidro, sombra tingida só no cartão em andamento, chips e botões retos, tipografia na escala de tela (corpo 17, legenda 13). Ainda há duas diagonais na página inicial (o seletor `.vidro` e o cartão em andamento), e elas ficam para a etapa 2.
 2. ~~Cantos (ponto 2) e o elemento de foco de cada tela~~ **feito em 04/11**. A classe `.foco` aplica a diagonal de 40 px e a única sombra da tela. No início, ela fica na primeira tarefa da sessão; no projeto, no primeiro número vivo; na reunião, no cronômetro; na memória, na busca. Os painéis (`.vidro`), os cartões e o "mostrar para a equipe" ficaram retos. O botão principal (`.btn.acento`) agora é preto, com um ponto crimson, e só fica crimson cheio enquanto está pressionado. O login continua sem foco e fica para a etapa 4.
-3. Símbolo como marcador de seção, e cabeçalho do projeto com cor e papel (ponto 5).
-4. Login.
+3. ~~Símbolo como marcador de seção, e cabeçalho do projeto com cor e papel (ponto 5)~~ **feito em 04/11**, com uma parte ainda aberta.
+   - **Marcadores:** as camadas do símbolo foram tiradas, sem redesenho, de `moldura-simbolo.svg` do DS v2 e estão em `public/marca/simbolo-camada-{v,l,j}.svg`. A camada v marca cada seção (`h2` sem classe dentro de `.bloco`) e fica pendurada na margem. A camada l marca o subnível, que hoje é o nome do projeto nos encaminhamentos da reunião. No celular e dentro das gavetas, o marcador volta para dentro.
+   - **Cabeçalho do projeto:** virou uma faixa com a cor do projeto (`--tema-fundo`), um filete em cima na cor do texto do projeto e grão de papel em SVG (`feTurbulence`). O grão some com `prefers-contrast: more`.
+   - **Em aberto:** as cores de folga, moldura e vetor ainda são as de antes. O tema da moldura no banco ainda usa o off-white `#f8f7f8`. Falta receber as cores e as marcas (dúvida 3 da rodada 1).
+4. ~~Login~~ **feito em 04/11**.
+   - Saiu o cartão. A tela agora tem papel no fundo, "entrar" em display de tela, o apoio em tinta-2 e o campo com rótulo próprio.
+   - O botão principal tem o ponto crimson.
+   - O símbolo entra em sangria no canto inferior direito, girado 180°, com os braços rentes às bordas e o conteúdo dentro do ângulo. Ele usa o arquivo `moldura-simbolo.svg` do DS v2, em tinta-4.
+   - O texto entra em 225 ms, um item a cada 0,4 s. Com `prefers-reduced-motion`, não há animação.
+
+**pedidos de 04/11 (fora da ordem)**
+
+- "o que andou nesta semana" saiu da página do projeto, junto com a consulta e o CSS que só ela usava.
+- **cartão de tarefa compacto.**
+  - Não tem mais altura mínima.
+  - O bonequinho fica à esquerda e o título ao lado.
+  - Numa linha só ficam as marcas (estrela, atrasada, em andamento), o projeto em mono e as reações.
+  - O mesmo formato vale para o cartão de item (`CartaoItem`), o cartão de sugestão da sessão (`PainelDoDia`) e o cartão do painel da reunião (`PainelProjetoView`).
+  - Na sessão do início, a grade usa `auto-fill`, então uma tarefa sozinha não ocupa mais a largura toda. Como o cartão ficou pequeno, o foco dela passou da diagonal de 40 px para a de 12 px.
 5. Colar transcrição na reunião.
 6. Projeto como processo e marco da semana.
+
+## revisão da Juliana, 04/11 (ditada)
+
+**feito**
+
+- **cabeçalho de sistema** em todas as telas internas: marca com "gestão" em mono, navegação (início, reunião, memória, faxina), onde estou e notificações. Ocupa a largura toda e fica fixo no topo.
+- **notificações**: o aviso solto ("Viviane deu foguinho…") saiu da página e foi para um painel no cabeçalho, com as reações nas minhas coisas e o que a equipe fez nos últimos 7 dias. O "novo" fica guardado no aparelho.
+- **topo do início**: "oi, juliana / como você se sente hoje?", e a equipe ao lado, com os bonequinhos soltos, sem caixa (estado e o que está fazendo). A seção "equipe" de baixo saiu.
+- **seletor**:
+  - projeto: "todos" e depois moldura, vettor e folga, nesta ordem. A API aceita "todos" e busca tarefas de todos os projetos ativos.
+  - "tempo disponível"
+  - "como você está": focada, criativa e distraída. "leve" continua no banco e aparece como "distraída", com uma dica de que as tarefas vêm mais fáceis.
+  - "quantas tarefas", com a opção "quantas achar melhor"
+- **tarefas de agora** dentro de uma caixa com fundo.
+- **desfazer feita**: no cartão da sessão e na gaveta. A gaveta também ganhou "cancelar tarefa" e "reabrir".
+- **todas as suas tarefas**: filtros por status (a fazer, em andamento, feitas, canceladas, com a contagem de cada um). Feitas e canceladas mostram os últimos 30 dias. Só aparece a lista do filtro escolhido; nada fica recolhido.
+- **novidades** no lugar de "entregas recentes", no início e no projeto: "larissa entregou…", "juliana compartilhou uma referência…", "maria concluiu…", com a categoria em mono e há quanto tempo.
+- **projeto**:
+  - os marcos subiram para o topo de "como estamos";
+  - o cabeçalho mostra "desde novembro de 2026 · N semanas";
+  - o evento do folga em 11/12 entrou como marco (banco local) e no registro da reunião.
+- **reunião**: o subtítulo agora é "grave a conversa olhando para o que está acontecendo em cada projeto."
+- **ordem e nome dos projetos** (banco local): moldura 1, vettor 2, folga 3. O nome do vetor passou a "vettor"; o slug continua `vetor`.
+
+**em aberto**
+
+- **identidade visual de cada projeto**: faltam as cores e a marca.
+- **links rápidos**: adicionar pela tela do projeto, para ver como fica.
+- ~~**sprint**~~ **feito em 05/11: sprint quinzenal por projeto.**
+  - Migration `20261112000000_sprint_quinzenal.sql`, sem tabela nova:
+    - `projetos.sprint_inicio` é a segunda-feira da sprint 1, preenchida pela semana em que o projeto foi criado;
+    - `projetos.sprint_objetivos` guarda um objetivo por número de sprint.
+  - O cálculo está em `lib/sprint.ts`, com testes.
+  - No topo de "como estamos", o bloco "sprint N" mostra:
+    - as datas, o dia (de 14) e quantos dias faltam;
+    - uma régua de 14 dias (passados em tinta, hoje em crimson, as duas semanas separadas);
+    - o objetivo, editável;
+    - as tarefas da sprint: em andamento, e abertas com prazo até o fim dela, incluindo as atrasadas.
+  - O bloco "em curso agora" foi trocado pela sprint.
+  - Ainda não foi aplicada no banco da nuvem.
+- **aba gestão**: repensar para não virar "uma coisa depois da outra".
+- **títulos das tarefas** ("definir filtros de categoria", "mandar fotos do espaço"…): são dados de teste do banco local, não tarefas reais. No banco da nuvem ainda não há nenhuma tarefa.

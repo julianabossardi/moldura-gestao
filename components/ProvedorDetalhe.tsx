@@ -3,8 +3,11 @@ import { createContext, useCallback, useContext, useState } from "react";
 import { DetalheItem } from "./DetalheItem";
 
 type Ctx = { abrir: (id: string) => void };
-const Contexto = createContext<Ctx>({ abrir: () => {} });
-export const useDetalhe = () => useContext(Contexto);
+const Contexto = createContext<Ctx | null>(null);
+const SEM_GAVETA: Ctx = { abrir: () => {} };
+export const useDetalhe = () => useContext(Contexto) ?? SEM_GAVETA;
+// fora de uma tela com gaveta (faxina, por exemplo) devolve null, para quem chama decidir o que fazer
+export const useDetalheOpcional = () => useContext(Contexto);
 
 type Props = {
   euId: string;

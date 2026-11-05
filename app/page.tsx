@@ -6,17 +6,18 @@ import { TarefasAbertas } from "@/components/TarefasAbertas";
 import { Bonequinho, rotuloEstado } from "@/components/Bonequinho";
 import { TempoReal } from "@/components/TempoReal";
 import { Mostrar } from "@/components/Mostrar";
-import { CartaoItem } from "@/components/CartaoItem";
 import { PainelDoDia } from "@/components/PainelDoDia";
 import { CapturasAutomaticas } from "@/components/CapturasAutomaticas";
 import { ProvedorDetalhe } from "@/components/ProvedorDetalhe";
 import { SELECT_CARTAO, paraCartoes } from "@/lib/cartao";
-import { carregarEntregas } from "@/lib/entregas";
+import { carregarNovidades } from "@/lib/novidades";
+import { Novidades } from "@/components/Novidades";
 import { NavegacaoProjetos } from "@/components/NavegacaoProjetos";
 import Link from "next/link";
 import type { ResumoPessoa } from "@/lib/estados-bonequinho";
 import { diasAtras, hojeISO } from "@/lib/datas";
 import type { Destino } from "@/lib/ia/schemas";
+import { Cabecalho } from "@/components/Cabecalho";
 
 export default async function Inicio() {
   const { supabase, pessoa } = await pessoaAtual();
@@ -35,10 +36,11 @@ export default async function Inicio() {
   }
 
   const hoje = new Date().toISOString().slice(0, 10);
-  const [{ data: projetos }, { data: abertasBrutas }, { data: emCursoBrutas }, { data: pendentesBrutas }, { data: pessoasAtivas }, { data: resumo }, { data: avisosBrutos }, { count: paradas }] = await Promise.all([
+  const [{ data: projetos }, { data: abertasBrutas }, { data: emCursoBrutas }, { data: pendentesBrutas }, { data: pessoasAtivas }, { data: resumo }, { count: paradas }] = await Promise.all([
     supabase.from("projetos").select("id, nome, slug, ordem_prioridade").eq("status", "ativo").order("ordem_prioridade"),
-    supabase.from("itens").select(SELECT_CARTAO).eq("tipo", "tarefa").eq("status", "aberta")
-      .or(`responsavel_id.eq.${pessoa.id},responsavel_id.is.null`).is("pai_id", null).order("ultima_movimentacao", { ascending: false }),
+    // todas as minhas tarefas (ou sem responsável), em qualquer status; feitas e canceladas só as recentes (filtro abaixo)
+    supabase.from("itens").select(SELECT_CARTAO).eq("tipo", "tarefa").in("status", ["aberta", "fazendo", "concluida", "arquivada"])
+      .or(`responsavel_id.eq.${pessoa.id},responsavel_id.is.null`).is("pai_id", null).order("ultima_movimentacao", { ascending: false }).limit(200),
     // tarefas de agora: em andamento, ou feitas hoje
     supabase.from("itens").select(SELECT_CARTAO).eq("tipo", "tarefa").eq("responsavel_id", pessoa.id)
       .or(`status.eq.fazendo,and(status.eq.concluida,concluido_em.gte.${hojeISO()})`).order("ultima_movimentacao", { ascending: false }),
@@ -46,10 +48,6 @@ export default async function Inicio() {
     supabase.from("capturas").select("id, proposta, autor_id, autor:pessoas!autor_id(nome, papel)").eq("status", "proposta").order("criado_em"),
     supabase.from("pessoas").select("id, nome").eq("ativa", true).eq("papel", "socia"),
     supabase.rpc("equipe_resumo"),
-    // quem reagiu às minhas entregas nas últimas 48h
-    supabase.from("reacoes")
-      .select("id, tipo, pessoa:pessoas(nome), item:itens!inner(titulo, autor_id)")
-      .eq("item.autor_id", pessoa.id).neq("pessoa_id", pessoa.id).gte("criado_em", diasAtras(2)).order("criado_em", { ascending: false }),
     // tarefas minhas que a faxina marcou como paradas (sem responsável entram na faxina de quem criou)
     supabase.from("itens").select("id", { count: "exact", head: true }).eq("tipo", "tarefa").eq("status", "aberta").is("pai_id", null).not("parada_em", "is", null)
       .or(`responsavel_id.eq.${pessoa.id},and(responsavel_id.is.null,autor_id.eq.${pessoa.id})`),
@@ -68,14 +66,15 @@ export default async function Inicio() {
   const euResumo = equipe.find((p) => p.id === pessoa.id);
   const outras = equipe.filter((p) => p.id !== pessoa.id);
 
-  const [entregas, abertas, emCurso] = await Promise.all([
-    carregarEntregas(supabase),
-    paraCartoes(supabase, abertasBrutas),
+  const recente = diasAtras(30);
+  const [novidades, minhas, emCurso] = await Promise.all([
+    carregarNovidades(supabase, { limite: 10 }),
+    paraCartoes(supabase, ((abertasBrutas ?? []) as unknown as { status: string; ultima_movimentacao?: string }[]).filter((t) => ["aberta", "fazendo"].includes(t.status) || (t.ultima_movimentacao ?? "") >= recente)),
     paraCartoes(supabase, emCursoBrutas),
   ]);
+  const abertas = minhas.filter((t) => t.status === "aberta");
   // em andamento primeiro, depois as feitas hoje
   emCurso.sort((a, b) => (a.status === "fazendo" ? -1 : 0) - (b.status === "fazendo" ? -1 : 0));
-  const avisos = (avisosBrutos ?? []) as unknown as { id: string; tipo: string; pessoa: { nome: string } | null; item: { titulo: string } }[];
 
   // projeto do dia: o de hoje, se já escolhido; senão o mais prioritário com tarefa minha aberta
   const comTarefa = new Set(abertas.map((t) => t.projeto_id));
@@ -86,26 +85,30 @@ export default async function Inicio() {
   const { data: existentes } = idsAtualizar.length ? await supabase.from("itens").select("id, titulo").in("id", idsAtualizar) : { data: [] };
   const titulosExistentes = Object.fromEntries((existentes ?? []).map((i) => [i.id, i.titulo]));
 
+  // o topo: como eu estou, e logo ao lado como está a equipe (sem caixa, bonequinhos soltos)
   const saudacao = (
     <>
       <div className="cabeca-eu">
         {euResumo && <Bonequinho pessoa={euResumo} tamanho={96} />}
         <div className="saudacao">
           <h1 className="m-h1">oi, {pessoa.nome.split(" ")[0].toLowerCase()}</h1>
-          <p className="m-lead" style={{ margin: 0, color: "var(--m-ink-quiet)" }}>
-            {euResumo ? `estado: ${rotuloEstado(euResumo)}` : "o que cabe hoje?"}
-          </p>
+          <p className="m-lead" style={{ margin: 0 }}>como você se sente hoje?</p>
+          {euResumo && <span className="m-mono" style={{ color: "var(--m-ink-muted)" }}>agora: {rotuloEstado(euResumo)}</span>}
         </div>
       </div>
-      {avisos.length > 0 && (
-        <div className="avisos">
-          {avisos.slice(0, 3).map((a) => (
-            <p key={a.id} className="m-meta" style={{ margin: 0 }}>
-              {a.pessoa?.nome} {a.tipo === "audio" ? "respondeu em áudio" : a.tipo === "estrela" ? "deu estrela" : "deu foguinho"} em {a.item.titulo}
-            </p>
-          ))}
-        </div>
-      )}
+      <div className="equipe-topo" aria-label="equipe">
+        {outras.map((p) => (
+          <div className="pessoa-topo" key={p.id}>
+            <Bonequinho pessoa={p} tamanho={56} />
+            <div className="pessoa-topo-texto">
+              <strong>{p.nome.split(" ")[0].toLowerCase()}</strong>
+              <span className="m-mono">{rotuloEstado(p)}</span>
+              {p.fazendo_titulo && <span className="pessoa-fazendo">fazendo: {p.fazendo_titulo}</span>}
+            </div>
+          </div>
+        ))}
+        {!outras.length && <p className="aviso">quando a Lari e a Vivi entrarem, elas aparecem aqui.</p>}
+      </div>
       <Mostrar autorId={pessoa.id} projetos={projetos ?? []} projetoInicial={projetoDoDia} />
       {(paradas ?? 0) > 0 && (
         <Link href="/faxina" className="m-small aviso-faxina">faxina: {paradas} {paradas === 1 ? "tarefa parada" : "tarefas paradas"}. resolver</Link>
@@ -116,10 +119,7 @@ export default async function Inicio() {
   return (
     <ProvedorDetalhe euId={pessoa.id} projetos={projetos ?? []} pessoas={pessoasAtivas ?? []}>
     <main className="pagina">
-      <header className="topo">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <Link href="/"><img src="/marca/logo_preto.svg" alt="moldura" /></Link>
-      </header>
+      <Cabecalho atual="inicio" />
 
       <NavegacaoProjetos />
 
@@ -145,7 +145,7 @@ export default async function Inicio() {
       />
 
       <TarefasAbertas
-        tarefas={abertas}
+        tarefas={minhas}
         projetos={projetos ?? []}
         pessoas={pessoasAtivas ?? []}
         autorId={pessoa.id}
@@ -153,29 +153,8 @@ export default async function Inicio() {
       />
 
       <section className="bloco">
-        <h2>equipe</h2>
-        <div className="equipe">
-          {outras.map((p) => (
-            <div className="vidro quieto pessoa-card" key={p.id}>
-              <Bonequinho pessoa={p} />
-              <div>
-                <div className="m-lead">{p.nome.toLowerCase()}</div>
-                <div className="m-meta">{rotuloEstado(p)}</div>
-                <div className="m-small">{p.fazendo_titulo ? `fazendo: ${p.fazendo_titulo}` : ""}</div>
-              </div>
-            </div>
-          ))}
-          {!outras.length && <p className="aviso">quando a Lari e a Vivi entrarem, elas aparecem aqui.</p>}
-        </div>
-      </section>
-
-      <section className="bloco">
-        <h2>entregas recentes</h2>
-        {entregas.length ? (
-          <div className="grade-cartoes">{entregas.map((e) => <CartaoItem key={e.id} item={e} euId={pessoa.id} mostrarProjeto />)}</div>
-        ) : (
-          <p className="aviso">nada nos últimos 14 dias. o botão mostrar para a equipe é o jeito de começar.</p>
-        )}
+        <h2>novidades</h2>
+        <Novidades itens={novidades} vazio="nada nos últimos 14 dias. o botão mostrar para a equipe é o jeito de começar." />
       </section>
 
       <TempoReal />

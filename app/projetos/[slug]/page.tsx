@@ -3,15 +3,17 @@ import { notFound, redirect } from "next/navigation";
 import { pessoaAtual } from "@/lib/pessoa";
 import { temaParaCss, type Tema } from "@/lib/tema";
 import { variacaoSemana, type Metrica } from "@/lib/metricas";
-import { carregarEntregas } from "@/lib/entregas";
-import { diasAtras, diasAte, haQuanto } from "@/lib/datas";
+import { carregarNovidades } from "@/lib/novidades";
+import { Novidades } from "@/components/Novidades";
+import { diasAte, haQuanto, hojeISO, semanasDesde } from "@/lib/datas";
+import { naSprint, sprintAtual } from "@/lib/sprint";
+import { SprintAtual } from "@/components/projeto/SprintAtual";
 import { sinaisDoCodigo, type Integracoes } from "@/lib/sinais";
 import { NavegacaoProjetos } from "@/components/NavegacaoProjetos";
 import { Captura } from "@/components/Captura";
 import { CartaoItem } from "@/components/CartaoItem";
 import { ProvedorDetalhe } from "@/components/ProvedorDetalhe";
 import { LinhaClicavel } from "@/components/LinhaClicavel";
-import { Avatar } from "@/components/Avatar";
 import { LinhaDoTempo } from "@/components/projeto/LinhaDoTempo";
 import { LinksRapidos } from "@/components/projeto/LinksRapidos";
 import { SELECT_CARTAO, paraCartoes } from "@/lib/cartao";
@@ -23,6 +25,7 @@ import { ReativarBanner } from "@/components/projeto/ReativarBanner";
 import { EditarProjeto } from "@/components/projeto/EditarProjeto";
 import { DocumentosFixados } from "@/components/projeto/DocumentosFixados";
 import { ColunasTarefas } from "@/components/projeto/ColunasTarefas";
+import { Cabecalho } from "@/components/Cabecalho";
 
 type Props = { params: Promise<{ slug: string }>; searchParams: Promise<{ aba?: string }> };
 
@@ -40,14 +43,13 @@ export default async function Projeto({ params, searchParams }: Props) {
   const metricas = ((projeto.metricas ?? []) as Metrica[]).slice(0, 3);
   const gestao = aba === "gestao";
 
-  const [{ data: socias }, { data: clientes }, { data: outros }, { data: fazendoBrutas }, { data: movidos }, entregas, { data: tarefasBrutas }, { data: decisoes }, { data: memoria }] =
+  const [{ data: socias }, { data: clientes }, { data: outros }, { data: fazendoBrutas }, novidades, { data: tarefasBrutas }, { data: decisoes }, { data: memoria }] =
     await Promise.all([
       supabase.from("pessoas").select("id, nome").eq("papel", "socia").eq("ativa", true).order("nome"),
       supabase.from("pessoas").select("id, nome").eq("papel", "cliente").eq("ativa", true).contains("projetos_cliente", [projeto.id]),
       supabase.from("projetos").select("id, nome").eq("status", "ativo").neq("id", projeto.id).order("ordem_prioridade"),
       supabase.from("itens").select(SELECT_CARTAO).eq("projeto_id", projeto.id).eq("status", "fazendo"),
-      supabase.from("itens").select("responsavel_id, autor_id").eq("projeto_id", projeto.id).gte("ultima_movimentacao", diasAtras(7)),
-      carregarEntregas(supabase, projeto.id),
+      carregarNovidades(supabase, { projetoId: projeto.id, limite: 10 }),
       supabase.from("itens").select(SELECT_CARTAO)
         .eq("projeto_id", projeto.id).eq("tipo", "tarefa").in("status", ["aberta", "fazendo"]).is("pai_id", null),
       supabase.from("itens").select("id, titulo, corpo, criado_em").eq("projeto_id", projeto.id).eq("tipo", "decisao").order("criado_em", { ascending: false }),
@@ -55,6 +57,11 @@ export default async function Projeto({ params, searchParams }: Props) {
     ]);
 
   const [fazendo, tarefas] = await Promise.all([paraCartoes(supabase, fazendoBrutas), paraCartoes(supabase, tarefasBrutas)]);
+  // sprint quinzenal: em andamento + abertas com prazo até o fim dela, as atrasadas primeiro
+  const sprint = sprintAtual(projeto.sprint_inicio ?? projeto.criado_em, hojeISO());
+  // inclui recortes em andamento (fazendo traz também as subtarefas)
+  const candidatas = [...fazendo, ...tarefas.filter((t) => !fazendo.some((f) => f.id === t.id))];
+  const daSprint = candidatas.filter((t) => naSprint(t, sprint)).sort((a, b) => (a.status === "fazendo" ? -1 : 1) - (b.status === "fazendo" ? -1 : 1) || (a.prazo ?? "9999").localeCompare(b.prazo ?? "9999"));
   const marcos = (projeto.marcos ?? []) as Marco[];
   const links = (projeto.links ?? []) as LinkProjeto[];
   const integracoes = (projeto.integracoes ?? {}) as Integracoes;
@@ -62,25 +69,13 @@ export default async function Projeto({ params, searchParams }: Props) {
   const linksExtras: LinkProjeto[] = integracoes.github ? [{ titulo: integracoes.github, url: `https://github.com/${integracoes.github}`, tipo: "repositorio" }] : [];
   const sinais = !gestao && (integracoes.github || integracoes.vercel?.projeto_id) ? await sinaisDoCodigo(integracoes) : null;
 
-  const nomes = Object.fromEntries((socias ?? []).map((p) => [p.id, p.nome]));
-  const movimento = Object.entries(
-    (movidos ?? []).reduce<Record<string, number>>((acc, i) => {
-      const quem = i.responsavel_id ?? i.autor_id;
-      acc[quem] = (acc[quem] ?? 0) + 1;
-      return acc;
-    }, {}),
-  ).sort((a, b) => b[1] - a[1]);
 
   const pessoasEdicao = [...(socias ?? []), ...(clientes ?? []).map((c) => ({ id: c.id, nome: `${c.nome} (cliente)` }))];
   return (
     <ProvedorDetalhe euId={pessoa.id} projetos={[{ id: projeto.id, nome: projeto.nome }, ...(outros ?? [])]} pessoas={pessoasEdicao}>
     <div className="tema-projeto" style={temaParaCss(tema)}>
       <main className="pagina">
-        <header className="topo">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <Link href="/"><img src="/marca/logo_preto.svg" alt="moldura" /></Link>
-          <span className="m-meta">dentro de {projeto.nome}</span>
-        </header>
+        <Cabecalho atual="projeto" contexto={`dentro de ${projeto.nome.toLowerCase()}`} />
 
         <NavegacaoProjetos atual={slug} />
         {arquivado && <ReativarBanner projetoId={projeto.id} />}
@@ -89,6 +84,11 @@ export default async function Projeto({ params, searchParams }: Props) {
           <div className="saudacao">
             <h1 className="m-h1">{projeto.nome}</h1>
             {projeto.descricao && <p className="m-lead" style={{ margin: 0, color: "var(--m-ink-quiet)" }}>{projeto.descricao}</p>}
+            {projeto.criado_em && (
+              <span className="m-mono" style={{ color: "var(--m-ink-muted)" }}>
+                desde {new Date(projeto.criado_em).toLocaleDateString("pt-BR", { month: "long", year: "numeric" })} · {semanasDesde(projeto.criado_em)} {semanasDesde(projeto.criado_em) === 1 ? "semana" : "semanas"}
+              </span>
+            )}
           </div>
           {!arquivado && (
             <div className="linha">
@@ -105,6 +105,23 @@ export default async function Projeto({ params, searchParams }: Props) {
 
         {!gestao ? (
           <>
+            <SprintAtual projetoId={projeto.id} sprint={sprint} objetivos={(projeto.sprint_objetivos ?? {}) as Record<string, string>} editavel={!arquivado}>
+              {daSprint.length ? (
+                <div className="grade-cartoes">{daSprint.map((t) => <CartaoItem key={t.id} item={t} euId={pessoa.id} />)}</div>
+              ) : (
+                <p className="aviso">nada em andamento nem com prazo nesta sprint.</p>
+              )}
+            </SprintAtual>
+
+            <section className="bloco">
+              <h2>marcos</h2>
+              {marcos.length ? (
+                <LinhaDoTempo projetoId={projeto.id} marcos={marcos} editavel={!arquivado} />
+              ) : (
+                <p className="aviso">nenhum marco ainda. dá para criar a linha do tempo em editar.</p>
+              )}
+            </section>
+
             {!arquivado && <LinksRapidos projetoId={projeto.id} links={links} extras={linksExtras} />}
 
             {metricas.length > 0 && (
@@ -125,30 +142,11 @@ export default async function Projeto({ params, searchParams }: Props) {
               </section>
             )}
 
-            <section className="bloco">
-              <h2>em curso agora</h2>
-              {fazendo.length ? (
-                <div className="grade-cartoes">{fazendo.map((f) => <CartaoItem key={f.id} item={f} euId={pessoa.id} />)}</div>
-              ) : (
-                <p className="aviso">ninguém com algo em curso neste projeto agora.</p>
-              )}
-            </section>
 
             <section className="bloco">
-              <h2>marcos</h2>
-              {marcos.length ? (
-                <LinhaDoTempo projetoId={projeto.id} marcos={marcos} editavel={!arquivado} />
-              ) : (
-                <p className="aviso">nenhum marco ainda. dá para criar a linha do tempo em editar.</p>
-              )}
+              <h2>novidades</h2>
+              <Novidades itens={novidades} mostrarProjeto={false} vazio="nada neste projeto nos últimos 14 dias." />
             </section>
-
-            {entregas.length > 0 && (
-              <section className="bloco">
-                <h2>entregas recentes</h2>
-                <div className="grade-cartoes">{entregas.map((e) => <CartaoItem key={e.id} item={e} euId={pessoa.id} />)}</div>
-              </section>
-            )}
 
             {sinais && (sinais.commits.length > 0 || sinais.deploys.length > 0) && (
               <section className="bloco">
@@ -168,22 +166,6 @@ export default async function Projeto({ params, searchParams }: Props) {
               </section>
             )}
 
-            <section className="bloco">
-              <h2>o que andou nesta semana</h2>
-              <p className="m-meta" style={{ margin: 0 }}>quantas coisas deste projeto cada uma mexeu nos últimos 7 dias: criou, editou, começou ou concluiu.</p>
-              {movimento.length ? (
-                <div className="linha">
-                  {movimento.map(([id, n]) => (
-                    <span className="pessoa-movimento" key={id}>
-                      <Avatar nome={nomes[id] ?? null} tam={40} />
-                      <span><span className="m-h4">{n}</span> <span className="m-meta">{(nomes[id] ?? "").toLowerCase()}</span></span>
-                    </span>
-                  ))}
-                </div>
-              ) : (
-                <p className="aviso">nada se mexeu nos últimos 7 dias.</p>
-              )}
-            </section>
           </>
         ) : (
           <>

@@ -24,7 +24,7 @@ test("vários estados mostram os símbolos lado a lado", () => {
   const e = estadoDoBonequinho(pessoa({ estados: ["leve", "focada"] }), AGORA);
   assert.equal(e.sprite, "leve");
   assert.deepEqual(e.simbolos, ["leve", "focada"]);
-  assert.equal(e.rotulo, "leve + focada");
+  assert.equal(e.rotulo, "distraída + focada"); // "leve" aparece como "distraída"
 });
 
 test("estados desconhecidos são ignorados", () => {

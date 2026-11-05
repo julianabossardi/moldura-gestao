@@ -12,14 +12,17 @@ export async function POST(req: Request) {
   const { projeto_id, minutos, estados, quantidade } = await req.json();
 
   const { data: eu } = await supabase.from("pessoas").select("preferencias").eq("id", auth.user.id).single();
-  // candidatas: tarefas abertas do projeto do dia, minhas ou sem responsável
-  const { data: tarefas } = await supabase
+  // candidatas: tarefas abertas do projeto escolhido (ou de todos), minhas ou sem responsável
+  // projeto_id nulo = "todos": candidatas de todos os projetos ativos
+  let consulta = supabase
     .from("itens")
-    .select("id, titulo, corpo, prioridade, prazo, ultima_movimentacao")
+    .select("id, titulo, corpo, prioridade, prazo, ultima_movimentacao, projeto_id, projeto:projetos!inner(status)")
     .eq("tipo", "tarefa")
     .eq("status", "aberta")
-    .eq("projeto_id", projeto_id)
+    .eq("projeto.status", "ativo")
     .or(`responsavel_id.eq.${auth.user.id},responsavel_id.is.null`);
+  if (projeto_id) consulta = consulta.eq("projeto_id", projeto_id);
+  const { data: tarefas } = await consulta;
 
   const ordenadas = (tarefas ?? [])
     .sort(
@@ -53,7 +56,11 @@ export async function POST(req: Request) {
       tamanho: ((eu?.preferencias as { tamanho_recorte?: string })?.tamanho_recorte as "pequeno" | "medio") ?? "medio",
     });
     const validos = recortes.filter((r) => ordenadas.some((t) => t.id === r.pai_id));
-    return NextResponse.json({ recortes: validos, titulos: Object.fromEntries(ordenadas.map((t) => [t.id, t.titulo])) });
+    return NextResponse.json({
+      recortes: validos,
+      titulos: Object.fromEntries(ordenadas.map((t) => [t.id, t.titulo])),
+      projetos: Object.fromEntries(ordenadas.map((t) => [t.id, t.projeto_id])),
+    });
   } catch (e) {
     return NextResponse.json({ erro: (e as Error).message }, { status: 502 });
   }

@@ -1,9 +1,9 @@
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { pessoaAtual } from "@/lib/pessoa";
 import { diasAtras, diasDesde } from "@/lib/datas";
 import { NavegacaoProjetos } from "@/components/NavegacaoProjetos";
 import { FaxinaFluxo } from "@/components/FaxinaFluxo";
+import { Cabecalho } from "@/components/Cabecalho";
 
 const RETORNOS = [
   ["aceito", "aceitos"], ["trocado", "trocados"], ["editado", "editados"], ["concluido", "concluídos"], ["abandonado", "abandonados"],
@@ -37,11 +37,7 @@ export default async function Faxina() {
 
   return (
     <main className="pagina">
-      <header className="topo">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <Link href="/"><img src="/marca/logo_preto.svg" alt="moldura" /></Link>
-        <span className="m-meta">faxina</span>
-      </header>
+      <Cabecalho atual="faxina" />
       <NavegacaoProjetos />
 
       <div className="saudacao">

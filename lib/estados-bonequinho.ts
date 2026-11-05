@@ -13,6 +13,8 @@ export type ResumoPessoa = {
 };
 
 export const ESTADOS_BASE = ["leve", "criativa", "focada"] as const;
+// na tela, "leve" aparece como "distraída" (pede tarefas mais fáceis e guiadas); no banco segue "leve"
+export const ROTULO_ESTADO: Record<string, string> = { leve: "distraída" };
 
 export const REGRAS = {
   fogo: { minimoConcluidos: 5, dias: 7 },
@@ -46,5 +48,5 @@ export function estadoDoBonequinho(p: ResumoPessoa, agora = Date.now()): EstadoB
   if (p.feliz) return { sprite: "feliz", rotulo: "feliz", simbolos: base };
   if (p.concluidos_7d >= REGRAS.fogo.minimoConcluidos) return { sprite: "pegando-fogo", rotulo: "pegando fogo", simbolos: base };
   const sprite = base[0] ?? "neutro";
-  return { sprite, rotulo: base.length ? base.join(" + ") : "sem estado", simbolos: base.length > 1 ? base : [] };
+  return { sprite, rotulo: base.length ? base.map((e) => ROTULO_ESTADO[e] ?? e).join(" + ") : "sem estado", simbolos: base.length > 1 ? base : [] };
 }

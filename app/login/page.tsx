@@ -2,6 +2,8 @@
 import { useState } from "react";
 import { supabaseNavegador } from "@/lib/supabase/client";
 
+// login só tipográfico: o foco é a hierarquia ("entrar" grande contra o texto pequeno),
+// e o símbolo entra em sangria no canto, com o conteúdo dentro do ângulo.
 export default function Login() {
   const [email, setEmail] = useState("");
   const [estado, setEstado] = useState<"parado" | "enviando" | "enviado" | "erro">("parado");
@@ -18,23 +20,25 @@ export default function Login() {
 
   return (
     <main className="login">
-      <form className="vidro" onSubmit={entrar}>
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/marca/logo_preto.svg" alt="moldura" height={28} style={{ height: 28, justifySelf: "start" }} />
-        <div>
-          <h1 className="m-h3" style={{ margin: 0 }}>entrar</h1>
-          <p className="m-meta">mandamos um link para o seu e-mail. sem senha.</p>
-        </div>
+      <span className="login-simbolo" aria-hidden />
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img className="login-logo" src="/marca/logo_preto.svg" alt="moldura" height={28} />
+      <div className="login-corpo">
+        <h1 className="login-titulo">entrar</h1>
+        <p className="login-apoio">mandamos um link para o seu e-mail. sem senha.</p>
         {estado === "enviado" ? (
-          <p className="m-body">link a caminho. é só abrir o e-mail neste mesmo aparelho.</p>
+          <p className="login-apoio login-enviado" role="status">link a caminho. é só abrir o e-mail neste mesmo aparelho.</p>
         ) : (
-          <>
-            <input className="campo" type="email" required placeholder="seu e-mail" value={email} onChange={(e) => setEmail(e.target.value)} />
-            <button className="btn" disabled={estado === "enviando"}>{estado === "enviando" ? "enviando" : "mandar link"}</button>
-            {estado === "erro" && <p className="erro">não deu certo. confere o e-mail e tenta de novo.</p>}
-          </>
+          <form className="login-form" onSubmit={entrar}>
+            <label className="login-rotulo" htmlFor="email">seu e-mail</label>
+            <div className="login-linha">
+              <input id="email" className="campo" type="email" required autoComplete="email" placeholder="nome@agenciamoldura.com" value={email} onChange={(e) => setEmail(e.target.value)} />
+              <button className="btn acento" disabled={estado === "enviando"}>{estado === "enviando" ? "enviando" : "mandar link"}</button>
+            </div>
+            {estado === "erro" && <p className="erro" role="alert">não deu certo. confere o e-mail e tenta de novo.</p>}
+          </form>
         )}
-      </form>
+      </div>
     </main>
   );
 }

@@ -25,7 +25,7 @@ export type ItemCartao = {
 };
 
 export const SELECT_CARTAO =
-  "id, tipo, titulo, corpo, objetivo, definicao_pronto, url, status, prioridade, prazo, projeto_id, responsavel_id, origem, minutos_estimados, midia, criado_em, " +
+  "id, tipo, titulo, corpo, objetivo, definicao_pronto, url, status, prioridade, prazo, projeto_id, responsavel_id, origem, minutos_estimados, midia, criado_em, ultima_movimentacao, " +
   "projeto:projetos(nome), responsavel:pessoas!responsavel_id(nome), autor:pessoas!autor_id(nome), reacoes(tipo)";
 
 type Linha = Omit<ItemCartao, "projeto" | "responsavel" | "autor" | "imagem" | "reacoes"> & {

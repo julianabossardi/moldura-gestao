@@ -121,7 +121,7 @@ export function FormItem({ item, autorId, projetos, pessoas, onSalvo }: Props) {
           </label>
           <div className="rotulo-campo">importante
             <button type="button" className="chip" aria-pressed={ehImportante} onClick={alternarImportante}>
-              <Icone nome="estrela" tam={16} /> {ehImportante ? "importante" : "marcar como importante"}
+              <Icone nome="importante" tam={16} /> {ehImportante ? "importante" : "marcar como importante"}
             </button>
           </div>
         </div>
