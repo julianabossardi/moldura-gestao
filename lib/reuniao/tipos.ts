@@ -34,6 +34,8 @@ export const painelNovo = (b: PainelProjeto | PainelProjetoAntigo): b is PainelP
 
 export const propostaReuniaoSchema = z.object({
   resumo: z.string().default(""),
+  // explicações do cruzamento com o contexto (o que foi juntado, movido ou tirado, e por quê)
+  notas: z.array(z.string()).default([]),
   projetos: z.array(
     z.object({
       projeto_slug: z.string().nullish(),
@@ -43,6 +45,8 @@ export const propostaReuniaoSchema = z.object({
         corpo: z.string().nullish(),
         responsavel: z.string().nullish(),
         prioridade: z.string().nullish(),
+        trecho: z.string().nullish(), // pedaço da transcrição que originou o item
+        dono_origem: z.enum(["fala", "papel"]).nullish(), // "fala": foi dito; "papel": sugerido pelo papel
         incluido: z.boolean().optional(),
       })).default([]),
       atualizacoes: z.array(z.object({
@@ -51,8 +55,18 @@ export const propostaReuniaoSchema = z.object({
         valor: z.string(),
         incluido: z.boolean().optional(),
       })).default([]),
-      decisoes: z.array(z.object({ titulo: z.string(), corpo: z.string().nullish(), incluido: z.boolean().optional() })).default([]),
-      ideias: z.array(z.object({ titulo: z.string(), corpo: z.string().nullish(), incluido: z.boolean().optional() })).default([]),
+      decisoes: z.array(z.object({
+        titulo: z.string(),
+        corpo: z.string().nullish(),
+        trecho: z.string().nullish(),
+        desdobramentos: z.array(z.string()).default([]), // tarefas possíveis, só sugestão
+        incluido: z.boolean().optional(),
+      })).default([]),
+      ideias: z.array(z.object({ titulo: z.string(), corpo: z.string().nullish(), trecho: z.string().nullish(), incluido: z.boolean().optional() })).default([]),
+      ja_feitas: z.array(z.union([
+        z.string().transform((titulo) => ({ titulo, corpo: null as string | null | undefined, trecho: null as string | null | undefined, incluido: undefined as boolean | undefined })),
+        z.object({ titulo: z.string(), corpo: z.string().nullish(), trecho: z.string().nullish(), incluido: z.boolean().optional() }),
+      ])).default([]),
     }),
   ),
 });

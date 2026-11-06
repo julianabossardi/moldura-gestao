@@ -1,0 +1,411 @@
+{
+  "resumo": "- **como a moldura se organiza:** é difícil definir o que cada uma entrega. A Juliana propõe um backlog básico com a lógica do folga (\"tenho 1 h e estou focada, o que dá para fazer?\"), uma hora de organização no começo da semana e a volta dos sprints com visão de longo prazo, como no projeto do Caio. A ideia é sair de \"cada uma numa frente de um pseudo-projeto\". O que está 99% pronto pode ser fechado em trabalho síncrono.\n- **projeto e processo:** o site tinha planejamento de projeto, mas virou várias pecinhas ao mesmo tempo que prospecção e comunicação. A Juliana nomeia a diferença: projeto tem marco e entrega; processo é contínuo (post toda semana). O site precisa de um novo prazo e das entregas finais ligadas a ele.\n- **o app de gestão:** a Juliana apresenta o app como rascunho, \"ainda não está 100% funcional\", e diz que não quer gastar muito tempo com ele. O app gera tarefas por tempo e estado a partir do que está priorizado na semana, mostra a equipe, deixa curtir o que foi feito e mostra o marco da semana e do mês, como no vetor. Na aba de reunião, grava tudo e distribui (atualiza tarefas abertas, cria novas). O motivo: no Miro e no WhatsApp as coisas se perdem. O Notion continua. Na demonstração, o app travou carregando.\n- **comunicação:** há um post para publicar hoje. A Juliana quer saber se ele foi mandado para a Raquel antes ou se publica e pergunta se ela quer compartilhar. O post com a Raquel sai compartilhado quando ela publicar o vídeo, mesmo sendo diferente da identidade visual da moldura. Também vão marcar meia hora para entender o design system e as regras que foram mandadas, fora da reunião semanal.\n- **prospecção:** a energia da Juliana agora é prospectar para a moldura. Nesta semana ela vai estudar tráfego pago, e a Viviane assumiu o assunto depois. Contexto:\n  - uma amiga dela, fisioterapeuta de recém-nascidos que vende curso na Hotmart, diz que o tráfego pago é o melhor retorno que tem;\n  - um sócio de tráfego pago pede opinião sobre o trabalho dele.\n  A visão muda de \"tráfego pago só para produto de escala\" para \"botar o nome no mundo\". Há dois contatos: a própria amiga (formulário ruim, histórico de atendimento no WhatsApp; a Juliana já apresentou a moldura) e as lojas do Quitandinha, que quase não investem em venda de produto. O chip do telefone da moldura tem custo mensal. A Lari pediu uma revisão do site.\n- **folga:** a primeira versão está pronta. O pedido na Google Play exige um período de teste contado em dias úteis de novembro; a conta foi \"meio aleatória\", sem saber se pega os feriados. A proposta é usar o prazo desse pedido como prazo de finalização para começar a divulgar. A Juliana já montou a política de privacidade e estava subindo os termos de uso (já subidos, segundo o estado). Faltam:\n  - a revisão do produto (\"da News\")\n  - a revisão da landing\n  - o fluxo automático de posts com a Vivi\n  - ajeitar o mapa\n  - decidir sobre a \"New\" antes de subir\n  - testar datas na agenda\n  - revisar as notificações\n  - a revisão visual\n\n  A Lari conta que corrigiu a tipografia, que o acesso estava liberado só para o usuário curador e foi atualizado, e que padronizou o que não tinha ficado bonito; agora falta a revisão visual. A Juliana propõe um dia de fim de semana para dar um gás no folga. Também comentam um material da Lari sobre como construir um site.\n- **dinheiro e venda:** a Juliana precisa de dinheiro. Dois sites pequenos que paguem seriam ótimos. O mercado está difícil: as pessoas estão acostumadas a fazer sozinhas e mal. Falta portfólio no ar: nem o vetor nem o folga estão 100% publicados, então \"o que se faz na moldura\" ainda não tem o que mostrar. A Juliana sente dificuldade de vender e quer treinar a cara de pau. Editais: BNDES agora, para o folga, e Inovativa ainda neste mês. Mas o folga precisa estar no ar para a inscrição fazer sentido.\n- **agenda:** a Juliana volta de viagem na quarta à noite e não vai a São Paulo. O dia 20 é feriado. **Ficou marcado um evento do folga para 11 de dezembro** (correção da Juliana em 04/11: \"vamos marcar folga 11\"). O dia 19 é aniversário da irmã de quem fala.",
+  "notas": [
+    "tirei \"publicar o post de hoje\" e \"ver se o post foi mandado para a raquel\" como tarefas separadas e juntei em \"alinhar com a raquel sobre o post de hoje\", porque o contexto diz que a tarefa da moldura é alinhar com ela e quem publica é ela",
+    "tirei \"publicar o post compartilhado com a raquel\": quem publica é a Raquel, não é tarefa da moldura",
+    "o post de tecnologia já foi postado segundo o estado, mas não está claro se é o mesmo post de hoje. Mantive o alinhamento com a Raquel e deixei o dono em aberto",
+    "tirei \"montar o backlog da semana no começo da semana\" das tarefas e movi para ideias: foi dito como preferência e proposta, sem ninguém assumir. Era dono provável",
+    "o \"eu\" da transcrição não vira dono de ninguém. Tirei o dono provável juliana de itens como o backlog e a revisão do produto e deixei dono_origem papel só onde o papel manda",
+    "\"marcar meia hora para entender o design system\" ficou com a juliana, pelo papel de marcar encontros. A explicação é da larissa",
+    "tirei \"estudar tráfego pago para prospecção\" da juliana: ela disse que ia estudar, mas a viviane assumiu depois (estado e contexto). Vale a última fala. A tarefa ficou com a viviane com prioridade média",
+    "tirei \"conversar com o sócio da empresa de tráfego pago\", \"seguir com a amiga fisioterapeuta\" e \"mapear as lojas do quitandinha\": são relato e observação sobre pessoas e lugares, sem ninguém dizer \"eu vou\". Foram para ideias",
+    "troquei \"decidir se mantém o chip do telefone da moldura\" por \"ligar o chip e trocar o telefone\", que é a ação dita. A fala diz \"eu só tenho que ligar\", mas quem fala é desconhecido, então o dono ficou null. O contexto manda achar um telefone e ligar o chip",
+    "tirei \"procurar dois sites pequenos que paguem\": é desejo, não tarefa. Foi para ideias",
+    "dividi \"ver o material da lari sobre como construir um site\": virou \"aplicar o material da lari sobre como construir um site\", para a viviane (provavelmente no folga), pelo contexto",
+    "\"fazer a revisão do site que a lari pediu\" ficou com juliana e viviane, que revisam e repassam para a lari. A proposta só tinha a juliana",
+    "a lari pediu a revisão do site. Passou a ser tarefa da juliana e da viviane, e o resultado volta para a lari",
+    "\"definir novo prazo do site e as entregas finais\" ficou com prioridade media: o contexto diz que moldura nunca é alta. Já estava sem dono dito",
+    "baixei para media ou baixa tudo o que estava alta na moldura, porque o contexto só deixa folga como alta",
+    "os editais: \"nova ativa\" não existe na transcrição nem no contexto. O nome dito é Inovativa. Troquei e mantive BNDES. Os dois ficaram sem dono, com prioridade media, e viraram um item por edital",
+    "tirei \"inscrever o folga no nova ativa\" e coloquei \"inscrever o folga no inovativa\" na moldura. Se for edital do folga, vale rever o projeto",
+    "\"preparar o evento do folga de 11 de dezembro\" saiu das tarefas: evento é marco. Passou a ser a decisão \"evento do folga em 11 de dezembro\", com desdobramentos como texto solto (agendar a data, criar o convite, lista de convidados, produtos físicos)",
+    "\"contar os dias úteis de teste e abrir o pedido na google play\" foi trocada por duas tarefas que o contexto nomeia: a juliana pega o número DUNS e a viviane abre o pedido, ambas por volta de 13 e 14/11. A conta dos dias úteis virou uma nota da decisão do prazo",
+    "\"subir os termos de uso\" saiu das tarefas e foi para ja_feitas, porque o estado mostra como já subidos. A política de privacidade também foi para ja_feitas",
+    "\"fazer a landing do folga\" saiu das tarefas e foi para ja_feitas, porque a viviane já fez. Criei duas tarefas novas de revisão: juliana no texto e larissa no design",
+    "\"fechar a revisão do produto\" ficou com juliana e larissa, que é o papel dito no contexto para a revisão do produto da newsletter. Prioridade alta",
+    "juntei \"decidir sobre a new antes de subir\" com a revisão da newsletter e ficou como \"decidir se a newsletter sobe junto com o aplicativo no google\". A fala mostra que \"New\" é a newsletter",
+    "o fluxo automático de posts ficou com a viviane, que é o que o contexto diz. Tirei o \"provável: juliana e viviane\" do corpo",
+    "\"ajeitar o mapa\" ficou com a larissa, conforme o contexto",
+    "\"testar se a data salva e aparece na agenda\": a fala diz \"eu vou botar um horário dessa semana\", mas quem fala é desconhecido. Dono null",
+    "\"revisar as notificações\" ficou com a juliana, conforme o contexto e a fala (\"estava comigo\")",
+    "\"fazer a revisão visual depois da padronização\" ficou com a larissa, conforme o contexto. Já estava assim",
+    "acrescentei \"cuidar do que falta para o aplicativo funcionar\" para a viviane e \"terminar o que ainda está aberto no folga\" para a larissa, ambos até o prazo do pedido no google, porque o contexto nomeia as duas e não estavam na proposta",
+    "acrescentei \"versionamento\" para a viviane, pelo contexto. A juliana não lembra se foi dito na reunião, então não tem trecho",
+    "a decisão \"prazo da google play vira prazo de finalização\" foi mantida, mas o prazo exato (por volta de 13/11/2026) vem só do contexto, sem trecho",
+    "a decisão da google play estava como \"proposta na reunião; confirmar\". Foi dita como proposta (\"acho que a gente pode colocar\"), então virou ideia, não decisão. Tirei de decisões",
+    "\"um dia de fim de semana para dar um gás no folga\" ficou em ideias: foi uma pergunta, não uma ação assumida",
+    "as ideias do app (gerar tarefas por tempo e estado, marco da semana e do mês, grava e distribui a reunião) são feedback do app de gestão, não tarefa. Mantive como ideias do app. O backlog por tempo e energia da juliana entra aí também, como referência",
+    "a conversa sobre o app de gestão da moldura não vira tarefa da moldura, conforme o contexto",
+    "tirei \"treinar a venda e se inscrever em editais\" das ideias: a parte de editais virou tarefa e a de treinar a venda ficou como \"treinar a venda\"",
+    "o resumo mencionava \"Nova Ativa\" e \"a landing\" como falta. Corrigi para Inovativa e \"a revisão da landing\"",
+    "tirei do resumo a frase \"o tráfego pago foi para a juliana\" e deixei a viviane como quem assumiu, para bater com o estado",
+    "o prazo do pedido no google play (13/11/2026) e do evento (11/12/2026) estão no contexto. O evento de 11/12 foi dito na transcrição, o prazo da google play não foi",
+    "fiquei sem saber a qual projeto pertencem \"definir novo prazo do site\" e as entregas finais: o site pode ser da moldura ou do folga. Deixei na moldura e avisei aqui"
+  ],
+  "projetos": [
+    {
+      "projeto_slug": "moldura",
+      "novas": [
+        {
+          "tipo": "tarefa",
+          "titulo": "marcar meia hora para entender o design system",
+          "corpo": "fora da reunião semanal. A larissa explica as regras que montou e mandou",
+          "responsavel": "juliana",
+          "prioridade": "media",
+          "trecho": "marcar um horário pra ela falar melhor qual é essa lógica do design System e essas regras que ela montou que ela mandou",
+          "dono_origem": "papel"
+        },
+        {
+          "tipo": "tarefa",
+          "titulo": "alinhar com a raquel sobre o post de hoje",
+          "corpo": "ver se foi mandado para ela antes, ou publicar e perguntar se ela quer compartilhar. Quem publica o post compartilhado é a raquel",
+          "responsavel": "juliana",
+          "prioridade": "media",
+          "trecho": "tem um post já que eu vou postar hoje e aí eu queria ver se ai se mandou pra tais ou eu publico e perguntou se eu quero compartilhar",
+          "dono_origem": "papel"
+        },
+        {
+          "tipo": "tarefa",
+          "titulo": "definir novo prazo do site e as entregas finais",
+          "corpo": "ligar as entregas ao projeto do site",
+          "responsavel": null,
+          "prioridade": "media",
+          "trecho": "acho que a gente tem pódio conseguir estabelecer um novo prazo E voltar ali com as entregas finais dele pra esse prazo",
+          "dono_origem": "papel"
+        },
+        {
+          "tipo": "tarefa",
+          "titulo": "revisar o site e repassar o que melhorar para a larissa",
+          "corpo": "a larissa pediu a revisão do site. Juliana e viviane revisam e identificam o que melhorar",
+          "responsavel": "juliana",
+          "prioridade": "media",
+          "trecho": "essa revisão do site que a Lari pediu então pra ver ali no detalhe",
+          "dono_origem": "papel"
+        },
+        {
+          "tipo": "tarefa",
+          "titulo": "revisar o site e repassar o que melhorar para a larissa",
+          "corpo": "a larissa pediu a revisão do site. Juliana e viviane revisam e identificam o que melhorar",
+          "responsavel": "viviane",
+          "prioridade": "media",
+          "trecho": "essa revisão do site que a Lari pediu então pra ver ali no detalhe",
+          "dono_origem": "papel"
+        },
+        {
+          "tipo": "tarefa",
+          "titulo": "aplicar o material da larissa sobre como construir um site",
+          "corpo": "provavelmente no folga",
+          "responsavel": "viviane",
+          "prioridade": "baixa",
+          "trecho": "mais alguma coisa sobre como construir um site que a Lari montou",
+          "dono_origem": "papel"
+        },
+        {
+          "tipo": "tarefa",
+          "titulo": "estudar tráfego pago para prospecção",
+          "corpo": "a juliana disse que ia estudar, mas a viviane assumiu depois",
+          "responsavel": "viviane",
+          "prioridade": "media",
+          "trecho": "eu vou estudar essa semana pra gente fazer prospecção com tráfego pago",
+          "dono_origem": "papel"
+        },
+        {
+          "tipo": "tarefa",
+          "titulo": "ligar o chip e trocar o telefone",
+          "corpo": "achar um telefone e ligar o chip. O chip tem custo mensal",
+          "responsavel": null,
+          "prioridade": "baixa",
+          "trecho": "uma coisa que era o negócio do telefone que eu tenho chip aqui eu só tenho que ligar eu vou ligar porque tem que ficar pagando mensalmente",
+          "dono_origem": "papel"
+        },
+        {
+          "tipo": "tarefa",
+          "titulo": "inscrever o folga no bndes",
+          "corpo": "montar uma inscrição forte. O folga precisa estar no ar",
+          "responsavel": null,
+          "prioridade": "media",
+          "trecho": "se inscrever nas paradas abrir o BNDES agora então montar uma inscrição foda do folga",
+          "dono_origem": "papel"
+        },
+        {
+          "tipo": "tarefa",
+          "titulo": "inscrever o folga no inovativa",
+          "corpo": "é neste mês. O folga precisa estar no ar",
+          "responsavel": null,
+          "prioridade": "media",
+          "trecho": "tem aquele Inovativa também que é esse mês Tem algumas paradas aqui que dá pra melhorar a inscrição",
+          "dono_origem": "papel"
+        }
+      ],
+      "atualizacoes": [],
+      "decisoes": [],
+      "ideias": [
+        {
+          "titulo": "montar um backlog básico por tempo e energia do dia",
+          "corpo": "\"tenho 1 h e estou focada, o que dá para fazer?\". Uma hora de organização no começo da semana. Serve de referência para o app",
+          "trecho": "eu prefiro gastar de repente uma hora organizando o que que eu queria ter no começo da semana pra ver"
+        },
+        {
+          "titulo": "voltar a trabalhar em sprints com visão de longo prazo",
+          "corpo": "como no projeto do Caio",
+          "trecho": "a gente trabalhou bem no do Caio baseado nos sprints em na visão de longo prazo então também eu sugeri voltar com isso"
+        },
+        {
+          "titulo": "trabalho síncrono para fechar o que está 99% pronto",
+          "corpo": null,
+          "trecho": "se é coisa pra finalizar talvez seja o trabalho síncroo pra finalizar tudo dos projetos que tão 99 por cento"
+        },
+        {
+          "titulo": "separar projeto (com marco) de processo (contínuo)",
+          "corpo": "posts semanais não têm marco",
+          "trecho": "é a diferença de projeto pra processo né e aí o processo é meio que mais contínuo"
+        },
+        {
+          "titulo": "tráfego pago para botar o nome no mundo",
+          "corpo": "a visão mudou de produto de escala para qualquer projeto",
+          "trecho": "qualquer projeto projeto tipo às vezes é só botar o nome no mundo E aí deixar as coisas aparecerem"
+        },
+        {
+          "titulo": "conversar com o sócio da empresa de tráfego pago",
+          "corpo": "ele pede opinião sobre o trabalho dele",
+          "trecho": "sócio e tem uma empresa de tráfego pago e ele vira e mexe pergunta coisa assim da gente"
+        },
+        {
+          "titulo": "seguir com a amiga fisioterapeuta como cliente",
+          "corpo": "formulário ruim e histórico de atendimento no whatsapp. A juliana já apresentou a moldura",
+          "trecho": "eu apresentei a moldura pra essa amiga porque ela falou ai porque eu tô com um formulário meio ruim"
+        },
+        {
+          "titulo": "olhar as lojas do quitandinha como prospecção",
+          "corpo": "quase todas quase não investem em venda de produto",
+          "trecho": "eu fui lá no Quitandinha e a lo horrível todas as loj mas assim quase todo eles não investem nisso de venda de produto"
+        },
+        {
+          "titulo": "achar dois sites pequenos que paguem",
+          "corpo": "a juliana precisa de dinheiro",
+          "trecho": "eu preciso dinheiro desesperadamente né dois sitezinhos relativamente tranquilos mas que pagar uma coisinha seria ótimo"
+        },
+        {
+          "titulo": "treinar a venda e ter mais cara de pau",
+          "corpo": null,
+          "trecho": "eu tenho tô tendo muita dificuldade de tipo conseguir vender assim sabe que eu acho que"
+        },
+        {
+          "titulo": "app: gerar tarefas a partir do priorizado da semana, por tempo e estado",
+          "corpo": "feedback do app de gestão",
+          "trecho": "gerar tarefas a partir do que tem no Mcog do folga a partir do que tá priorizado folga"
+        },
+        {
+          "titulo": "app: gravar a reunião e distribuir nas tarefas",
+          "corpo": "atualiza tarefas abertas e cria novas",
+          "trecho": "botar pra gravar tudo que a gente conversar ele Distribuir dentro do que faz sentido tipo atualizar as tarefas que estão abertas criar tarefas novas"
+        },
+        {
+          "titulo": "app: marco da semana e do mês à vista",
+          "corpo": "como no vetor",
+          "trecho": "qual é o marco da semana do mês mesma coisa que tem lá no no vetor"
+        }
+      ],
+      "ja_feitas": [
+        {
+          "titulo": "post de tecnologia da moldura",
+          "corpo": "já foi postado, segundo o estado",
+          "trecho": null
+        }
+      ]
+    },
+    {
+      "projeto_slug": "folga",
+      "novas": [
+        {
+          "tipo": "tarefa",
+          "titulo": "pegar o número DUNS",
+          "corpo": "por volta de 13 e 14/11, para o pedido no google play",
+          "responsavel": "juliana",
+          "prioridade": "alta",
+          "trecho": "com esse número a gente consegue abrir o pedido do Google Store pra subir",
+          "dono_origem": "papel"
+        },
+        {
+          "tipo": "tarefa",
+          "titulo": "abrir o pedido no google play para subir o aplicativo",
+          "corpo": "por volta de 13 e 14/11. Conferir se a conta dos dias úteis de novembro pega os feriados",
+          "responsavel": "viviane",
+          "prioridade": "alta",
+          "trecho": "em torno de novembro que são dias úteis aí foi uma conta meia aleatória né não sei se pega feriado nosso ou não",
+          "dono_origem": "papel"
+        },
+        {
+          "tipo": "tarefa",
+          "titulo": "cuidar do que falta para o aplicativo funcionar",
+          "corpo": "até o prazo do pedido no google play",
+          "responsavel": "viviane",
+          "prioridade": "alta",
+          "trecho": null,
+          "dono_origem": "papel"
+        },
+        {
+          "tipo": "tarefa",
+          "titulo": "terminar o que ainda está aberto no folga (design)",
+          "corpo": "até o prazo do pedido no google play",
+          "responsavel": "larissa",
+          "prioridade": "alta",
+          "trecho": null,
+          "dono_origem": "papel"
+        },
+        {
+          "tipo": "tarefa",
+          "titulo": "fechar a revisão do produto da newsletter",
+          "corpo": "a juliana quer fechar essa semana",
+          "responsavel": "juliana",
+          "prioridade": "alta",
+          "trecho": "a parte de revisão do produto que eu ainda não peguei que é da newsletter mas é alguma coisa que eu quero fechar essa semana",
+          "dono_origem": "papel"
+        },
+        {
+          "tipo": "tarefa",
+          "titulo": "fechar a revisão do produto da newsletter",
+          "corpo": "a juliana quer fechar essa semana",
+          "responsavel": "larissa",
+          "prioridade": "alta",
+          "trecho": "a parte de revisão do produto que eu ainda não peguei que é da newsletter mas é alguma coisa que eu quero fechar essa semana",
+          "dono_origem": "papel"
+        },
+        {
+          "tipo": "tarefa",
+          "titulo": "decidir se a newsletter sobe junto com o aplicativo no google",
+          "corpo": "depois fica ruim de pedir",
+          "responsavel": null,
+          "prioridade": "alta",
+          "trecho": "ver a questão da newsletter né se a gente vai fechar ela e já subir porque depois pra pedir isso acho que vai ser meio ruim",
+          "dono_origem": "papel"
+        },
+        {
+          "tipo": "tarefa",
+          "titulo": "revisar o texto da landing do folga",
+          "corpo": "a viviane já fez a landing. Falta revisão",
+          "responsavel": "juliana",
+          "prioridade": "alta",
+          "trecho": null,
+          "dono_origem": "papel"
+        },
+        {
+          "tipo": "tarefa",
+          "titulo": "revisar o design da landing do folga",
+          "corpo": "a viviane já fez a landing. Falta revisão",
+          "responsavel": "larissa",
+          "prioridade": "alta",
+          "trecho": null,
+          "dono_origem": "papel"
+        },
+        {
+          "tipo": "tarefa",
+          "titulo": "montar o fluxo automático de posts de divulgação",
+          "corpo": "listas como rio, baixada, criança e gratuito",
+          "responsavel": "viviane",
+          "prioridade": "alta",
+          "trecho": "o que eu comentei com a vivi de montar esse fluxo automático de post pra divulgação",
+          "dono_origem": "papel"
+        },
+        {
+          "tipo": "tarefa",
+          "titulo": "fazer a revisão visual depois da padronização",
+          "corpo": "tipografia, acesso do curador e padronização já feitos",
+          "responsavel": "larissa",
+          "prioridade": "alta",
+          "trecho": "padronizar algumas coisas que não ficaram tão bonitas aí tem que agora fazer revisão visual",
+          "dono_origem": "papel"
+        },
+        {
+          "tipo": "tarefa",
+          "titulo": "ajeitar o mapa",
+          "corpo": null,
+          "responsavel": "larissa",
+          "prioridade": "alta",
+          "trecho": "tava faltando basicamente ajeitar o mapa ver a questão da newsletter",
+          "dono_origem": "papel"
+        },
+        {
+          "tipo": "tarefa",
+          "titulo": "testar se a data salva e aparece na agenda",
+          "corpo": "a juliana vai marcar um horário nesta semana",
+          "responsavel": null,
+          "prioridade": "alta",
+          "trecho": "eu vou botar uma um horário dessa semana pra pra ver tipo se a data tá funcionando se a gente salva e aparece na agenda",
+          "dono_origem": "papel"
+        },
+        {
+          "tipo": "tarefa",
+          "titulo": "revisar as notificações",
+          "corpo": null,
+          "responsavel": "juliana",
+          "prioridade": "alta",
+          "trecho": "as notificações tava no comigo de tipo revisar elas pra ver como é que fica",
+          "dono_origem": "papel"
+        },
+        {
+          "tipo": "tarefa",
+          "titulo": "fazer o versionamento",
+          "corpo": "a juliana não lembra se foi dito na reunião",
+          "responsavel": "viviane",
+          "prioridade": "alta",
+          "trecho": null,
+          "dono_origem": "papel"
+        }
+      ],
+      "atualizacoes": [],
+      "decisoes": [
+        {
+          "titulo": "evento do folga em 11 de dezembro",
+          "corpo": "marco do projeto: 11/12/2026. A juliana confirmou em 04/11",
+          "trecho": "vamos marcar folgar 11 tipo do seu aniversário entendeu",
+          "desdobramentos": [
+            "agendar a data",
+            "criar o convite",
+            "fazer a lista de convidados",
+            "pensar nos produtos físicos para o evento"
+          ]
+        }
+      ],
+      "ideias": [
+        {
+          "titulo": "usar o prazo do pedido na google play como prazo de finalização",
+          "corpo": "as coisas precisam estar funcionando para começar a divulgar com o aplicativo no ar. Prazo por volta de 13/11/2026",
+          "trecho": "eu acho que a gente pode colocar esse prazo de pedido pro Google como prazo de finalização das coisas que a gente precisa estar funcionando"
+        },
+        {
+          "titulo": "um dia de fim de semana para dar um gás no folga",
+          "corpo": "fazer outra revisão de uso e de função",
+          "trecho": "se você acha que vale a gente tipo pegar um dia desse fim de semana e pra gente sentar e só dar um gás bizarro no folga"
+        },
+        {
+          "titulo": "posts automáticos por recorte: bairro, público, gratuito",
+          "corpo": "lógica de lista do caio",
+          "trecho": "hoje vamos fazer um posto de quê é baixada mais criança mais gratuito tipo e lançar um post com isso"
+        }
+      ],
+      "ja_feitas": [
+        {
+          "titulo": "política de privacidade do folga",
+          "corpo": "montada",
+          "trecho": "eu já montei lá a política de privacidade tava subindo termos de uso também"
+        },
+        {
+          "titulo": "termos de uso do folga",
+          "corpo": "já subidos, segundo o estado",
+          "trecho": null
+        },
+        {
+          "titulo": "landing do folga",
+          "corpo": "a viviane já fez. Está em revisão",
+          "trecho": null
+        },
+        {
+          "titulo": "tipografia, acesso do usuário curador e padronização visual do folga",
+          "corpo": "a larissa já fez. Agora falta a revisão visual",
+          "trecho": "meu único rolê foi muito bobo mas foi tipografia porque afia que a gente usa usuário que tem acesso aware era só o usuário curador"
+        }
+      ]
+    }
+  ]
+}

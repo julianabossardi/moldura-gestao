@@ -1,3 +1,4 @@
+import type { Conferencia } from "@/lib/reuniao/passo2";
 import { notFound, redirect } from "next/navigation";
 import { pessoaAtual } from "@/lib/pessoa";
 import type { Painel, PropostaReuniao, Segmento } from "@/lib/reuniao/tipos";
@@ -56,6 +57,8 @@ export default async function ReuniaoPorId({ params }: { params: Promise<{ id: s
       <RevisaoReuniao
         id={id}
         proposta={proposta}
+        conferencia={(r.conferencia ?? null) as Conferencia | null}
+        erroPasso2={r.passo2_erro ?? null}
         projetos={Object.fromEntries((projetos ?? []).map((p) => [p.slug, p.nome]))}
         titulos={Object.fromEntries((itens ?? []).map((i) => [i.id, i.titulo]))}
       />

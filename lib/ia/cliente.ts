@@ -13,6 +13,7 @@ export async function chamarJson<T>(opts: {
   usuario: string;
   schema: ZodType<T>;
   maxTokens?: number;
+  semPensar?: boolean; // respostas longas: o raciocínio não pode comer o limite de tokens
 }): Promise<T> {
   let ultimoErro: unknown;
   for (let tentativa = 0; tentativa < 2; tentativa++) {
@@ -20,6 +21,7 @@ export async function chamarJson<T>(opts: {
       const r = await anthropic.messages.create({
         model: opts.modelo,
         max_tokens: opts.maxTokens ?? 2000,
+        ...(opts.semPensar ? { thinking: { type: "between_tools" } as never } : {}),
         system: `${opts.sistema}\n\nResponda apenas com JSON válido, sem texto antes ou depois.`,
         messages: [{ role: "user", content: opts.usuario }],
       });
