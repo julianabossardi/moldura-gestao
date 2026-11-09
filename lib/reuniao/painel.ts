@@ -18,8 +18,8 @@ export async function montarPainel(supabase: SupabaseClient, desdeISO: string): 
   const [{ data: projetos }, { data: pessoas }, { data: mexidos }, { data: abertos }, { data: recs }, { data: criadas }] = await Promise.all([
     supabase.from("projetos").select("id, slug, nome").eq("status", "ativo").order("ordem_prioridade"),
     supabase.from("pessoas").select("id, nome"),
-    supabase.from("itens").select("*").gte("ultima_movimentacao", desdeISO).is("pai_id", null),
-    supabase.from("itens").select("*").in("status", ["aberta", "fazendo"]).is("pai_id", null),
+    supabase.from("itens").select("*").gte("ultima_movimentacao", desdeISO).or("pai_id.is.null,origem.eq.manual"),
+    supabase.from("itens").select("*").in("status", ["aberta", "fazendo"]).or("pai_id.is.null,origem.eq.manual"),
     supabase.from("recorrencias").select("*").eq("ativa", true),
     supabase.from("itens").select("id, recorrencia_id, periodo, vez, status, titulo").not("recorrencia_id", "is", null).gte("periodo", paraIso(paraDia(hoje) - 62)),
   ]);

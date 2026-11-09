@@ -16,7 +16,7 @@ import { ProvedorDetalhe } from "@/components/ProvedorDetalhe";
 import { LinhaClicavel } from "@/components/LinhaClicavel";
 import { LinhaDoTempo } from "@/components/projeto/LinhaDoTempo";
 import { LinksRapidos } from "@/components/projeto/LinksRapidos";
-import { SELECT_CARTAO, paraCartoes } from "@/lib/cartao";
+import { RAIZ_OU_FILHA_MANUAL, SELECT_CARTAO, paraCartoes } from "@/lib/cartao";
 import type { Marco } from "@/lib/marcos";
 import type { LinkProjeto } from "@/lib/links";
 import { TempoReal } from "@/components/TempoReal";
@@ -54,7 +54,7 @@ export default async function Projeto({ params, searchParams }: Props) {
       supabase.from("itens").select(SELECT_CARTAO).eq("projeto_id", projeto.id).eq("status", "fazendo"),
       carregarNovidades(supabase, { projetoId: projeto.id, limite: 10 }),
       supabase.from("itens").select(SELECT_CARTAO)
-        .eq("projeto_id", projeto.id).eq("tipo", "tarefa").in("status", ["aberta", "fazendo"]).is("pai_id", null),
+        .eq("projeto_id", projeto.id).eq("tipo", "tarefa").in("status", ["aberta", "fazendo"]).or(RAIZ_OU_FILHA_MANUAL),
       supabase.from("itens").select("id, titulo, corpo, criado_em").eq("projeto_id", projeto.id).eq("tipo", "decisao").order("criado_em", { ascending: false }),
       supabase.from("itens").select("id, tipo, titulo, url, validade").eq("projeto_id", projeto.id).in("tipo", ["ideia", "reflexao", "referencia"]).eq("status", "aberta").order("criado_em", { ascending: false }),
     ]);

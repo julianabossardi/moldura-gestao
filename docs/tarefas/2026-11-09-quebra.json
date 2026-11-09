@@ -1,0 +1,275 @@
+{
+  "_leia": "quebra das tarefas do folga entre Larissa e Viviane (09/11/2026). reaproveita: true atualiza só os campos listados numa tarefa que já existe. 'depende de': a tarefa só guarda uma espera (a que mais tarde fica pronta); a lista completa vai nas anotações.",
+  "tarefas": [
+    {
+      "projeto": "folga",
+      "titulo": "revisar as cores e a tipografia do folga",
+      "responsavel": "Larissa",
+      "prioridade": "alta",
+      "definicao_pronto": "paleta e escala de texto fechadas, com o uso de cada cor (fundo, texto, destaque, estados)",
+      "pai": "revisar a identidade visual: componentes, depois páginas"
+    },
+    {
+      "projeto": "folga",
+      "titulo": "revisar espaçamento, bordas e sombras",
+      "responsavel": "Larissa",
+      "prioridade": "alta",
+      "definicao_pronto": "valores definidos e aplicados nos componentes",
+      "pai": "revisar a identidade visual: componentes, depois páginas",
+      "espera": "revisar as cores e a tipografia do folga"
+    },
+    {
+      "projeto": "folga",
+      "titulo": "revisar botões, campos e seleção",
+      "responsavel": "Larissa",
+      "prioridade": "alta",
+      "definicao_pronto": "variações (normal, foco, desativado, erro) prontas",
+      "pai": "revisar a identidade visual: componentes, depois páginas",
+      "espera": "revisar as cores e a tipografia do folga"
+    },
+    {
+      "projeto": "folga",
+      "titulo": "revisar o cartão de evento",
+      "responsavel": "Larissa",
+      "prioridade": "alta",
+      "definicao_pronto": "cartão com imagem, título, data, local e preço no visual novo",
+      "pai": "revisar a identidade visual: componentes, depois páginas",
+      "espera": "revisar botões, campos e seleção"
+    },
+    {
+      "projeto": "folga",
+      "titulo": "revisar filtros e etiquetas",
+      "responsavel": "Larissa",
+      "prioridade": "alta",
+      "definicao_pronto": "filtros usáveis no celular, com estado ativo e inativo",
+      "pai": "revisar a identidade visual: componentes, depois páginas",
+      "espera": "revisar botões, campos e seleção"
+    },
+    {
+      "projeto": "folga",
+      "titulo": "revisar a navegação (menu, abas, voltar)",
+      "responsavel": "Larissa",
+      "prioridade": "alta",
+      "definicao_pronto": "navegação no visual novo, testada numa tela de 360 px",
+      "pai": "revisar a identidade visual: componentes, depois páginas",
+      "espera": "revisar botões, campos e seleção"
+    },
+    {
+      "projeto": "folga",
+      "titulo": "revisar ícones e ilustrações",
+      "responsavel": "Larissa",
+      "prioridade": "alta",
+      "definicao_pronto": "conjunto único de ícones, e ilustrações para estado vazio, erro e carregando",
+      "pai": "revisar a identidade visual: componentes, depois páginas",
+      "espera": "revisar as cores e a tipografia do folga"
+    },
+    {
+      "projeto": "folga",
+      "titulo": "documentar os componentes",
+      "responsavel": "Larissa",
+      "prioridade": "alta",
+      "definicao_pronto": "cada componente com uso, variações e o que não fazer",
+      "pai": "revisar a identidade visual: componentes, depois páginas",
+      "espera": "revisar ícones e ilustrações",
+      "corpo": "depende de: todas as anteriores (revisar as cores e a tipografia do folga; revisar espaçamento, bordas e sombras; revisar botões, campos e seleção; revisar o cartão de evento; revisar filtros e etiquetas; revisar a navegação (menu, abas, voltar); revisar ícones e ilustrações)"
+    },
+    {
+      "projeto": "folga",
+      "titulo": "refazer o design da home do folga",
+      "responsavel": "Larissa",
+      "prioridade": "alta",
+      "definicao_pronto": "home no visual novo e aprovada pelas três",
+      "pai": "revisar a identidade visual: componentes, depois páginas",
+      "espera": "revisar a navegação (menu, abas, voltar)",
+      "corpo": "depende de: revisar o cartão de evento; revisar filtros e etiquetas; revisar a navegação (menu, abas, voltar)"
+    },
+    {
+      "projeto": "folga",
+      "titulo": "refazer o design da agenda do folga",
+      "responsavel": "Larissa",
+      "prioridade": "alta",
+      "definicao_pronto": "agenda no visual novo, com o estado vazio",
+      "pai": "revisar a identidade visual: componentes, depois páginas",
+      "espera": "revisar a navegação (menu, abas, voltar)",
+      "corpo": "depende de: revisar o cartão de evento; revisar filtros e etiquetas; revisar a navegação (menu, abas, voltar)"
+    },
+    {
+      "projeto": "folga",
+      "titulo": "refazer o design do catálogo do folga",
+      "responsavel": "Larissa",
+      "prioridade": "alta",
+      "definicao_pronto": "catálogo no visual novo, com filtros",
+      "pai": "revisar a identidade visual: componentes, depois páginas",
+      "espera": "revisar a navegação (menu, abas, voltar)",
+      "corpo": "depende de: revisar o cartão de evento; revisar filtros e etiquetas; revisar a navegação (menu, abas, voltar)"
+    },
+    {
+      "projeto": "folga",
+      "titulo": "ajeitar o mapa",
+      "responsavel": "Larissa",
+      "prioridade": "alta",
+      "definicao_pronto": "mapa no visual novo, com marcadores e cartão de evento",
+      "pai": "revisar a identidade visual: componentes, depois páginas",
+      "espera": "revisar a navegação (menu, abas, voltar)",
+      "corpo": "depende de: revisar o cartão de evento; revisar filtros e etiquetas; revisar a navegação (menu, abas, voltar)",
+      "reaproveita": true
+    },
+    {
+      "projeto": "folga",
+      "titulo": "refinar o design da landing",
+      "responsavel": "Larissa",
+      "prioridade": "alta",
+      "definicao_pronto": "landing no visual novo, com o texto já revisado",
+      "pai": "revisar a identidade visual: componentes, depois páginas",
+      "corpo": "depende de: revisar o texto da landing (Juliana); revisar as cores e a tipografia do folga; revisar botões, campos e seleção",
+      "reaproveita": true
+    },
+    {
+      "projeto": "folga",
+      "titulo": "refazer o design do perfil do folga",
+      "responsavel": "Larissa",
+      "prioridade": "alta",
+      "definicao_pronto": "perfil no visual novo, com login e conta",
+      "pai": "revisar a identidade visual: componentes, depois páginas",
+      "espera": "revisar a navegação (menu, abas, voltar)",
+      "corpo": "depende de: revisar o cartão de evento; revisar filtros e etiquetas; revisar a navegação (menu, abas, voltar)"
+    },
+    {
+      "projeto": "folga",
+      "titulo": "refazer o design da newsletter do folga",
+      "responsavel": "Larissa",
+      "prioridade": "alta",
+      "definicao_pronto": "e-mail da newsletter no visual novo, testado em dois clientes de e-mail",
+      "pai": "revisar a identidade visual: componentes, depois páginas",
+      "espera": "revisar botões, campos e seleção",
+      "corpo": "depende de: revisar as cores e a tipografia do folga; revisar botões, campos e seleção"
+    },
+    {
+      "projeto": "folga",
+      "titulo": "construir o plugin de identidade do folga",
+      "responsavel": "Larissa",
+      "prioridade": "alta",
+      "definicao_pronto": "plugin que carrega cores, tipografia, componentes e regras do folga e faz um assistente produzir peças no padrão (como a moldura-visual faz para a moldura); testado com pelo menos um post e uma página",
+      "pai": "revisar a identidade visual: componentes, depois páginas",
+      "espera": "documentar os componentes",
+      "corpo": "depende de: revisar as cores e a tipografia do folga; documentar os componentes"
+    },
+    {
+      "projeto": "folga",
+      "titulo": "construir os artefatos de design do folga",
+      "responsavel": "Larissa",
+      "prioridade": "alta",
+      "definicao_pronto": "artefatos de design publicados (guia de identidade, biblioteca de componentes e as sete páginas), editáveis e exportáveis",
+      "pai": "revisar a identidade visual: componentes, depois páginas",
+      "espera": "refazer o design da newsletter do folga",
+      "corpo": "depende de: todas as páginas (refazer o design da home do folga; refazer o design da agenda do folga; refazer o design do catálogo do folga; ajeitar o mapa; refinar o design da landing; refazer o design do perfil do folga; refazer o design da newsletter do folga)"
+    },
+    {
+      "projeto": "folga",
+      "titulo": "escolher como empacotar o app para o Google Play (TWA, Capacitor ou outro)",
+      "responsavel": "Viviane",
+      "prioridade": "alta",
+      "definicao_pronto": "escolha registrada como decisão, com o motivo",
+      "pai": "adaptar o folga para mobile",
+      "reaproveita": true
+    },
+    {
+      "projeto": "folga",
+      "titulo": "ajustar as telas principais para celular (agenda, filtros, detalhe do evento, mapa)",
+      "responsavel": "Viviane",
+      "prioridade": "alta",
+      "definicao_pronto": "telas usáveis numa tela de 360 px",
+      "pai": "adaptar o folga para mobile",
+      "reaproveita": true
+    },
+    {
+      "projeto": "folga",
+      "titulo": "ajustar a navegação para celular (menu, voltar, gestos)",
+      "responsavel": "Viviane",
+      "prioridade": "alta",
+      "definicao_pronto": "dá para navegar o app inteiro com uma mão",
+      "pai": "adaptar o folga para mobile",
+      "reaproveita": true
+    },
+    {
+      "projeto": "folga",
+      "titulo": "garantir login e sessão no app instalado",
+      "responsavel": "Viviane",
+      "prioridade": "alta",
+      "definicao_pronto": "login funciona e a sessão não cai ao fechar o app",
+      "pai": "adaptar o folga para mobile",
+      "espera": "escolher como empacotar o app para o Google Play (TWA, Capacitor ou outro)",
+      "reaproveita": true
+    },
+    {
+      "projeto": "folga",
+      "titulo": "garantir que o app funciona com internet fraca",
+      "responsavel": "Viviane",
+      "prioridade": "alta",
+      "definicao_pronto": "telas principais carregam com cache e mostram aviso sem conexão",
+      "pai": "adaptar o folga para mobile"
+    },
+    {
+      "projeto": "folga",
+      "titulo": "preparar ícone, tela de abertura e manifest",
+      "responsavel": "Viviane",
+      "prioridade": "alta",
+      "definicao_pronto": "ícones e tela de abertura no visual do folga",
+      "pai": "adaptar o folga para mobile",
+      "espera": "revisar ícones e ilustrações",
+      "corpo": "depende de: revisão das cores e dos ícones (Larissa)",
+      "reaproveita": true
+    },
+    {
+      "projeto": "folga",
+      "titulo": "aplicar o design novo das páginas no código",
+      "responsavel": "Viviane",
+      "prioridade": "alta",
+      "definicao_pronto": "cada página da Larissa implementada e conferida contra o design",
+      "pai": "adaptar o folga para mobile",
+      "espera": "refazer o design da home do folga",
+      "corpo": "depende de: cada página da Larissa, uma a uma (refazer o design da home do folga; refazer o design da agenda do folga; refazer o design do catálogo do folga; ajeitar o mapa; refinar o design da landing; refazer o design do perfil do folga; refazer o design da newsletter do folga). pode começar pela home e seguir à medida que cada uma fica pronta"
+    },
+    {
+      "projeto": "folga",
+      "titulo": "gerar a versão assinada e testar em celular real",
+      "responsavel": "Viviane",
+      "prioridade": "alta",
+      "definicao_pronto": "app instalado e testado em pelo menos dois aparelhos",
+      "pai": "adaptar o folga para mobile",
+      "espera": "aplicar o design novo das páginas no código",
+      "corpo": "depende de: todas as anteriores (as outras tarefas de adaptar para mobile)",
+      "reaproveita": true
+    },
+    {
+      "projeto": "folga",
+      "titulo": "escrever a ficha do app no Google Play (descrição, prints, link da política)",
+      "responsavel": "Viviane",
+      "prioridade": "alta",
+      "definicao_pronto": "ficha preenchida e revisada (Juliana revisa o texto)",
+      "pai": "adaptar o folga para mobile",
+      "espera": "aplicar o design novo das páginas no código",
+      "corpo": "depende de: prints das páginas novas",
+      "reaproveita": true
+    },
+    {
+      "projeto": "moldura",
+      "titulo": "escrever um texto novo para o site",
+      "responsavel": "Viviane",
+      "prioridade": "baixa",
+      "definicao_pronto": "texto revisado pela Juliana e publicado no site",
+      "objetivo": "texto do mês sobre o processo de adaptar o folga para mobile",
+      "reaproveita": true
+    },
+    {
+      "projeto": "moldura",
+      "titulo": "fazer um post para o Instagram da moldura (carrossel de 4 lâminas)",
+      "responsavel": "Viviane",
+      "prioridade": "media",
+      "definicao_pronto": "post construído com o plugin, revisado pela Larissa e publicado",
+      "objetivo": "post criado com o plugin de identidade do folga",
+      "espera": "construir o plugin de identidade do folga",
+      "reaproveita": true
+    }
+  ]
+}

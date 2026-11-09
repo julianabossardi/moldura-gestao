@@ -27,6 +27,7 @@ type Item = {
   responsavel_id: string | null; origem: string; minutos_estimados: number | null; midia: string[] | null; criado_em: string;
   visivel_cliente: boolean; comeca_em: string | null; recorrencia_id: string | null;
   espera: { titulo: string; status: string } | null;
+  pai: { titulo: string } | null;
   projeto: { nome: string } | null; responsavel: { nome: string } | null; autor: { nome: string } | null;
   reacoes: { tipo: string }[];
   audios: { id: string; pessoa_id: string; audio_path: string | null; pessoa: { nome: string } | null }[];
@@ -110,6 +111,7 @@ export function DetalheItem({ id, euId, projetos, pessoas, onFechar }: Props) {
         {atrasada(cartao) && <span className="marca atrasada"><Icone nome="atrasada" tam={16} /> atrasada</span>}
         {item.status !== "aberta" && <span className="m-mono">{STATUS[item.status] ?? item.status}</span>}
         {item.minutos_estimados && <span className="m-mono">{item.minutos_estimados} min</span>}
+        {item.pai && <span className="m-mono">parte de: {item.pai.titulo}</span>}
         {item.recorrencia_id && <span className="m-mono">tarefa que se repete</span>}
         {item.comeca_em && item.comeca_em > hojeISO() && <span className="m-mono">começa em {new Date(item.comeca_em + "T12:00").toLocaleDateString("pt-BR", { day: "2-digit", month: "long" })}</span>}
         {item.espera && item.espera.status !== "concluida" && <span className="m-mono">espera: {item.espera.titulo}</span>}

@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { pessoaAtual } from "@/lib/pessoa";
 import { diasAtras, diasDesde } from "@/lib/datas";
+import { RAIZ_OU_FILHA_MANUAL } from "@/lib/cartao";
 import { NavegacaoProjetos } from "@/components/NavegacaoProjetos";
 import { Cabecalho } from "@/components/Cabecalho";
 import { ProvedorDetalhe } from "@/components/ProvedorDetalhe";
@@ -18,7 +19,7 @@ export default async function Backlog() {
   const [{ data: abertas }, { data: projetos }, { data: socias }, { data: recortes }] = await Promise.all([
     supabase.from("itens")
       .select("id, titulo, corpo, prioridade, prazo, status, ultima_movimentacao, recorrencia_id, projeto_id, responsavel_id, projeto:projetos(nome), responsavel:pessoas!responsavel_id(nome)")
-      .eq("tipo", "tarefa").in("status", ["aberta", "fazendo"]).is("pai_id", null)
+      .eq("tipo", "tarefa").in("status", ["aberta", "fazendo"]).or(RAIZ_OU_FILHA_MANUAL)
       .order("ultima_movimentacao").limit(1000),
     supabase.from("projetos").select("id, nome").eq("status", "ativo").order("ordem_prioridade"),
     supabase.from("pessoas").select("id, nome").eq("papel", "socia").eq("ativa", true).order("nome"),

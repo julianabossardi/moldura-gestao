@@ -9,7 +9,7 @@ import { Mostrar } from "@/components/Mostrar";
 import { PainelDoDia } from "@/components/PainelDoDia";
 import { CapturasAutomaticas } from "@/components/CapturasAutomaticas";
 import { ProvedorDetalhe } from "@/components/ProvedorDetalhe";
-import { SELECT_CARTAO, aindaNaoComeca, paraCartoes } from "@/lib/cartao";
+import { RAIZ_OU_FILHA_MANUAL, SELECT_CARTAO, aindaNaoComeca, paraCartoes } from "@/lib/cartao";
 import { carregarNovidades } from "@/lib/novidades";
 import { Novidades } from "@/components/Novidades";
 import { NavegacaoProjetos } from "@/components/NavegacaoProjetos";
@@ -41,7 +41,7 @@ export default async function Inicio() {
     supabase.from("projetos").select("id, nome, slug, ordem_prioridade").eq("status", "ativo").order("ordem_prioridade"),
     // todas as minhas tarefas (ou sem responsável), em qualquer status; feitas e canceladas só as recentes (filtro abaixo)
     supabase.from("itens").select(SELECT_CARTAO).eq("tipo", "tarefa").in("status", ["aberta", "fazendo", "concluida", "arquivada"])
-      .or(`responsavel_id.eq.${pessoa.id},responsavel_id.is.null`).is("pai_id", null).order("ultima_movimentacao", { ascending: false }).limit(200),
+      .or(`responsavel_id.eq.${pessoa.id},responsavel_id.is.null`).or(RAIZ_OU_FILHA_MANUAL).order("ultima_movimentacao", { ascending: false }).limit(200),
     // tarefas de agora: em andamento, ou feitas hoje
     supabase.from("itens").select(SELECT_CARTAO).eq("tipo", "tarefa").eq("responsavel_id", pessoa.id)
       .or(`status.eq.fazendo,and(status.eq.concluida,concluido_em.gte.${hojeISO()})`).order("ultima_movimentacao", { ascending: false }),

@@ -26,7 +26,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
   const [{ data: pessoas }, { data: projetos }, { data: itens }, { data: concluidos }, { data: recs }, { data: criadasRec }] = await Promise.all([
     supabase.from("pessoas").select("id, nome"),
     supabase.from("projetos").select("id, slug, nome").eq("status", "ativo").order("ordem_prioridade"),
-    supabase.from("itens").select("id, titulo, status, projeto_id, responsavel:pessoas!responsavel_id(nome)").in("status", ["aberta", "fazendo"]).is("pai_id", null).eq("tipo", "tarefa"),
+    supabase.from("itens").select("id, titulo, status, projeto_id, responsavel:pessoas!responsavel_id(nome)").in("status", ["aberta", "fazendo"]).or("pai_id.is.null,origem.eq.manual").eq("tipo", "tarefa"),
     supabase.from("itens").select("titulo, status, concluido_em, projeto_id, responsavel:pessoas!responsavel_id(nome)").eq("status", "concluida").eq("tipo", "tarefa").gte("concluido_em", desde),
     supabase.from("recorrencias").select("*").eq("ativa", true),
     supabase.from("itens").select("id, titulo, status, recorrencia_id, periodo, vez").not("recorrencia_id", "is", null).gte("periodo", paraIso(paraDia(hoje) - 35)),

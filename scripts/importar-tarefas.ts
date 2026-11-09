@@ -6,6 +6,8 @@
  *
  * pula o que já existe (mesmo título no mesmo projeto, em qualquer status), como o "aprovar" faz com as já feitas.
  * a filha nasce com pai_id; "espera" aponta a tarefa que precisa ficar pronta antes. grava com origem "manual" e embedding.
+ * "reaproveita": true numa tarefa que já existe atualiza só os campos que o JSON traz (dono, definição de pronto, espera...),
+ * mostrando antes e depois. sem essa marca, o que já existe é sempre pulado e nunca alterado.
  * contra um banco que não é o local, só grava com --confirmo-banco-remoto.
  */
 import { readFileSync } from "node:fs";
@@ -18,7 +20,7 @@ import { hojeISO } from "../lib/datas";
 
 type TarefaJson = {
   projeto: string; titulo: string; responsavel?: string | null; prioridade: string; definicao_pronto?: string | null; objetivo?: string | null;
-  prazo?: string; comeca_em?: string; pai?: string; espera?: string;
+  prazo?: string; comeca_em?: string; pai?: string; espera?: string; corpo?: string; reaproveita?: boolean;
 };
 type RecorrenciaJson = {
   projeto: string; titulo: string; responsavel?: string | null; prioridade: string; frequencia: Recorrencia["frequencia"]; quantidade: number;
@@ -26,7 +28,7 @@ type RecorrenciaJson = {
 };
 type MarcoJson = { projeto: string; titulo: string; data: string; substitui?: string; desdobramentos?: string[] };
 type IdeiaJson = { projeto: string; projeto_se_nao_houver?: string; titulo: string; autor: string };
-type Arquivo = { recorrencias: RecorrenciaJson[]; tarefas: TarefaJson[]; marcos: MarcoJson[]; ideias: IdeiaJson[] };
+type Arquivo = { recorrencias?: RecorrenciaJson[]; tarefas?: TarefaJson[]; marcos?: MarcoJson[]; ideias?: IdeiaJson[] };
 
 const norm = (s: string) => s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().trim();
 const arg = (nome: string) => { const i = process.argv.indexOf(`--${nome}`); return i >= 0 ? process.argv[i + 1] : undefined; };
@@ -37,7 +39,8 @@ async function main() {
   const arquivo = arg("arquivo") ?? "docs/tarefas/2026-11-09.json";
   const gravar = tem("gravar");
   if (gravar && tem("simular")) throw new Error("escolha --simular ou --gravar, não os dois");
-  const dados = JSON.parse(readFileSync(arquivo, "utf8")) as Arquivo;
+  const bruto = JSON.parse(readFileSync(arquivo, "utf8")) as Arquivo;
+  const dados = { recorrencias: bruto.recorrencias ?? [], tarefas: bruto.tarefas ?? [], marcos: bruto.marcos ?? [], ideias: bruto.ideias ?? [] };
 
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL ?? "";
   const local = /^https?:\/\/(127\.0\.0\.1|localhost|\[::1\])[:/]/.test(url);
@@ -48,7 +51,7 @@ async function main() {
   const [{ data: projetos }, { data: pessoas }, { data: itens }, { data: recs }] = await Promise.all([
     admin.from("projetos").select("id, slug, nome, marcos"),
     admin.from("pessoas").select("id, nome").eq("papel", "socia"),
-    admin.from("itens").select("id, titulo, tipo, projeto_id"),
+    admin.from("itens").select("id, titulo, tipo, projeto_id, status, responsavel_id, prioridade, objetivo, definicao_pronto, corpo, prazo, comeca_em, pai_id, espera_item_id"),
     admin.from("recorrencias").select("id, titulo, projeto_id"),
   ]);
   const projeto = (slug: string) => projetos?.find((p) => p.slug === slug);
@@ -58,27 +61,70 @@ async function main() {
   const erros: string[] = [];
 
   // ---- tarefas ----
+  type Existente = NonNullable<typeof itens>[number];
   const existeTarefa = (titulo: string, pid: string) => itens?.find((i) => i.tipo === "tarefa" && i.projeto_id === pid && norm(i.titulo) === norm(titulo));
-  type Plano = { j: TarefaJson; pid: string; dono: string | null; acao: "entra" | "pula" };
+  const chave = (pid: string | null, titulo: string) => `${pid}|${norm(titulo)}`;
+  // pai e espera valem no próprio projeto; se o título não está lá, vale o de outro projeto (ex.: um post da moldura que espera o plugin do folga)
+  const chavesNoArquivo = new Set<string>();
+  const achaChave = (pid: string, ref: string): string | null => {
+    const propria = chave(pid, ref);
+    const todas = [...chavesNoArquivo, ...(itens ?? []).filter((i) => i.tipo === "tarefa").map((i) => chave(i.projeto_id, i.titulo))];
+    if (todas.includes(propria)) return propria;
+    const outras = [...new Set(todas.filter((k) => k.endsWith(`|${norm(ref)}`)))];
+    return outras.length === 1 ? outras[0] : null;
+  };
+  const idDe = (pid: string, ref: string) => {
+    const k = achaChave(pid, ref);
+    return k ? ids.get(k) ?? null : null;
+  };
+  const ids = new Map<string, string>(); // projeto_id|título normalizado -> id (do banco e, na gravação, dos criados)
+  for (const i of itens ?? []) if (i.tipo === "tarefa" && i.projeto_id) ids.set(chave(i.projeto_id, i.titulo), i.id);
+  const tituloDe = (id: string | null) => (id ? itens?.find((i) => i.id === id)?.titulo ?? "?" : "nenhuma");
+  type Plano = { j: TarefaJson; pid: string; dono: string | null; acao: "entra" | "pula" | "reaproveita"; existente?: Existente; mudancas: { campo: string; antes: string; depois: string; dados: Record<string, unknown> }[]; nota?: string };
   const plano: Plano[] = [];
+  const curto = (t: string | null | undefined) => (t ? (t.length > 70 ? t.slice(0, 67) + "..." : t) : "·");
   for (const j of dados.tarefas) {
     const p = projeto(j.projeto);
     if (!p) { erros.push(`projeto "${j.projeto}" não existe (tarefa "${j.titulo}")`); continue; }
     const dono = j.responsavel ? pessoa(j.responsavel) : undefined;
     if (j.responsavel && !dono) erros.push(`responsável "${j.responsavel}" não existe (tarefa "${j.titulo}")`);
-    plano.push({ j, pid: p.id, dono: dono?.id ?? null, acao: existeTarefa(j.titulo, p.id) ? "pula" : "entra" });
+    const existente = existeTarefa(j.titulo, p.id);
+    const item: Plano = { j, pid: p.id, dono: dono?.id ?? null, acao: existente ? "pula" : "entra", existente, mudancas: [] };
+    if (existente && j.reaproveita) {
+      if (["concluida", "arquivada"].includes(existente.status)) item.nota = `já existe e está ${existente.status}: não mexo`;
+      else {
+        // só os campos que o JSON traz; pai e espera são comparados pelo título
+        const m = item.mudancas;
+        const tit = (ref?: string) => (ref ? idDe(p.id, ref) ?? `novo:${ref}` : undefined);
+        if (j.responsavel !== undefined && (dono?.id ?? null) !== existente.responsavel_id) m.push({ campo: "responsável", antes: pessoas?.find((x) => x.id === existente.responsavel_id)?.nome ?? "sem dono", depois: dono?.nome ?? "sem dono", dados: { responsavel_id: dono?.id ?? null } });
+        if (j.prioridade && j.prioridade !== existente.prioridade) m.push({ campo: "prioridade", antes: existente.prioridade ?? "·", depois: j.prioridade, dados: { prioridade: j.prioridade } });
+        if (j.objetivo !== undefined && (j.objetivo ?? null) !== existente.objetivo) m.push({ campo: "objetivo", antes: curto(existente.objetivo), depois: curto(j.objetivo), dados: { objetivo: j.objetivo ?? null } });
+        if (j.definicao_pronto !== undefined && (j.definicao_pronto ?? null) !== existente.definicao_pronto) m.push({ campo: "definição de pronto", antes: curto(existente.definicao_pronto), depois: curto(j.definicao_pronto), dados: { definicao_pronto: j.definicao_pronto ?? null } });
+        if (j.corpo !== undefined && j.corpo !== existente.corpo) m.push({ campo: "anotações", antes: curto(existente.corpo), depois: curto(j.corpo), dados: { corpo: j.corpo } });
+        if (j.prazo !== undefined && j.prazo !== existente.prazo) m.push({ campo: "prazo", antes: dataBr(existente.prazo), depois: dataBr(j.prazo), dados: { prazo: j.prazo } });
+        if (j.comeca_em !== undefined && j.comeca_em !== existente.comeca_em) m.push({ campo: "começa em", antes: dataBr(existente.comeca_em), depois: dataBr(j.comeca_em), dados: { comeca_em: j.comeca_em } });
+        if (j.pai !== undefined && tit(j.pai) !== existente.pai_id) m.push({ campo: "filha de", antes: tituloDe(existente.pai_id), depois: j.pai, dados: { __pai: j.pai } });
+        if (j.espera !== undefined && tit(j.espera) !== existente.espera_item_id) m.push({ campo: "espera", antes: tituloDe(existente.espera_item_id), depois: j.espera, dados: { __espera: j.espera } });
+        item.acao = m.length ? "reaproveita" : "pula";
+        if (!m.length) item.nota = "já existe e já está assim";
+      }
+    }
+    plano.push(item);
   }
-  const titulosNoArquivo = (pid: string) => new Set(plano.filter((x) => x.pid === pid).map((x) => norm(x.j.titulo)));
+  for (const x of plano) chavesNoArquivo.add(chave(x.pid, x.j.titulo));
   for (const x of plano) {
     for (const ref of [x.j.pai, x.j.espera].filter(Boolean) as string[]) {
-      if (!titulosNoArquivo(x.pid).has(norm(ref)) && !existeTarefa(ref, x.pid)) erros.push(`"${x.j.titulo}" aponta para "${ref}", que não está no arquivo nem no banco`);
+      if (!achaChave(x.pid, ref)) erros.push(`"${x.j.titulo}" aponta para "${ref}", que não está no arquivo nem no banco (ou há mais de uma com esse título)`);
     }
   }
 
   console.log("\n== tarefas ==");
+  const ROTULO = { entra: "ENTRA ", pula: "pula  ", reaproveita: "REAPROV" } as const;
   for (const x of plano) {
     const marcas = [x.j.pai && `filha de "${x.j.pai}"`, x.j.espera && `espera "${x.j.espera}"`, x.j.comeca_em && `começa em ${dataBr(x.j.comeca_em)}`, x.j.prazo && `prazo ${dataBr(x.j.prazo)}`].filter(Boolean).join("; ");
-    console.log(`${x.acao === "entra" ? "ENTRA" : "pula "}  ${x.j.projeto.padEnd(7)} ${x.j.prioridade.padEnd(5)} ${(pessoas?.find((p) => p.id === x.dono)?.nome ?? "sem dono").padEnd(8)} ${x.j.titulo}${marcas ? `  [${marcas}]` : ""}`);
+    const dono = x.j.responsavel ?? pessoas?.find((p) => p.id === x.existente?.responsavel_id)?.nome ?? "sem dono";
+    console.log(`${ROTULO[x.acao]} ${x.j.projeto.padEnd(7)} ${(x.j.prioridade ?? "").padEnd(5)} ${dono.padEnd(8)} ${x.j.titulo}${x.acao === "entra" && marcas ? `  [${marcas}]` : ""}${x.nota ? `  (${x.nota})` : ""}`);
+    for (const m of x.mudancas) console.log(`           ${m.campo}: ${m.antes}  →  ${m.depois}`);
   }
 
   // ---- recorrências ----
@@ -122,7 +168,8 @@ async function main() {
   }
 
   const entram = plano.filter((x) => x.acao === "entra").length;
-  console.log(`\nresumo: ${entram} tarefas entram, ${plano.length - entram} puladas; ${modelos.filter((m) => !m.ja).length} recorrências entram`);
+  const reaprov = plano.filter((x) => x.acao === "reaproveita").length;
+  console.log(`\nresumo: ${entram} tarefas entram, ${reaprov} reaproveitadas, ${plano.length - entram - reaprov} puladas; ${modelos.filter((m) => !m.ja).length} recorrências entram`);
   if (erros.length) {
     console.error("\nproblemas (nada foi gravado):\n- " + erros.join("\n- "));
     process.exit(1);
@@ -130,20 +177,38 @@ async function main() {
   if (!gravar) return console.log("simulação: nada foi gravado. para gravar, repita com --gravar.");
 
   // ---- gravar ----
-  const ids = new Map<string, string>(); // projeto_id|título normalizado -> id
-  for (const i of itens ?? []) if (i.tipo === "tarefa" && i.projeto_id) ids.set(`${i.projeto_id}|${norm(i.titulo)}`, i.id);
-  const chave = (pid: string, titulo: string) => `${pid}|${norm(titulo)}`;
 
-  // pais e tarefas soltas primeiro, depois as filhas e as que esperam
-  const ordem = [...plano.filter((x) => !x.j.pai && !x.j.espera), ...plano.filter((x) => x.j.pai || x.j.espera)];
+  // quem é apontado (pai ou espera) é gravado antes de quem aponta
+  const ordem: Plano[] = [];
+  const faltam = plano.filter((x) => x.acao !== "pula");
+  const prontos = new Set<string>();
+  for (let volta = 0; volta < 20 && faltam.length; volta++) {
+    for (const x of [...faltam]) {
+      const refs = [x.j.pai, x.j.espera].filter(Boolean).map((r) => achaChave(x.pid, r!)!);
+      // só espera quem aponta para alguém que ainda vai ser criado ou alterado nesta rodada
+      if (refs.every((r) => prontos.has(r) || !faltam.some((f) => chave(f.pid, f.j.titulo) === r))) {
+        ordem.push(x); prontos.add(chave(x.pid, x.j.titulo)); faltam.splice(faltam.indexOf(x), 1);
+      }
+    }
+  }
+  if (faltam.length) throw new Error(`referência circular entre tarefas: ${faltam.map((x) => x.j.titulo).join("; ")}`);
+
   for (const x of ordem) {
-    if (x.acao === "pula") continue;
     const { j } = x;
+    const pai = j.pai ? idDe(x.pid, j.pai) : null;
+    const espera = j.espera ? idDe(x.pid, j.espera) : null;
+    if (x.acao === "reaproveita") {
+      const dados: Record<string, unknown> = {};
+      for (const m of x.mudancas) for (const [k, v] of Object.entries(m.dados)) dados[k === "__pai" ? "pai_id" : k === "__espera" ? "espera_item_id" : k] = k === "__pai" ? pai : k === "__espera" ? espera : v;
+      const { error } = await admin.from("itens").update(dados).eq("id", x.existente!.id);
+      if (error) throw new Error(`"${j.titulo}": ${error.message}`);
+      continue;
+    }
     const emb = await gerarEmbedding(textoParaEmbedding({ titulo: j.titulo, corpo: j.definicao_pronto }));
     const { data, error } = await admin.from("itens").insert({
-      tipo: "tarefa", origem: "manual", autor_id: juliana.id, projeto_id: x.pid, titulo: j.titulo, objetivo: j.objetivo ?? null,
+      tipo: "tarefa", origem: "manual", autor_id: juliana.id, projeto_id: x.pid, titulo: j.titulo, objetivo: j.objetivo ?? null, corpo: j.corpo ?? null,
       definicao_pronto: j.definicao_pronto ?? null, responsavel_id: x.dono, prioridade: j.prioridade, prazo: j.prazo ?? null, comeca_em: j.comeca_em ?? null,
-      pai_id: j.pai ? ids.get(chave(x.pid, j.pai)) ?? null : null, espera_item_id: j.espera ? ids.get(chave(x.pid, j.espera)) ?? null : null,
+      pai_id: pai, espera_item_id: espera,
       ...(emb && { embedding: JSON.stringify(emb) }),
     }).select("id").single();
     if (error) throw new Error(`"${j.titulo}": ${error.message}`);

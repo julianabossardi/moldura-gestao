@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { pessoaAtual } from "@/lib/pessoa";
-import { SELECT_CARTAO, aindaNaoComeca, paraCartoes } from "@/lib/cartao";
+import { RAIZ_OU_FILHA_MANUAL, SELECT_CARTAO, aindaNaoComeca, paraCartoes } from "@/lib/cartao";
 import { diasAtras, hojeISO } from "@/lib/datas";
 import type { ResumoPessoa } from "@/lib/estados-bonequinho";
 import { Bonequinho, rotuloEstado } from "@/components/Bonequinho";
@@ -33,7 +33,7 @@ export default async function PaginaDaColega({ params }: { params: Promise<{ id:
   const recente = diasAtras(30);
   const [{ data: todasBrutas }, { data: emCursoBrutas }, { data: enviados }] = await Promise.all([
     supabase.from("itens").select(SELECT_CARTAO).eq("tipo", "tarefa").in("status", ["aberta", "fazendo", "concluida", "arquivada"])
-      .eq("responsavel_id", id).is("pai_id", null).order("ultima_movimentacao", { ascending: false }).limit(200),
+      .eq("responsavel_id", id).or(RAIZ_OU_FILHA_MANUAL).order("ultima_movimentacao", { ascending: false }).limit(200),
     supabase.from("itens").select(SELECT_CARTAO).eq("tipo", "tarefa").eq("responsavel_id", id)
       .or(`status.eq.fazendo,and(status.eq.concluida,concluido_em.gte.${hojeISO()})`).order("ultima_movimentacao", { ascending: false }),
     supabase.from("bilhetes").select("id, texto, criado_em, lido_em").eq("de_id", eu.id).eq("para_id", id).order("criado_em", { ascending: false }).limit(5),

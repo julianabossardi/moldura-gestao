@@ -44,6 +44,7 @@ export function CartaoItem({ item, euId, destaque, mostrarProjeto, topo, rodape,
             {importante(item) && <span title="importante" aria-label="importante"><Icone nome="importante" tam={16} /></span>}
             {atrasada(item) && <span title="atrasada" className="marca atrasada"><Icone nome="atrasada" tam={16} /> atrasada</span>}
             {item.status === "fazendo" && <span className="selo">em andamento</span>}
+            {item.parte_de && <span className="m-mono" title="parte de outra tarefa">parte de: {item.parte_de}</span>}
             {item.recorrente && <span className="m-mono" title="tarefa que se repete">repete</span>}
             {item.espera && <span className="m-mono" title="espera outra tarefa">espera: {item.espera}</span>}
             {aindaNaoComeca(item) && <span className="m-mono">começa em {new Date(item.comeca_em + "T12:00").toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" })}</span>}
