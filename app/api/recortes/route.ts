@@ -16,15 +16,18 @@ export async function POST(req: Request) {
   // projeto_id nulo = "todos": candidatas de todos os projetos ativos
   let consulta = supabase
     .from("itens")
-    .select("id, titulo, corpo, prioridade, prazo, ultima_movimentacao, projeto_id, projeto:projetos!inner(status)")
+    .select("id, titulo, corpo, prioridade, prazo, comeca_em, ultima_movimentacao, projeto_id, projeto:projetos!inner(status)")
     .eq("tipo", "tarefa")
     .eq("status", "aberta")
     .eq("projeto.status", "ativo")
     .or(`responsavel_id.eq.${auth.user.id},responsavel_id.is.null`);
   if (projeto_id) consulta = consulta.eq("projeto_id", projeto_id);
-  const { data: tarefas } = await consulta;
+  const { data: todas } = await consulta;
+  // o que só começa mais tarde não é sugerido hoje
+  const hoje = new Date().toISOString().slice(0, 10);
+  const tarefas = (todas ?? []).filter((t) => !t.comeca_em || t.comeca_em <= hoje);
 
-  const ordenadas = (tarefas ?? [])
+  const ordenadas = tarefas
     .sort(
       (a, b) =>
         PESO[(a.prioridade ?? "media") as keyof typeof PESO] - PESO[(b.prioridade ?? "media") as keyof typeof PESO] ||

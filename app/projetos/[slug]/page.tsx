@@ -26,6 +26,9 @@ import { EditarProjeto } from "@/components/projeto/EditarProjeto";
 import { DocumentosFixados } from "@/components/projeto/DocumentosFixados";
 import { ColunasTarefas } from "@/components/projeto/ColunasTarefas";
 import { Cabecalho } from "@/components/Cabecalho";
+import { OQueSeRepete } from "@/components/projeto/OQueSeRepete";
+import { NovaTarefa } from "@/components/projeto/NovaTarefa";
+import { paraDia, paraIso, previsao, type ItemRecorrente, type Recorrencia } from "@/lib/recorrencia";
 
 type Props = { params: Promise<{ slug: string }>; searchParams: Promise<{ aba?: string }> };
 
@@ -57,6 +60,18 @@ export default async function Projeto({ params, searchParams }: Props) {
     ]);
 
   const [fazendo, tarefas] = await Promise.all([paraCartoes(supabase, fazendoBrutas), paraCartoes(supabase, tarefasBrutas)]);
+
+  // o que se repete: o modelo, mais a previsão calculada das próximas 4 semanas (nada disso é gravado)
+  const hoje = hojeISO();
+  const { data: recBrutas } = await supabase.from("recorrencias").select("*").eq("projeto_id", projeto.id).order("criado_em");
+  const recs = (recBrutas ?? []) as Recorrencia[];
+  const { data: criadas } = recs.length
+    ? await supabase.from("itens").select("id, recorrencia_id, periodo, vez, status").in("recorrencia_id", recs.map((r) => r.id)).gte("periodo", paraIso(paraDia(hoje) - 62))
+    : { data: [] };
+  const recorrencias = recs.map((r) => ({
+    ...r, previsao: previsao(r, hoje, (criadas ?? []) as ItemRecorrente[]),
+    responsavel: (socias ?? []).find((p) => p.id === r.responsavel_id)?.nome ?? null,
+  }));
   // sprint quinzenal: em andamento + abertas com prazo até o fim dela, as atrasadas primeiro
   const sprint = sprintAtual(projeto.sprint_inicio ?? projeto.criado_em, hojeISO());
   // inclui recortes em andamento (fazendo traz também as subtarefas)
@@ -92,6 +107,8 @@ export default async function Projeto({ params, searchParams }: Props) {
           </div>
           {!arquivado && (
             <div className="linha">
+              <NovaTarefa projetoId={projeto.id} euId={pessoa.id} projetos={[{ id: projeto.id, nome: projeto.nome }, ...(outros ?? [])]} pessoas={pessoasEdicao} recorrentes={recs.map((r) => ({ id: r.id, titulo: r.titulo, projeto_id: r.projeto_id }))} />
+              <OQueSeRepete projetoId={projeto.id} euId={pessoa.id} recorrencias={recorrencias} pessoas={socias ?? []} />
               <EditarProjeto projetoId={projeto.id} marcos={marcos} metricas={(projeto.metricas ?? []) as Metrica[]} integracoes={integracoes} />
               <ArquivarProjeto projetoId={projeto.id} nome={projeto.nome} tarefas={(tarefas ?? []).map((t) => ({ id: t.id, titulo: t.titulo }))} outros={outros ?? []} />
             </div>

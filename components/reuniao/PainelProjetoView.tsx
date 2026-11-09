@@ -8,10 +8,12 @@ import { Icone } from "../Icone";
 // o que mudou em um projeto desde a reunião anterior, em caixinhas (usado ao vivo e no histórico)
 export function PainelProjetoView({ bloco }: { bloco: PainelProjeto | PainelProjetoAntigo }) {
   if (!painelNovo(bloco)) return <PainelAntigo bloco={bloco} />;
-  const vazio = !bloco.emAndamento.length && !bloco.feito.length && !bloco.falta.length && !bloco.entregas.length && !bloco.ideias.length;
+  const vazio = !bloco.previsto?.length && !bloco.expirou?.length && !bloco.emAndamento.length && !bloco.feito.length && !bloco.falta.length && !bloco.entregas.length && !bloco.ideias.length;
   return (
     <div className="painel-reuniao">
       {vazio && <p className="aviso">nada se mexeu aqui desde a última reunião.</p>}
+      <Previsto itens={bloco.previsto ?? []} />
+      <Grupo titulo="expirou desde a última reunião" ajuda="tarefas que se repetem e ficaram abertas quando o período acabou" itens={bloco.expirou ?? []} />
       <Grupo titulo="em andamento" itens={bloco.emAndamento} />
       <Grupo titulo="o que falta" ajuda="tarefas abertas, as importantes primeiro" itens={bloco.falta} />
       <Grupo titulo="feito desde a última reunião" itens={bloco.feito} />
@@ -19,6 +21,22 @@ export function PainelProjetoView({ bloco }: { bloco: PainelProjeto | PainelProj
       <Grupo titulo="entrou por captura" itens={bloco.novas} />
       <Grupo titulo="ideias abertas" itens={bloco.ideias} />
     </div>
+  );
+}
+
+const ROTULO_ESTADO: Record<string, string> = { "a criar": "ainda vai ser criada", aberta: "a fazer", fazendo: "em andamento", concluida: "feita", expirada: "expirou" };
+const dataCurta = (iso: string) => new Date(iso + "T12:00").toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" });
+
+function Previsto({ itens }: { itens: NonNullable<PainelProjeto["previsto"]> }) {
+  if (!itens.length) return null;
+  const feitas = itens.filter((i) => i.estado === "concluida").length;
+  return (
+    <section className="bloco">
+      <div><h3 className="m-lead" style={{ margin: 0 }}>previsto para esta semana</h3><span className="m-meta">o que se repete: {itens.length} previstas, {feitas} {feitas === 1 ? "feita" : "feitas"}</span></div>
+      {itens.map((i, k) => (
+        <div className="item" key={k}><span>{i.titulo}</span><span className="m-mono">até {dataCurta(i.prazo)} · {ROTULO_ESTADO[i.estado]}</span></div>
+      ))}
+    </section>
   );
 }
 

@@ -9,7 +9,7 @@ import { Mostrar } from "@/components/Mostrar";
 import { PainelDoDia } from "@/components/PainelDoDia";
 import { CapturasAutomaticas } from "@/components/CapturasAutomaticas";
 import { ProvedorDetalhe } from "@/components/ProvedorDetalhe";
-import { SELECT_CARTAO, paraCartoes } from "@/lib/cartao";
+import { SELECT_CARTAO, aindaNaoComeca, paraCartoes } from "@/lib/cartao";
 import { carregarNovidades } from "@/lib/novidades";
 import { Novidades } from "@/components/Novidades";
 import { NavegacaoProjetos } from "@/components/NavegacaoProjetos";
@@ -48,7 +48,7 @@ export default async function Inicio() {
     supabase.from("capturas").select("id, proposta, autor_id, autor:pessoas!autor_id(nome, papel)").eq("status", "proposta").order("criado_em"),
     supabase.from("pessoas").select("id, nome").eq("ativa", true).eq("papel", "socia"),
     supabase.rpc("equipe_resumo"),
-    // tarefas minhas que a faxina marcou como paradas (sem responsável entram na faxina de quem criou)
+    // tarefas minhas que o job marcou como paradas (sem responsável entram no backlog de quem criou)
     supabase.from("itens").select("id", { count: "exact", head: true }).eq("tipo", "tarefa").eq("status", "aberta").is("pai_id", null).not("parada_em", "is", null)
       .or(`responsavel_id.eq.${pessoa.id},and(responsavel_id.is.null,autor_id.eq.${pessoa.id})`),
   ]);
@@ -72,7 +72,9 @@ export default async function Inicio() {
     paraCartoes(supabase, ((abertasBrutas ?? []) as unknown as { status: string; ultima_movimentacao?: string }[]).filter((t) => ["aberta", "fazendo"].includes(t.status) || (t.ultima_movimentacao ?? "") >= recente)),
     paraCartoes(supabase, emCursoBrutas),
   ]);
-  const abertas = minhas.filter((t) => t.status === "aberta");
+  // o que só começa mais tarde (ex.: depende de um prazo de fora) não aparece ainda no painel
+  const minhasHoje = minhas.filter((t) => !aindaNaoComeca(t));
+  const abertas = minhasHoje.filter((t) => t.status === "aberta");
   // em andamento primeiro, depois as feitas hoje
   emCurso.sort((a, b) => (a.status === "fazendo" ? -1 : 0) - (b.status === "fazendo" ? -1 : 0));
 
@@ -110,7 +112,7 @@ export default async function Inicio() {
         {!outras.length && <p className="aviso">quando a Lari e a Vivi entrarem, elas aparecem aqui.</p>}
       </div>
       {(paradas ?? 0) > 0 && (
-        <Link href="/faxina" className="m-small aviso-faxina">faxina: {paradas} {paradas === 1 ? "tarefa parada" : "tarefas paradas"}. resolver</Link>
+        <Link href="/backlog" className="m-small aviso-faxina">tarefas: {paradas} {paradas === 1 ? "tarefa parada" : "tarefas paradas"}. limpar</Link>
       )}
     </>
   );
@@ -145,7 +147,7 @@ export default async function Inicio() {
       />
 
       <TarefasAbertas
-        tarefas={minhas}
+        tarefas={minhasHoje}
         projetos={projetos ?? []}
         pessoas={pessoasAtivas ?? []}
         autorId={pessoa.id}

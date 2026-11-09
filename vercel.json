@@ -1,6 +1,7 @@
 {
   "crons": [
     { "path": "/api/cron/metricas", "schedule": "0 9 * * *" },
+    { "path": "/api/cron/recorrencias", "schedule": "0 9 * * *" },
     { "path": "/api/cron/validade", "schedule": "0 9 * * *" },
     { "path": "/api/cron/faxina", "schedule": "0 9 1,16 * *" }
   ]

@@ -36,7 +36,7 @@ test("recorte: leva geral e só os projetos citados", () => {
 test("contexto real da pasta carrega", () => {
   const c = carregarContexto();
   assert.ok(c.papeis.includes("juliana"));
-  assert.ok(c.projetos.folga.includes("11/12/2026"));
+  assert.ok(c.projetos.folga.includes("12/12/2026"));
   assert.ok(c.glossario.length >= 4);
 });
 

@@ -59,3 +59,13 @@ test("chaveSprite: apelidos, acentos e desconhecidos", () => {
   assert.equal(chaveSprite("Zé"), "padrao");
   assert.equal(chaveSprite(""), "padrao");
 });
+
+test("normal usa o boneco neutro e some quando há outro estado junto", () => {
+  const so = estadoDoBonequinho(pessoa({ estados: ["normal"] }), AGORA);
+  assert.equal(so.sprite, "neutro");
+  assert.equal(so.rotulo, "normal");
+  assert.deepEqual(so.simbolos, []);
+  const junto = estadoDoBonequinho(pessoa({ estados: ["normal", "focada"] }), AGORA);
+  assert.equal(junto.sprite, "focada");
+  assert.equal(junto.rotulo, "focada");
+});

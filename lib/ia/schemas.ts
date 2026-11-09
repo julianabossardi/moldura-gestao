@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const TIPOS = ["tarefa", "ideia", "reflexao", "referencia", "decisao", "entrega"] as const;
-export const ESTADOS = ["leve", "criativa", "focada"] as const;
+export const ESTADOS = ["normal", "leve", "criativa", "focada"] as const;
 
 export const destinoSchema = z.object({
   acao: z.enum(["criar", "atualizar"]),

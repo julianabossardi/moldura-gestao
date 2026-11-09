@@ -14,16 +14,23 @@ export const REGRAS_CRUZAMENTO = `1. Tarefa só quando há ação concreta e alg
 9. Prioridade segue o contexto: o que ele define como prioridade agora é "alta" e o resto é "media" ou "baixa". Nunca marque "alta" fora do que o contexto manda.
 10. Todo item leva "trecho": de 8 a 30 palavras copiadas letra por letra da transcrição fornecida, sem corrigir nem resumir. Sem trecho dito, deixe null (é um item vindo do contexto). Um trecho que não existe na transcrição é descartado.
 11. Nunca invente prazo, número ou nome. Termos do glossário já foram trocados no texto.
-12. Cada mudança que você fizer na proposta (juntou, moveu, tirou, trocou dono) entra em "notas", uma frase curta cada.`;
+12. Cada mudança que você fizer na proposta (juntou, moveu, tirou, trocou dono) entra em "notas", uma frase curta cada.
+13. Tarefa que se repete (lista "Tarefas que se repetem", se vier) nunca vira tarefa nova: a fala "tem que fazer o post" casa com a tarefa do período atual, que já existe. Tire de "novas" e diga em "notas" com qual casou. Se a fala diz que foi feita neste período, use "atualizacoes" com o item_id da tarefa do período, campo "status" e valor "concluida"; nunca "ja_feitas" para tarefa que se repete. Se a fala muda quando ou quem faz, atualize a tarefa do período do mesmo jeito. Só proponha nova recorrência como "ideias".`;
 
 // o que o banco sabe: itens abertos e o que foi concluído há pouco (substitui o que antes ia à mão no estado.md)
-export type ItemDoBanco = { titulo: string; projeto_slug: string | null; responsavel: string | null; status: string; concluido_em?: string | null };
+export type ItemDoBanco = { id?: string; titulo: string; projeto_slug: string | null; responsavel: string | null; status: string; concluido_em?: string | null };
+// tarefas que se repetem e o que cada uma já criou no período atual
+export type RecorrenciaParaCruzar = {
+  titulo: string; projeto_slug: string | null; frequencia: string; quantidade: number; responsavel: string | null;
+  do_periodo: { id: string; titulo: string; status: string }[];
+};
+export type BancoParaCruzar = { abertos: ItemDoBanco[]; concluidos: ItemDoBanco[]; recorrencias?: RecorrenciaParaCruzar[] };
 
 export async function cruzarComContexto(e: {
   proposta: PropostaReuniao;
   transcricao?: string; // já com o glossário aplicado
   contexto: Contexto;
-  banco?: { abertos: ItemDoBanco[]; concluidos: ItemDoBanco[] };
+  banco?: BancoParaCruzar;
 }): Promise<PropostaReuniao> {
   const slugs = e.proposta.projetos.map((p) => p.projeto_slug).filter((s): s is string => !!s);
   const sistema = `Você revisa a proposta de organização da reunião semanal das sócias da moldura (juliana, larissa, viviane), cruzando-a com o contexto. ${VOZ}
@@ -39,7 +46,10 @@ ${JSON.stringify(e.banco.abertos)}
 Itens concluídos recentemente no banco:
 ${JSON.stringify(e.banco.concluidos)}
 
-` : ""}Proposta da leitura da transcrição:
+${e.banco.recorrencias?.length ? `Tarefas que se repetem (ativas), com o que já existe no período atual:
+${JSON.stringify(e.banco.recorrencias)}
+
+` : ""}` : ""}Proposta da leitura da transcrição:
 ${JSON.stringify(e.proposta)}
 ${e.transcricao ? `\nTranscrição (sem separação de vozes):\n${e.transcricao}` : ""}`;
   return chamarJson({ modelo: MODELO_FORTE, sistema, usuario, schema: propostaReuniaoSchema, maxTokens: 10000, semPensar: true });

@@ -12,7 +12,7 @@ export type ResumoPessoa = {
   feliz: boolean;
 };
 
-export const ESTADOS_BASE = ["leve", "criativa", "focada"] as const;
+export const ESTADOS_BASE = ["normal", "leve", "criativa", "focada"] as const;
 // na tela, "leve" aparece como "distraída" (pede tarefas mais fáceis e guiadas); no banco segue "leve"
 export const ROTULO_ESTADO: Record<string, string> = { leve: "distraída" };
 
@@ -42,11 +42,14 @@ export type EstadoBonequinho = {
 
 // precedência do visual: dormindo > feliz > pegando fogo > estado base
 export function estadoDoBonequinho(p: ResumoPessoa, agora = Date.now()): EstadoBonequinho {
-  const base = (p.estados ?? []).filter((e) => (ESTADOS_BASE as readonly string[]).includes(e));
+  const comum = (p.estados ?? []).filter((e) => (ESTADOS_BASE as readonly string[]).includes(e));
   const dias = (agora - new Date(p.ultima_atividade).getTime()) / 86_400_000;
   if (dias >= REGRAS.dormindo.diasSemAtividade) return { sprite: "dormindo", rotulo: "dormindo", simbolos: [] };
-  if (p.feliz) return { sprite: "feliz", rotulo: "feliz", simbolos: base };
-  if (p.concluidos_7d >= REGRAS.fogo.minimoConcluidos) return { sprite: "pegando-fogo", rotulo: "pegando fogo", simbolos: base };
-  const sprite = base[0] ?? "neutro";
+  const visiveis = comum.filter((e) => e !== "normal");
+  if (p.feliz) return { sprite: "feliz", rotulo: "feliz", simbolos: visiveis };
+  if (p.concluidos_7d >= REGRAS.fogo.minimoConcluidos) return { sprite: "pegando-fogo", rotulo: "pegando fogo", simbolos: visiveis };
+  // "normal" é o dia sem nada de especial: usa o boneco neutro, e some se houver outro estado junto
+  const base = comum.filter((e) => e !== "normal" || comum.length === 1);
+  const sprite = base[0] === "normal" ? "neutro" : base[0] ?? "neutro";
   return { sprite, rotulo: base.length ? base.map((e) => ROTULO_ESTADO[e] ?? e).join(" + ") : "sem estado", simbolos: base.length > 1 ? base : [] };
 }

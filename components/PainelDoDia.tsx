@@ -28,6 +28,7 @@ type Sessao = { recortes: Recorte[]; titulos: Record<string, string>; projeto: s
 const TEMPOS = [{ r: "30 min", m: 30 }, { r: "1h", m: 60 }, { r: "2h", m: 120 }, { r: "3h+", m: 180 }];
 // "leve" continua no banco; na tela vira "distraída": pede tarefas mais fáceis e mais guiadas
 const ESTADOS = [
+  { valor: "normal", rotulo: "normal" },
   { valor: "focada", rotulo: "focada" },
   { valor: "criativa", rotulo: "criativa" },
   { valor: "leve", rotulo: "distraída" },
@@ -90,7 +91,8 @@ export function PainelDoDia({ pessoaId, pessoaNome, projetos, projetoInicial, es
     await supabase.from("pessoas").update({ projeto_do_dia: id, projeto_do_dia_em: hojeISO() }).eq("id", pessoaId);
   }
   async function alternarEstado(s: string) {
-    const novo = estados.includes(s) ? estados.filter((x) => x !== s) : [...estados, s];
+    // "normal" é o dia sem nada de especial: escolher ele solta os outros, e escolher outro solta ele
+    const novo = s === "normal" ? ["normal"] : estados.includes(s) ? estados.filter((x) => x !== s) : [...estados.filter((x) => x !== "normal"), s];
     if (!novo.length) return;
     setEstados(novo);
     await supabase.from("pessoas").update({ estados: novo }).eq("id", pessoaId);

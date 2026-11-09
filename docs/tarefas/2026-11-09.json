@@ -1,0 +1,382 @@
+{
+  "_leia": "carga inicial de 09/11/2026. o script scripts/importar-tarefas.ts lê este arquivo, pula o que já existe (título + projeto) e só grava depois de --gravar.",
+  "recorrencias": [
+    {
+      "projeto": "moldura",
+      "titulo": "fazer um post para o Instagram da moldura",
+      "variacoes": [
+        "1 lâmina",
+        "carrossel de 4 lâminas"
+      ],
+      "responsavel": "Juliana",
+      "prioridade": "media",
+      "frequencia": "semanal",
+      "quantidade": 2,
+      "prazo_no_periodo": "sex",
+      "definicao_pronto": "post construído, publicado no Instagram e compartilhado",
+      "inicio": "2026-11-09"
+    },
+    {
+      "projeto": "moldura",
+      "titulo": "adaptar um post do Instagram para o LinkedIn",
+      "responsavel": "Juliana",
+      "prioridade": "baixa",
+      "frequencia": "quinzenal",
+      "quantidade": 1,
+      "prazo_no_periodo": "sex",
+      "definicao_pronto": "post adaptado e publicado no LinkedIn da moldura",
+      "inicio": "2026-11-09"
+    },
+    {
+      "projeto": "moldura",
+      "titulo": "escrever um texto novo para o site",
+      "responsavel": "Juliana",
+      "prioridade": "baixa",
+      "frequencia": "mensal",
+      "quantidade": 1,
+      "prazo_no_periodo": "dia-20",
+      "definicao_pronto": "texto revisado e publicado no site",
+      "inicio": "2026-11-09"
+    },
+    {
+      "projeto": "moldura",
+      "titulo": "publicar no LinkedIn o texto do mês do site",
+      "responsavel": "Juliana",
+      "prioridade": "baixa",
+      "frequencia": "mensal",
+      "quantidade": 1,
+      "prazo_no_periodo": "ultimo_dia_util",
+      "depende_de": "escrever um texto novo para o site",
+      "definicao_pronto": "texto publicado no LinkedIn com link para o site",
+      "inicio": "2026-11-09"
+    },
+    {
+      "projeto": "moldura",
+      "titulo": "buscar editais abertos",
+      "responsavel": "Juliana",
+      "prioridade": "media",
+      "frequencia": "quinzenal",
+      "quantidade": 1,
+      "prazo_no_periodo": "sex",
+      "definicao_pronto": "lista de editais com prazo; os que valem viram tarefa de inscrição",
+      "inicio": "2026-11-09"
+    }
+  ],
+  "tarefas": [
+    {
+      "projeto": "moldura",
+      "titulo": "alinhar com a Raquel o post compartilhado",
+      "responsavel": "Juliana",
+      "prioridade": "media",
+      "definicao_pronto": "combinado com a Raquel quando ela publica e como a moldura entra",
+      "prazo": "2026-11-13"
+    },
+    {
+      "projeto": "moldura",
+      "titulo": "marcar meia hora para a Larissa explicar o design system",
+      "responsavel": "Juliana",
+      "prioridade": "media",
+      "definicao_pronto": "horário marcado com as três"
+    },
+    {
+      "projeto": "moldura",
+      "titulo": "terminar o mecanismo de inscrição em editais",
+      "responsavel": "Juliana",
+      "prioridade": "media",
+      "definicao_pronto": "mecanismo usado em pelo menos uma inscrição real"
+    },
+    {
+      "projeto": "moldura",
+      "titulo": "inscrever o folga no BNDES",
+      "responsavel": "Juliana",
+      "prioridade": "media",
+      "definicao_pronto": "inscrição enviada"
+    },
+    {
+      "projeto": "moldura",
+      "titulo": "inscrever o folga no Inovativa",
+      "responsavel": "Juliana",
+      "prioridade": "media",
+      "definicao_pronto": "inscrição enviada",
+      "prazo": "2026-11-30"
+    },
+    {
+      "projeto": "moldura",
+      "titulo": "definir as entregas finais do site",
+      "responsavel": "Juliana",
+      "prioridade": "media",
+      "definicao_pronto": "lista do que falta no site, com dono de cada item",
+      "prazo": "2026-12-12"
+    },
+    {
+      "projeto": "moldura",
+      "titulo": "revisar o site e repassar à Larissa o que melhorar (juliana)",
+      "responsavel": "Juliana",
+      "prioridade": "baixa",
+      "definicao_pronto": "lista de melhorias enviada à Larissa"
+    },
+    {
+      "projeto": "moldura",
+      "titulo": "revisar o site e repassar à Larissa o que melhorar (viviane)",
+      "responsavel": "Viviane",
+      "prioridade": "baixa",
+      "definicao_pronto": "lista de melhorias enviada à Larissa"
+    },
+    {
+      "projeto": "moldura",
+      "titulo": "revisar os textos dos cases",
+      "responsavel": "Juliana",
+      "prioridade": "baixa",
+      "definicao_pronto": "textos dos cases revisados e atualizados no site"
+    },
+    {
+      "projeto": "moldura",
+      "titulo": "definir o modelo de mockup dos cases da página inicial",
+      "responsavel": "Larissa",
+      "prioridade": "baixa",
+      "definicao_pronto": "modelo padrão aprovado pelas três"
+    },
+    {
+      "projeto": "moldura",
+      "titulo": "aplicar o modelo de mockup nos outros cases",
+      "responsavel": "Larissa",
+      "prioridade": "baixa",
+      "definicao_pronto": "todos os cases da página inicial no modelo novo",
+      "pai": "definir o modelo de mockup dos cases da página inicial"
+    },
+    {
+      "projeto": "moldura",
+      "titulo": "fazer mais mockups para os cases",
+      "responsavel": "Larissa",
+      "prioridade": "baixa",
+      "definicao_pronto": null
+    },
+    {
+      "projeto": "moldura",
+      "titulo": "atualizar o formulário \"trabalhe conosco\" do site",
+      "responsavel": "Juliana",
+      "prioridade": "baixa",
+      "definicao_pronto": "formulário com textos e campos atuais, publicado"
+    },
+    {
+      "projeto": "moldura",
+      "titulo": "estudar tráfego pago para prospecção",
+      "responsavel": "Viviane",
+      "prioridade": "baixa",
+      "definicao_pronto": "resumo do que aprendeu e uma proposta de teste"
+    },
+    {
+      "projeto": "moldura",
+      "titulo": "ligar o chip e trocar o telefone da moldura",
+      "responsavel": "Juliana",
+      "prioridade": "baixa",
+      "definicao_pronto": "telefone novo funcionando e trocado onde aparece (site, redes)"
+    },
+    {
+      "projeto": "folga",
+      "titulo": "planejar as sprints do folga até a divulgação",
+      "responsavel": "Juliana",
+      "prioridade": "alta",
+      "definicao_pronto": "sprints com objetivo até 12/12 no app (sprint_objetivos)",
+      "prazo": "2026-11-13"
+    },
+    {
+      "projeto": "folga",
+      "titulo": "pegar o número DUNS e passar para a Viviane",
+      "responsavel": "Juliana",
+      "prioridade": "alta",
+      "definicao_pronto": "número recebido por e-mail e enviado à Viviane",
+      "prazo": "2026-11-14",
+      "comeca_em": "2026-11-12"
+    },
+    {
+      "projeto": "folga",
+      "titulo": "cadastrar o folga como aplicativo no Google Play",
+      "responsavel": "Viviane",
+      "prioridade": "alta",
+      "definicao_pronto": "pedido aberto no Google Play com o DUNS"
+    },
+    {
+      "projeto": "folga",
+      "titulo": "adaptar o folga para mobile",
+      "responsavel": "Viviane",
+      "prioridade": "alta",
+      "definicao_pronto": "app instalado em celular real, com as telas principais funcionando"
+    },
+    {
+      "projeto": "folga",
+      "titulo": "montar o mecanismo de posts automáticos a partir dos filtros",
+      "responsavel": "Viviane",
+      "prioridade": "alta",
+      "definicao_pronto": "posts gerados a partir dos filtros do app, com o que é automático e o que precisa de nós descrito"
+    },
+    {
+      "projeto": "folga",
+      "titulo": "liberar a chave do Mercado Pago para cobrar pelo app",
+      "responsavel": "Viviane",
+      "prioridade": "alta",
+      "definicao_pronto": "cobrança de teste feita pelo app"
+    },
+    {
+      "projeto": "folga",
+      "titulo": "fazer o versionamento do app",
+      "responsavel": "Viviane",
+      "prioridade": "media",
+      "definicao_pronto": null
+    },
+    {
+      "projeto": "folga",
+      "titulo": "revisar a identidade visual: componentes, depois páginas",
+      "responsavel": "Larissa",
+      "prioridade": "alta",
+      "definicao_pronto": "componentes revistos e aplicados nas páginas do folga"
+    },
+    {
+      "projeto": "folga",
+      "titulo": "ajeitar o mapa",
+      "responsavel": "Larissa",
+      "prioridade": "alta",
+      "definicao_pronto": "mapa no novo visual e funcionando",
+      "pai": "revisar a identidade visual: componentes, depois páginas"
+    },
+    {
+      "projeto": "folga",
+      "titulo": "refinar o design da landing",
+      "responsavel": "Larissa",
+      "prioridade": "alta",
+      "definicao_pronto": "landing no novo visual, com o texto revisado",
+      "pai": "revisar a identidade visual: componentes, depois páginas",
+      "espera": "revisar o texto da landing"
+    },
+    {
+      "projeto": "folga",
+      "titulo": "pensar os produtos físicos para o evento",
+      "responsavel": "Larissa",
+      "prioridade": "alta",
+      "definicao_pronto": "lista de produtos com custo e prazo de produção",
+      "prazo": "2026-12-12",
+      "pai": "revisar a identidade visual: componentes, depois páginas"
+    },
+    {
+      "projeto": "folga",
+      "titulo": "revisar o texto da landing",
+      "responsavel": "Juliana",
+      "prioridade": "alta",
+      "definicao_pronto": "texto revisado e passado para a Larissa"
+    },
+    {
+      "projeto": "folga",
+      "titulo": "revisar as notificações",
+      "responsavel": "Juliana",
+      "prioridade": "alta",
+      "definicao_pronto": "textos e momentos das notificações revistos"
+    },
+    {
+      "projeto": "folga",
+      "titulo": "revisar o fluxo da newsletter paga (2 meses, sugestões personalizadas)",
+      "responsavel": "Juliana",
+      "prioridade": "alta",
+      "definicao_pronto": "fluxo testado do pagamento ao primeiro envio, com ajustes listados para a Viviane"
+    },
+    {
+      "projeto": "folga",
+      "titulo": "terminar a página da curadoria",
+      "responsavel": "Juliana",
+      "prioridade": "media",
+      "definicao_pronto": "página publicada"
+    },
+    {
+      "projeto": "folga",
+      "titulo": "atualizar a curadoria com fontes e lugares novos",
+      "responsavel": "Juliana",
+      "prioridade": "media",
+      "definicao_pronto": "fontes novas cadastradas"
+    },
+    {
+      "projeto": "folga",
+      "titulo": "escolher como empacotar o app para o Google Play (TWA, Capacitor ou outro)",
+      "responsavel": "Viviane",
+      "prioridade": "alta",
+      "definicao_pronto": "escolha registrada como decisão, com o motivo",
+      "pai": "adaptar o folga para mobile"
+    },
+    {
+      "projeto": "folga",
+      "titulo": "ajustar as telas principais para celular (agenda, filtros, detalhe do evento, mapa)",
+      "responsavel": "Viviane",
+      "prioridade": "alta",
+      "definicao_pronto": "telas usáveis numa tela de 360 px",
+      "pai": "adaptar o folga para mobile"
+    },
+    {
+      "projeto": "folga",
+      "titulo": "ajustar a navegação para celular (menu, voltar, gestos)",
+      "responsavel": "Viviane",
+      "prioridade": "alta",
+      "definicao_pronto": "dá para navegar o app inteiro com uma mão",
+      "pai": "adaptar o folga para mobile"
+    },
+    {
+      "projeto": "folga",
+      "titulo": "garantir login e sessão no app instalado",
+      "responsavel": "Viviane",
+      "prioridade": "alta",
+      "definicao_pronto": "login funciona e a sessão não cai ao fechar o app",
+      "pai": "adaptar o folga para mobile"
+    },
+    {
+      "projeto": "folga",
+      "titulo": "preparar ícone, tela de abertura e manifest",
+      "responsavel": "Viviane",
+      "prioridade": "alta",
+      "definicao_pronto": "ícones e tela de abertura no visual do folga (pedir à Larissa)",
+      "pai": "adaptar o folga para mobile"
+    },
+    {
+      "projeto": "folga",
+      "titulo": "gerar a versão assinada e testar em celular real",
+      "responsavel": "Viviane",
+      "prioridade": "alta",
+      "definicao_pronto": "app instalado e testado em pelo menos dois aparelhos",
+      "pai": "adaptar o folga para mobile"
+    },
+    {
+      "projeto": "folga",
+      "titulo": "montar o grupo de teste fechado que o Google exige",
+      "responsavel": "Juliana",
+      "prioridade": "alta",
+      "definicao_pronto": "testadores convidados e testando pelo período pedido",
+      "pai": "adaptar o folga para mobile"
+    },
+    {
+      "projeto": "folga",
+      "titulo": "escrever a ficha do app no Google Play (descrição, prints, link da política)",
+      "responsavel": "Juliana",
+      "prioridade": "alta",
+      "definicao_pronto": "ficha preenchida e revisada",
+      "pai": "adaptar o folga para mobile"
+    }
+  ],
+  "marcos": [
+    {
+      "projeto": "folga",
+      "titulo": "divulgação do folga (evento)",
+      "data": "2026-12-12",
+      "substitui": "evento do folga",
+      "desdobramentos": [
+        "agendar o local e o horário",
+        "criar o convite",
+        "montar a lista de convidados",
+        "planejar a divulgação"
+      ]
+    }
+  ],
+  "ideias": [
+    {
+      "projeto": "app-gestao",
+      "projeto_se_nao_houver": "moldura",
+      "titulo": "a tarefa recorrente sugere o formato do post (1 lâmina, carrossel) conforme o que saiu nas últimas semanas",
+      "autor": "Juliana"
+    }
+  ]
+}

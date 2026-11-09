@@ -1,6 +1,6 @@
 "use client";
 /* eslint-disable @next/next/no-img-element */
-import { atrasada, importante, type ItemCartao } from "@/lib/cartao";
+import { aindaNaoComeca, atrasada, importante, type ItemCartao } from "@/lib/cartao";
 import { useDetalhe } from "./ProvedorDetalhe";
 import { Avatar } from "./Avatar";
 import { Icone } from "./Icone";
@@ -44,6 +44,9 @@ export function CartaoItem({ item, euId, destaque, mostrarProjeto, topo, rodape,
             {importante(item) && <span title="importante" aria-label="importante"><Icone nome="importante" tam={16} /></span>}
             {atrasada(item) && <span title="atrasada" className="marca atrasada"><Icone nome="atrasada" tam={16} /> atrasada</span>}
             {item.status === "fazendo" && <span className="selo">em andamento</span>}
+            {item.recorrente && <span className="m-mono" title="tarefa que se repete">repete</span>}
+            {item.espera && <span className="m-mono" title="espera outra tarefa">espera: {item.espera}</span>}
+            {aindaNaoComeca(item) && <span className="m-mono">começa em {new Date(item.comeca_em + "T12:00").toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" })}</span>}
             {item.status === "concluida" && tarefa && <span className="m-mono">feita</span>}
             {item.status === "arquivada" && tarefa && <span className="m-mono">cancelada</span>}
             {mostrarProjeto && item.projeto && <span className="m-mono cartao-projeto">{item.projeto}</span>}

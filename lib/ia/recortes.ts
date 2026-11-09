@@ -11,6 +11,7 @@ export type Candidata = {
 };
 
 const GUIA_ESTADOS = `Estados:
+- normal: dia sem nada de especial. Escolha pela importância e pelo prazo, sem ajustar o tipo de recorte.
 - leve: coisas objetivas e mecânicas, com pouca decisão. Nunca exija decisão de direção.
 - criativa: explorar, abrir possibilidades, rascunhar.
 - focada: resolver, decidir e fechar, mesmo que não seja criativo.

@@ -4,6 +4,8 @@ import { supabaseServidor } from "@/lib/supabase/server";
 import { processarReuniao } from "@/lib/ia/reuniao";
 import { aplicarPasso2 } from "@/lib/reuniao/passo2";
 import type { Marcacao, Segmento } from "@/lib/reuniao/tipos";
+import { hojeISO } from "@/lib/datas";
+import { inicioDoPeriodo, paraDia, paraIso, type Recorrencia } from "@/lib/recorrencia";
 
 export const maxDuration = 300; // dois passos de IA em sequência
 
@@ -20,11 +22,14 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
   if (!r?.transcricao) return NextResponse.json({ erro: "sem transcrição ainda" }, { status: 409 });
 
   const desde = new Date(Date.now() - 21 * 86_400_000).toISOString();
-  const [{ data: pessoas }, { data: projetos }, { data: itens }, { data: concluidos }] = await Promise.all([
+  const hoje = hojeISO();
+  const [{ data: pessoas }, { data: projetos }, { data: itens }, { data: concluidos }, { data: recs }, { data: criadasRec }] = await Promise.all([
     supabase.from("pessoas").select("id, nome"),
     supabase.from("projetos").select("id, slug, nome").eq("status", "ativo").order("ordem_prioridade"),
     supabase.from("itens").select("id, titulo, status, projeto_id, responsavel:pessoas!responsavel_id(nome)").in("status", ["aberta", "fazendo"]).is("pai_id", null).eq("tipo", "tarefa"),
     supabase.from("itens").select("titulo, status, concluido_em, projeto_id, responsavel:pessoas!responsavel_id(nome)").eq("status", "concluida").eq("tipo", "tarefa").gte("concluido_em", desde),
+    supabase.from("recorrencias").select("*").eq("ativa", true),
+    supabase.from("itens").select("id, titulo, status, recorrencia_id, periodo, vez").not("recorrencia_id", "is", null).gte("periodo", paraIso(paraDia(hoje) - 35)),
   ]);
   const nome = (f: string) => pessoas?.find((p) => p.id === falantes[f])?.nome ?? f;
 
@@ -46,7 +51,12 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
       proposta: leitura,
       segmentos: r.transcricao as Segmento[],
       banco: {
-        abertos: itensAbertos.map((i) => ({ titulo: i.titulo, status: i.status, projeto_slug: i.projeto_slug, responsavel: i.responsavel })),
+        recorrencias: ((recs ?? []) as Recorrencia[]).map((rc) => ({
+          titulo: rc.titulo, projeto_slug: slugDe(rc.projeto_id), frequencia: rc.frequencia, quantidade: rc.quantidade,
+          responsavel: pessoas?.find((p) => p.id === rc.responsavel_id)?.nome ?? null,
+          do_periodo: (criadasRec ?? []).filter((i) => i.recorrencia_id === rc.id && i.periodo === inicioDoPeriodo(rc, hoje)).map((i) => ({ id: i.id, titulo: i.titulo, status: i.status })),
+        })),
+        abertos: itensAbertos.map((i) => ({ id: i.id, titulo: i.titulo, status: i.status, projeto_slug: i.projeto_slug, responsavel: i.responsavel })),
         concluidos: (concluidos ?? []).map((i) => ({ titulo: i.titulo, status: i.status, projeto_slug: slugDe(i.projeto_id), responsavel: donoDe(i.responsavel), concluido_em: i.concluido_em })),
       },
     });

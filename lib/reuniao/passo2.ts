@@ -1,7 +1,7 @@
 import type { PropostaReuniao, Segmento } from "./tipos";
 import { aplicarGlossario, carregarContexto, type Contexto } from "./contexto";
 import { altaForaDoFolga, conferirTrechos, diferencas, mesmoTituloDonosDiferentes } from "./conferir";
-import { cruzarComContexto, type ItemDoBanco } from "../ia/cruzar";
+import { cruzarComContexto, type BancoParaCruzar } from "../ia/cruzar";
 
 // projetos em que o contexto manda prioridade alta (hoje só o folga)
 export const PROJETOS_ALTOS = ["folga"];
@@ -28,13 +28,13 @@ export function separarDonos(p: PropostaReuniao): PropostaReuniao {
 export type Conferencia = { mudou: string[]; trechos_apagados: string[]; altas_fora: string[]; mesmo_titulo: string[] };
 export type ResultadoPasso2 = { proposta: PropostaReuniao; conferencia: Conferencia; erro: string | null };
 
-type Cruzar = (e: { proposta: PropostaReuniao; transcricao?: string; contexto: Contexto; banco?: { abertos: ItemDoBanco[]; concluidos: ItemDoBanco[] } }) => Promise<PropostaReuniao>;
+type Cruzar = (e: { proposta: PropostaReuniao; transcricao?: string; contexto: Contexto; banco?: BancoParaCruzar }) => Promise<PropostaReuniao>;
 
 // passo 2 da reunião: cruza a proposta da leitura com a pasta contexto/ e com o que o banco sabe, e confere o resultado no código.
 // a conferência roda sempre, mesmo se o cruzamento falhar. se ele falhar, a proposta do passo 1 segue em frente
 // e o erro volta no resultado para ser guardado, sem travar a reunião.
 export async function aplicarPasso2(
-  e: { proposta: PropostaReuniao; segmentos: Segmento[]; contexto?: Contexto; banco?: { abertos: ItemDoBanco[]; concluidos: ItemDoBanco[] } },
+  e: { proposta: PropostaReuniao; segmentos: Segmento[]; contexto?: Contexto; banco?: BancoParaCruzar },
   cruzar: Cruzar = cruzarComContexto,
 ): Promise<ResultadoPasso2> {
   let contexto: Contexto | undefined = e.contexto;

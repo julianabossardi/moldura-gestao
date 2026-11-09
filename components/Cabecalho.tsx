@@ -5,12 +5,12 @@ import { carregarNovidades } from "@/lib/novidades";
 import { diasAtras } from "@/lib/datas";
 import { Notificacoes, type Notificacao } from "./Notificacoes";
 
-type Tela = "inicio" | "reuniao" | "memoria" | "faxina" | "projeto";
+type Tela = "inicio" | "reuniao" | "memoria" | "backlog" | "projeto";
 const LINKS: { tela: Tela; href: string; rotulo: string }[] = [
   { tela: "inicio", href: "/", rotulo: "início" },
   { tela: "reuniao", href: "/reuniao", rotulo: "reunião" },
   { tela: "memoria", href: "/memoria", rotulo: "memória" },
-  { tela: "faxina", href: "/faxina", rotulo: "faxina" },
+  { tela: "backlog", href: "/backlog", rotulo: "tarefas" },
 ];
 
 // a barra de sistema de todas as telas internas: marca, navegação, onde estou e notificações.

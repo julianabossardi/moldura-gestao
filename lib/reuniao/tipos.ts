@@ -19,7 +19,11 @@ export type PainelProjeto = {
   entregas: ItemPainel[];
   novas: ItemPainel[]; // entraram por captura
   ideias: ItemPainel[];
+  // o que se repete: o previsto para esta semana e o que expirou desde a reunião anterior (reuniões antigas não têm)
+  previsto?: PrevistoPainel[];
+  expirou?: ItemPainel[];
 };
+export type PrevistoPainel = { titulo: string; prazo: string; estado: "a criar" | "aberta" | "fazendo" | "concluida" | "expirada"; id?: string };
 // formato antigo (até a rodada de layout 1), mantido para o histórico
 export type PainelPessoa = { id: string; nome: string; concluidos: string[]; andamento: string[]; entregas: string[] };
 export type PainelProjetoAntigo = {
