@@ -18,6 +18,7 @@ export function TempoReal() {
       .on("postgres_changes", { event: "*", schema: "public", table: "itens" }, atualizar)
       .on("postgres_changes", { event: "*", schema: "public", table: "reacoes" }, atualizar)
       .on("postgres_changes", { event: "*", schema: "public", table: "pessoas" }, atualizar)
+      .on("postgres_changes", { event: "*", schema: "public", table: "bilhetes" }, atualizar)
       .subscribe();
     return () => {
       clearTimeout(espera);

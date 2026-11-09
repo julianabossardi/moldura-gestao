@@ -11,6 +11,8 @@ type Props = {
   pessoas: { id: string; nome: string }[];
   autorId: string;
   projetoDoDia: string | null;
+  titulo?: string; // padrão: "todas as suas tarefas"
+  semNova?: boolean; // na página de outra pessoa não se cria tarefa por aqui
 };
 
 const FILTROS = [
@@ -22,7 +24,7 @@ const FILTROS = [
 
 // o backlog: tudo que está com você (ou sem responsável), separado por status.
 // feitas e canceladas mostram só os últimos 30 dias; abrir a tarefa deixa desfazer ou reabrir
-export function TarefasAbertas({ tarefas, projetos, pessoas, autorId, projetoDoDia }: Props) {
+export function TarefasAbertas({ tarefas, projetos, pessoas, autorId, projetoDoDia, titulo = "todas as suas tarefas", semNova }: Props) {
   const [novo, setNovo] = useState<ItemEditavel | null>(null);
   const [filtro, setFiltro] = useState<string>("aberta");
   const daVez = tarefas.filter((t) => t.status === filtro);
@@ -33,11 +35,11 @@ export function TarefasAbertas({ tarefas, projetos, pessoas, autorId, projetoDoD
   return (
     <section className="bloco">
       <div className="linha" style={{ justifyContent: "space-between" }}>
-        <h2>todas as suas tarefas</h2>
-        <button className="btn sutil" onClick={() => setNovo({
+        <h2>{titulo}</h2>
+        {!semNova && <button className="btn sutil" onClick={() => setNovo({
           tipo: "tarefa", titulo: "", corpo: null, objetivo: null, definicao_pronto: null, projeto_id: projetoDoDia,
           responsavel_id: autorId, prioridade: "media", prazo: null, visivel_cliente: false,
-        })}><Icone nome="mais" /> nova</button>
+        })}><Icone nome="mais" /> nova</button>}
       </div>
       <div className="linha filtros-status" role="group" aria-label="status">
         {FILTROS.map((f) => {

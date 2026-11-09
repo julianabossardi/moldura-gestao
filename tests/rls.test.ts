@@ -165,3 +165,51 @@ t("cliente não lê reuniões nem reações", () =>
     assert.equal((await db.query("select 1 from reunioes")).rowCount, 0);
     assert.equal((await db.query("select 1 from reacoes")).rowCount, 0);
   }));
+
+// bilhetes: recado de uma sócia para outra. só quem escreveu e quem recebeu enxergam.
+const B = { lari: "00000000-0000-4000-8000-0000000000c1", vivi: "00000000-0000-4000-8000-0000000000c2" };
+async function sociasDosBilhetes() {
+  for (const [uid, nome] of [[B.lari, "Lari"], [B.vivi, "Vivi"]]) {
+    await db.query("insert into auth.users (id, email, instance_id, aud, role) values ($1, $2, '00000000-0000-0000-0000-000000000000', 'authenticated', 'authenticated') on conflict do nothing", [uid, `${nome}@teste.local`]);
+    await db.query("insert into pessoas (id, nome, papel) values ($1,$2,'socia') on conflict do nothing", [uid, nome]);
+  }
+}
+
+t("bilhete: só quem escreveu e quem recebeu leem; a outra sócia e o cliente não", async () => {
+  await sociasDosBilhetes();
+  const { rows } = await db.query("insert into bilhetes (de_id, para_id, texto) values ($1,$2,'oi lari') returning id", [U.socia, B.lari]);
+  const id = rows[0].id as string;
+  await como(U.socia, async () => assert.deepEqual(await ids("select id from bilhetes"), [id]));
+  await como(B.lari, async () => assert.deepEqual(await ids("select id from bilhetes"), [id]));
+  await como(B.vivi, async () => assert.deepEqual(await ids("select id from bilhetes"), []));
+  await como(U.clienteA, async () => assert.deepEqual(await ids("select id from bilhetes"), []));
+});
+
+t("bilhete: sócia escreve só em nome dela; cliente não escreve", async () => {
+  await sociasDosBilhetes();
+  await como(B.lari, async () => {
+    await db.query("insert into bilhetes (de_id, para_id, texto) values ($1,$2,'oi')", [B.lari, B.vivi]);
+    assert.equal(await falha(() => db.query("insert into bilhetes (de_id, para_id, texto) values ($1,$2,'fingindo')", [U.socia, B.vivi])), true);
+    assert.equal(await falha(() => db.query("insert into bilhetes (de_id, para_id, texto) values ($1,$2,'   ')", [B.lari, B.vivi])), true);
+    assert.equal(await falha(() => db.query("insert into bilhetes (de_id, para_id, texto) values ($1,$1,'para mim')", [B.lari])), true);
+  });
+  await como(U.clienteA, async () => {
+    assert.equal(await falha(() => db.query("insert into bilhetes (de_id, para_id, texto) values ($1,$2,'oi')", [U.clienteA, B.lari])), true);
+  });
+});
+
+t("bilhete: quem recebe marca como lido, mas não muda o texto; quem escreveu não marca; ninguém apaga", async () => {
+  await sociasDosBilhetes();
+  const { rows } = await db.query("insert into bilhetes (de_id, para_id, texto) values ($1,$2,'oi') returning id", [U.socia, B.lari]);
+  const id = rows[0].id as string;
+  await como(B.lari, async () => {
+    assert.equal((await db.query("update bilhetes set lido_em = now() where id = $1", [id])).rowCount, 1);
+    assert.equal(await falha(() => db.query("update bilhetes set texto = 'outro' where id = $1", [id])), true);
+    // sem regra de delete, o banco não apaga nada (e nem avisa): o bilhete continua lá
+    assert.equal((await db.query("delete from bilhetes where id = $1", [id])).rowCount, 0);
+    assert.deepEqual(await ids("select id from bilhetes where id = $1", [id]), [id]);
+  });
+  await como(U.socia, async () => {
+    assert.equal((await db.query("update bilhetes set lido_em = null where id = $1", [id])).rowCount, 0); // não enxerga para escrever: não é dela
+  });
+});

@@ -18,6 +18,7 @@ import type { ResumoPessoa } from "@/lib/estados-bonequinho";
 import { diasAtras, hojeISO } from "@/lib/datas";
 import type { Destino } from "@/lib/ia/schemas";
 import { Cabecalho } from "@/components/Cabecalho";
+import { BilhetePopup, type BilheteRecebido } from "@/components/BilhetePopup";
 
 export default async function Inicio() {
   const { supabase, pessoa } = await pessoaAtual();
@@ -66,6 +67,10 @@ export default async function Inicio() {
   const euResumo = equipe.find((p) => p.id === pessoa.id);
   const outras = equipe.filter((p) => p.id !== pessoa.id);
 
+  // bilhetes que deixaram para mim e ainda não li: aparecem num pop-up, um por vez
+  const { data: bilhetesBrutos } = await supabase.from("bilhetes").select("id, texto, criado_em, de:pessoas!de_id(nome)").eq("para_id", pessoa.id).is("lido_em", null).order("criado_em");
+  const bilhetes: BilheteRecebido[] = (bilhetesBrutos ?? []).map((b) => ({ id: b.id, texto: b.texto, criado_em: b.criado_em, de: (b.de as unknown as { nome: string } | null)?.nome ?? "alguém" }));
+
   const recente = diasAtras(30);
   const [novidades, minhas, emCurso] = await Promise.all([
     carregarNovidades(supabase, { limite: 10 }),
@@ -100,14 +105,15 @@ export default async function Inicio() {
       </div>
       <div className="equipe-topo" aria-label="equipe">
         {outras.map((p) => (
-          <div className="pessoa-topo" key={p.id}>
+          // clicar na colega abre a página dela, com as tarefas e a caixa de bilhete
+          <Link href={`/equipe/${p.id}`} className="pessoa-topo" key={p.id} aria-label={`abrir a página de ${p.nome.split(" ")[0].toLowerCase()}`}>
             <Bonequinho pessoa={p} tamanho={96} />
             <div className="pessoa-topo-texto">
               <strong>{p.nome.split(" ")[0].toLowerCase()}</strong>
               <span className="m-mono">{rotuloEstado(p)}</span>
               {p.fazendo_titulo && <span className="pessoa-fazendo">fazendo: {p.fazendo_titulo}</span>}
             </div>
-          </div>
+          </Link>
         ))}
         {!outras.length && <p className="aviso">quando a Lari e a Vivi entrarem, elas aparecem aqui.</p>}
       </div>
@@ -121,6 +127,7 @@ export default async function Inicio() {
     <ProvedorDetalhe euId={pessoa.id} projetos={projetos ?? []} pessoas={pessoasAtivas ?? []}>
     <main className="pagina">
       <Cabecalho atual="inicio" />
+      <BilhetePopup bilhetes={bilhetes} />
 
       <NavegacaoProjetos />
 
